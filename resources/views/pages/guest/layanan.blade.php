@@ -25,31 +25,31 @@
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-10 justify-center">
 
                 <!-- Card Layanan -->
-                <a href="#baptisan" class="group bg-yellow-50 border border-yellow-200 shadow-md rounded-2xl p-6 text-center 
+                <a href="{{ route('guest.layanan.baptisan') }}" class="group bg-yellow-50 border border-yellow-200 shadow-md rounded-2xl p-6 text-center 
                 hover:shadow-xl hover:-translate-y-2 transition duration-300">
                     <div class="text-4xl mb-3 group-hover:scale-110 transition">✝️</div>
                     <h3 class="font-bold text-gray-800">Baptisan</h3>
                 </a>
 
-                <a href="#kedukaan" class="group bg-yellow-50 border border-yellow-200 shadow-md rounded-2xl p-6 text-center 
+                <a href="{{ route('guest.layanan.kedukaan') }}" class="group bg-yellow-50 border border-yellow-200 shadow-md rounded-2xl p-6 text-center 
                 hover:shadow-xl hover:-translate-y-2 transition duration-300">
                     <div class="text-4xl mb-3 group-hover:scale-110 transition">🕊️</div>
                     <h3 class="font-bold text-gray-800">Kedukaan</h3>
                 </a>
 
-                <a href="#pernikahan" class="group bg-yellow-50 border border-yellow-200 shadow-md rounded-2xl p-6 text-center 
+                <a href="{{ route('guest.layanan.pernikahan') }}" class="group bg-yellow-50 border border-yellow-200 shadow-md rounded-2xl p-6 text-center 
                 hover:shadow-xl hover:-translate-y-2 transition duration-300">
                     <div class="text-4xl mb-3 group-hover:scale-110 transition">💍</div>
                     <h3 class="font-bold text-gray-800">Pernikahan</h3>
                 </a>
 
-                <a href="#pindah" class="group bg-yellow-50 border border-yellow-200 shadow-md rounded-2xl p-6 text-center 
+                <a href="{{ route('guest.layanan.pindah') }}" class="group bg-yellow-50 border border-yellow-200 shadow-md rounded-2xl p-6 text-center 
                 hover:shadow-xl hover:-translate-y-2 transition duration-300">
                     <div class="text-4xl mb-3 group-hover:scale-110 transition">📜</div>
                     <h3 class="font-bold text-gray-800">Pindah</h3>
                 </a>
 
-                <a href="#sidi" class="group bg-yellow-50 border border-yellow-200 shadow-md rounded-2xl p-6 text-center 
+                <a href="{{ route('guest.layanan.sidi') }}" class="group bg-yellow-50 border border-yellow-200 shadow-md rounded-2xl p-6 text-center 
                 hover:shadow-xl hover:-translate-y-2 transition duration-300">
                     <div class="text-4xl mb-3 group-hover:scale-110 transition">⛪</div>
                     <h3 class="font-bold text-gray-800">Sidi</h3>

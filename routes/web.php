@@ -46,6 +46,27 @@ Route::get('/galeri', function () {
     return view('pages.guest.galeri');
 })->name('guest.galeri');
 
+// Guest sub-pages for individual layanan (map to blades in pages.guest.layanan)
+Route::get('/layanan/baptisan', function () {
+    return view('pages.guest.layanan.baptisan');
+})->name('guest.layanan.baptisan');
+
+Route::get('/layanan/kedukaan', function () {
+    return view('pages.guest.layanan.kedukaan');
+})->name('guest.layanan.kedukaan');
+
+Route::get('/layanan/pernikahan', function () {
+    return view('pages.guest.layanan.pernikahan');
+})->name('guest.layanan.pernikahan');
+
+Route::get('/layanan/pindah', function () {
+    return view('pages.guest.layanan.pindah');
+})->name('guest.layanan.pindah');
+
+Route::get('/layanan/sidi', function () {
+    return view('pages.guest.layanan.sidi');
+})->name('guest.layanan.sidi');
+
 // Alias route name used in some templates — redirect to root dashboard
 Route::redirect('/guest', '/', 302)->name('guest.dashboard');
 
