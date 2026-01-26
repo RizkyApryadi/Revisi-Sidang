@@ -16,7 +16,7 @@
                     <h4>Data Pindah Jemaat</h4>
                 </div>
                 <div class="card-body">
-                    2 Jemaat
+                    {{ isset($pendaftarans) ? $pendaftarans->count() : 0 }} Jemaat
                 </div>
             </div>
         </div>
@@ -27,7 +27,7 @@
         <div class="card-header">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">Data Pindah</h4>
-                <a href="{{ route('penatua.pelayanan.pindah.create') }}" class="btn btn-primary">
+                <a href="{{ route('penatua.pindah.create') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Tambah Data
                 </a>
             </div>
@@ -40,29 +40,31 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Jemaat</th>
-                            <th>Tanggal Pindah</th>
-                            <th>Dari Gereja</th>
-                            <th>Ke Gereja</th>
+                            <th>Tanggal Permohonan</th>
                             <th>Keterangan</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
+                        @forelse($pendaftarans as $i => $p)
                         <tr>
-                            <td>1</td>
-                            <td>Rina Siregar</td>
-                            <td>15-01-2024</td>
-                            <td>HKBP Medan Kota</td>
-                            <td>HKBP Medan Baru</td>
-                            <td>Pindah Domisili</td>
+                            <td>{{ $i + 1 }}</td>
+                            <td>{{ $p->jemaat ? $p->jemaat->nama_lengkap : '-' }}</td>
+                            <td>{{ $p->created_at ? $p->created_at->format('d-m-Y') : '-' }}</td>
+                            <td>{{ $p->keterangan ?? '-' }}</td>
+                            <td>
+                                <form action="{{ route('penatua.pindah.approve', $p->id) }}" method="POST"
+                                    style="display:inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success btn-sm">acc</button>
+                                </form>
+                            </td>
                         </tr>
+                        @empty
                         <tr>
-                            <td>2</td>
-                            <td>Anton Simanjuntak</td>
-                            <td>28-02-2024</td>
-                            <td>HKBP Medan Kota</td>
-                            <td>HKBP Balige</td>
-                            <td>Pindah Pekerjaan</td>
+                            <td colspan="5" class="text-center">Tidak ada permohonan pindah.</td>
                         </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

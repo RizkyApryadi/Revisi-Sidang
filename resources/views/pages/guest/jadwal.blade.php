@@ -31,9 +31,8 @@
                 @foreach($ibadahs as $ibadah)
                 <div
                     class="bg-white rounded-2xl shadow-md p-6 border border-indigo-100 hover:shadow-xl transition duration-300">
-                    <h3 class="text-xl font-semibold text-indigo-700 mb-2">{{ $ibadah->jenis ?? 'Ibadah' }}</h3>
-                    <p class="text-gray-600">{{ $ibadah->tanggal ? \Carbon\Carbon::parse($ibadah->tanggal)->format('j F
-                        Y') : '-' }} - {{ $ibadah->waktu ?? '-' }} WIB</p>
+                    <h3 class="text-xl font-semibold text-indigo-700 mb-2">{{ optional($ibadah->warta)->nama_minggu ?? 'Ibadah' }}</h3>
+                    <p class="text-gray-600">{{ optional($ibadah->warta)->tanggal ? \Carbon\Carbon::parse(optional($ibadah->warta)->tanggal)->format('j F Y') : '-' }} - {{ $ibadah->waktu ?? '-' }} WIB</p>
                     @if(!empty($ibadah->tema))
                     <p class="text-gray-600">TOPIK MINGGU: {{ \Illuminate\Support\Str::limit(strip_tags($ibadah->tema),
                         100) }}</p>

@@ -32,11 +32,15 @@
             <label class="block text-gray-700 font-medium mb-2">
                 Jenis Kelamin
             </label>
-            <select name="jenis_kelamin" class="w-full border rounded-lg px-4 py-2">
-                <option>-- Pilih Jenis Kelamin --</option>
-                <option>Laki-laki</option>
-                <option>Perempuan</option>
+            <select name="jenis_kelamin"
+                class="w-full border rounded-lg px-4 py-2 @error('jenis_kelamin') border-red-500 @enderror" required>
+                <option value="">-- Pilih Jenis Kelamin --</option>
+                <option value="Laki-laki" {{ old('jenis_kelamin')=='Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                <option value="Perempuan" {{ old('jenis_kelamin')=='Perempuan' ? 'selected' : '' }}>Perempuan</option>
             </select>
+            @error('jenis_kelamin')
+            <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
         </div>
 
         <!-- Pilih WIJK -->
@@ -45,7 +49,8 @@
                 WIJK
             </label>
             @if(isset($wijks) && $wijks->count())
-                <select name="wijk_id" class="w-full border rounded-lg px-4 py-2">
+                <select name="wijk_id"
+                    class="w-full border rounded-lg px-4 py-2 @error('wijk_id') border-red-500 @enderror" required>
                     <option value="">-- Pilih WIJK --</option>
                     @foreach($wijks as $wijk)
                         <option value="{{ $wijk->id }}" {{ old('wijk_id') == $wijk->id ? 'selected' : '' }}>
@@ -53,6 +58,9 @@
                         </option>
                     @endforeach
                 </select>
+                @error('wijk_id')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             @else
                 <div class="text-sm text-red-600">Belum ada WIJK. Silakan tambahkan WIJK terlebih dahulu.</div>
             @endif
@@ -67,8 +75,11 @@
                   <input type="text"
                       name="tempat_lahir"
                       value="{{ old('tempat_lahir') }}"
-                      class="w-full border rounded-lg px-4 py-2"
-                      placeholder="Tempat lahir">
+                      class="w-full border rounded-lg px-4 py-2 @error('tempat_lahir') border-red-500 @enderror"
+                      placeholder="Tempat lahir" required>
+                @error('tempat_lahir')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
             <div>
                 <label class="block text-gray-700 font-medium mb-2">
@@ -77,7 +88,10 @@
                   <input type="date"
                       name="tanggal_lahir"
                       value="{{ old('tanggal_lahir') }}"
-                      class="w-full border rounded-lg px-4 py-2">
+                      class="w-full border rounded-lg px-4 py-2 @error('tanggal_lahir') border-red-500 @enderror" required>
+                @error('tanggal_lahir')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
         </div>
 
@@ -88,8 +102,11 @@
             </label>
             <textarea rows="3"
                       name="alamat"
-                      class="w-full border rounded-lg px-4 py-2"
-                      placeholder="Alamat lengkap">{{ old('alamat') }}</textarea>
+                      class="w-full border rounded-lg px-4 py-2 @error('alamat') border-red-500 @enderror"
+                      placeholder="Alamat lengkap" required>{{ old('alamat') }}</textarea>
+            @error('alamat')
+            <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
         </div>
 
         <!-- Nomor HP -->
@@ -100,18 +117,25 @@
                  <input type="text"
                      name="no_hp"
                      value="{{ old('no_hp') }}"
-                     class="w-full border rounded-lg px-4 py-2"
-                     placeholder="08xxxxxxxxxx">
+                     class="w-full border rounded-lg px-4 py-2 @error('no_hp') border-red-500 @enderror"
+                     placeholder="08xxxxxxxxxx" required>
+            @error('no_hp')
+            <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
         </div>
 
         <!-- Foto -->
         <div class="mb-8">
             <label class="block text-gray-700 font-medium mb-2">
-                Foto
+                Foto (opsional)
             </label>
                  <input type="file"
                      name="foto"
-                     class="w-full border rounded-lg px-4 py-2 bg-white">
+                     accept="image/*"
+                     class="w-full border rounded-lg px-4 py-2 bg-white @error('foto') border-red-500 @enderror">
+            @error('foto')
+            <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
         </div>
 
         <!-- Button -->

@@ -25,21 +25,21 @@
     {{-- Tabel Katekisasi --}}
     <div class="card mt-4">
         <div class="card-header">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">Data Katekisasi</h4>
-                        <div class="d-flex gap-2">
-                            @if(!empty($pendingCount) && $pendingCount > 0)
-                                <button id="pendingBtn" class="btn btn-warning">
-                                    <i class="fas fa-bell"></i>
-                                    <span class="badge bg-danger ms-1">{{ $pendingCount }}</span>
-                                </button>
-                            @endif
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Data Katekisasi</h4>
+                <div class="d-flex gap-2">
+                    {{-- @if(!empty($pendingCount) && $pendingCount > 0)
+                    <button id="pendingBtn" class="btn btn-warning">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge bg-danger ms-1">{{ $pendingCount }}</span>
+                    </button>
+                    @endif --}}
 
-                            <a href="{{ route('admin.pelayanan.katekisasi.create') }}" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Tambah Data 
-                            </a>
-                        </div>
-                    </div>
+                    <a href="{{ route('admin.pelayanan.katekisasi.create') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Tambah Data
+                    </a>
+                </div>
+            </div>
         </div>
 
         <div class="card-body">
@@ -57,18 +57,18 @@
                     </thead>
                     <tbody>
                         @forelse($katekisasis ?? [] as $k)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $k->periode_ajaran }}</td>
-                                <td>{{ optional($k->pendeta)->nama_lengkap ?? '-' }}</td>
-                                <td>{{ \Carbon\Carbon::parse($k->tanggal_mulai)->format('d M Y') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($k->tanggal_selesai)->format('d M Y') }}</td>
-                                <td>{{ $k->pendaftaranSidis->count() }}</td>
-                            </tr>
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $k->periode_ajaran }}</td>
+                            <td>{{ optional($k->pendeta)->nama_lengkap ?? '-' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($k->tanggal_mulai)->format('d M Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($k->tanggal_selesai)->format('d M Y') }}</td>
+                            <td>{{ $k->pendaftaranSidis->count() }}</td>
+                        </tr>
                         @empty
-                            <tr>
-                                <td colspan="6" class="text-center">Belum ada data katekisasi.</td>
-                            </tr>
+                        <tr>
+                            <td colspan="6" class="text-center">Belum ada data katekisasi.</td>
+                        </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -80,48 +80,54 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="pendingModalLabel">Pendaftar Menunggu Persetujuan ({{ $pendingCount ?? 0 }})</h5>
+                        <h5 class="modal-title" id="pendingModalLabel">Pendaftar Menunggu Persetujuan ({{ $pendingCount
+                            ?? 0 }})</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         @if(empty($pendingCount) || $pendingCount == 0)
-                            <p>Tidak ada pendaftar pending.</p>
+                        <p>Tidak ada pendaftar pending.</p>
                         @else
-                            <div class="table-responsive">
-                                <table class="table table-sm table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Nama</th>
-                                            <th>Wijk</th>
-                                            <th>Tgl Daftar</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($pendingRecent ?? [] as $idx => $p)
-                                        <tr>
-                                            <td>{{ $idx + 1 }}</td>
-                                            <td>{{ $p->nama }}</td>
-                                            <td>{{ $p->wijk }}</td>
-                                            <td>{{ optional($p->created_at)->format('d M Y H:i') }}</td>
-                                            <td class="text-end">
-                                                <form action="{{ route('admin.pelayanan.katekisasi.pendaftaran.reject', ['id' => $p->id]) }}" method="POST" style="display:inline-block;">
-                                                    @csrf
-                                                    <input type="hidden" name="catatan_admin" value="Ditolak oleh admin">
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tolak pendaftar ini?')">Tolak</button>
-                                                </form>
-                                                <form action="{{ route('admin.pelayanan.katekisasi.pendaftaran.approve', ['id' => $p->id]) }}" method="POST" style="display:inline-block; margin-left:6px;">
-                                                    @csrf
-                                                    <input type="hidden" name="catatan_admin" value="Disetujui oleh admin">
-                                                    <button type="submit" class="btn btn-sm btn-success">Setuju</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Nama</th>
+                                        <th>Wijk</th>
+                                        <th>Tgl Daftar</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($pendingRecent ?? [] as $idx => $p)
+                                    <tr>
+                                        <td>{{ $idx + 1 }}</td>
+                                        <td>{{ $p->nama }}</td>
+                                        <td>{{ $p->wijk }}</td>
+                                        <td>{{ optional($p->created_at)->format('d M Y H:i') }}</td>
+                                        <td class="text-end">
+                                            <form
+                                                action="{{ route('admin.pelayanan.katekisasi.pendaftaran.reject', ['id' => $p->id]) }}"
+                                                method="POST" style="display:inline-block;">
+                                                @csrf
+                                                <input type="hidden" name="catatan_admin" value="Ditolak oleh admin">
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Tolak pendaftar ini?')">Tolak</button>
+                                            </form>
+                                            <form
+                                                action="{{ route('admin.pelayanan.katekisasi.pendaftaran.approve', ['id' => $p->id]) }}"
+                                                method="POST" style="display:inline-block; margin-left:6px;">
+                                                @csrf
+                                                <input type="hidden" name="catatan_admin" value="Disetujui oleh admin">
+                                                <button type="submit" class="btn btn-sm btn-success">Setuju</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                         @endif
                     </div>
                     <div class="modal-footer">
@@ -141,22 +147,24 @@
         @endauth
     </div>
 
-@push('script')
-<style>
-    /* Ensure modal and backdrop appear above other overlays (very high to beat custom dropdowns) */
-    .modal-backdrop {
-        z-index: 99998 !important;
-    }
-    .modal {
-        z-index: 99999 !important;
-        position: fixed !important;
-    }
-    .modal.show {
-        display: block !important;
-    }
-</style>
-<script>
-    (function initPendingModal(){
+    @push('script')
+    <style>
+        /* Ensure modal and backdrop appear above other overlays (very high to beat custom dropdowns) */
+        .modal-backdrop {
+            z-index: 99998 !important;
+        }
+
+        .modal {
+            z-index: 99999 !important;
+            position: fixed !important;
+        }
+
+        .modal.show {
+            display: block !important;
+        }
+    </style>
+    <script>
+        (function initPendingModal(){
         function setup() {
             var btn = document.getElementById('pendingBtn');
             var modalEl = document.getElementById('pendingModal');
@@ -228,8 +236,8 @@
             setup();
         }
     })();
-</script>
-@endpush
+    </script>
+    @endpush
 
 </section>
 

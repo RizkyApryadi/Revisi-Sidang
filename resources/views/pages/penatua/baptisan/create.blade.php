@@ -194,168 +194,168 @@
 
 
                 {{-- ========================= --}}
-{{-- BAPTISAN DEWASA --}}
-{{-- ========================= --}}
-<div id="form-dewasa" hidden>
+                {{-- BAPTISAN DEWASA --}}
+                {{-- ========================= --}}
+                <div id="form-dewasa" hidden>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-9 col-sm-12">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8 col-md-9 col-sm-12">
 
-            {{-- HEADER --}}
-            <div class="mb-4">
-                <h4 class="text-primary">
-                    <i class="fas fa-user"></i> Pendaftaran Baptisan Dewasa
-                </h4>
-                <p class="text-muted mb-0">
-                    Formulir ini diperuntukkan bagi calon baptisan dewasa sesuai tata gereja HKBP.
-                </p>
-            </div>
-
-            {{-- DATA PRIBADI --}}
-            <div class="card mb-4 border">
-                <div class="card-header bg-light">
-                    <strong><i class="fas fa-id-card"></i> Data Pribadi Calon Baptisan</strong>
-                </div>
-                <div class="card-body">
-
-                    <div class="form-group">
-                        <label>Nama Lengkap</label>
-                        <input type="text" class="form-control" name="nama_calon">
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Jenis Kelamin</label>
-                                <select class="form-control" name="jenis_kelamin">
-                                    <option value="">-- Pilih --</option>
-                                    <option value="Laki-laki">Laki-laki</option>
-                                    <option value="Perempuan">Perempuan</option>
-                                </select>
+                            {{-- HEADER --}}
+                            <div class="mb-4">
+                                <h4 class="text-primary">
+                                    <i class="fas fa-user"></i> Pendaftaran Baptisan Dewasa
+                                </h4>
+                                <p class="text-muted mb-0">
+                                    Formulir ini diperuntukkan bagi calon baptisan dewasa sesuai tata gereja HKBP.
+                                </p>
                             </div>
-                        </div>
 
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Status Perkawinan</label>
-                                <select class="form-control" name="status_perkawinan">
-                                    <option value="">-- Pilih --</option>
-                                    <option value="Belum Menikah">Belum Menikah</option>
-                                    <option value="Menikah">Menikah</option>
-                                </select>
+                            {{-- DATA PRIBADI --}}
+                            <div class="card mb-4 border">
+                                <div class="card-header bg-light">
+                                    <strong><i class="fas fa-id-card"></i> Data Pribadi Calon Baptisan</strong>
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="form-group">
+                                        <label>Nama Lengkap</label>
+                                        <input type="text" class="form-control" name="nama_calon">
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Jenis Kelamin</label>
+                                                <select class="form-control" name="jenis_kelamin">
+                                                    <option value="">-- Pilih --</option>
+                                                    <option value="Laki-laki">Laki-laki</option>
+                                                    <option value="Perempuan">Perempuan</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Status Perkawinan</label>
+                                                <select class="form-control" name="status_perkawinan">
+                                                    <option value="">-- Pilih --</option>
+                                                    <option value="Belum Menikah">Belum Menikah</option>
+                                                    <option value="Menikah">Menikah</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Tempat Lahir</label>
+                                                <input type="text" class="form-control" name="tempat_lahir">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Tanggal Lahir</label>
+                                                <input type="date" class="form-control" name="tanggal_lahir">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Tempat Lahir</label>
-                                <input type="text" class="form-control" name="tempat_lahir">
+                            {{-- DATA KEGEREJAAN --}}
+                            <div class="card mb-4 border">
+                                <div class="card-header bg-light">
+                                    <strong><i class="fas fa-church"></i> Data Kegerejaan</strong>
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="form-group">
+                                        <label>Asal Gereja (jika pindahan)</label>
+                                        <input type="text" class="form-control" name="asal_gereja">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Sudah Mengikuti Katekisasi?</label>
+                                        <select class="form-control" name="sudah_katekisasi">
+                                            <option value="">-- Pilih --</option>
+                                            <option value="1">Sudah</option>
+                                            <option value="0">Belum</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Sudah Sidi?</label>
+                                        <select class="form-control" name="sudah_sidi">
+                                            <option value="">-- Pilih --</option>
+                                            <option value="1">Sudah</option>
+                                            <option value="0">Belum</option>
+                                        </select>
+                                    </div>
+
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Tanggal Lahir</label>
-                                <input type="date" class="form-control" name="tanggal_lahir">
+                            {{-- ADMINISTRASI --}}
+                            <div class="card mb-4 border">
+                                <div class="card-header bg-light">
+                                    <strong><i class="fas fa-file-alt"></i> Kelengkapan Administrasi</strong>
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="custom-control custom-checkbox mb-2">
+                                        <input type="checkbox" class="custom-control-input" id="kate"
+                                            name="surat_katekisasi">
+                                        <label class="custom-control-label" for="kate">
+                                            Surat Keterangan Katekisasi
+                                        </label>
+                                    </div>
+
+                                    <div class="custom-control custom-checkbox mb-2">
+                                        <input type="checkbox" class="custom-control-input" id="sintua-dewasa"
+                                            name="surat_sintua">
+                                        <label class="custom-control-label" for="sintua-dewasa">
+                                            Surat Pengantar Sintua
+                                        </label>
+                                    </div>
+
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="gereja-lain"
+                                            name="surat_gereja_lain">
+                                        <label class="custom-control-label" for="gereja-lain">
+                                            Surat Pengantar dari Gereja Asal
+                                        </label>
+                                    </div>
+
+                                </div>
                             </div>
+
+                            {{-- JADWAL --}}
+                            <div class="card mb-4 border">
+                                <div class="card-header bg-light">
+                                    <strong><i class="fas fa-calendar-alt"></i> Jadwal Baptisan</strong>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-0">
+                                        <label>Tanggal Kebaktian Baptisan</label>
+                                        <input type="date" class="form-control" name="tanggal_ibadah">
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- SUBMIT --}}
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fas fa-save"></i> Simpan Pendaftaran
+                                </button>
+                            </div>
+
                         </div>
                     </div>
-
                 </div>
-            </div>
-
-            {{-- DATA KEGEREJAAN --}}
-            <div class="card mb-4 border">
-                <div class="card-header bg-light">
-                    <strong><i class="fas fa-church"></i> Data Kegerejaan</strong>
-                </div>
-                <div class="card-body">
-
-                    <div class="form-group">
-                        <label>Asal Gereja (jika pindahan)</label>
-                        <input type="text" class="form-control" name="asal_gereja">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Sudah Mengikuti Katekisasi?</label>
-                        <select class="form-control" name="sudah_katekisasi">
-                            <option value="">-- Pilih --</option>
-                            <option value="1">Sudah</option>
-                            <option value="0">Belum</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Sudah Sidi?</label>
-                        <select class="form-control" name="sudah_sidi">
-                            <option value="">-- Pilih --</option>
-                            <option value="1">Sudah</option>
-                            <option value="0">Belum</option>
-                        </select>
-                    </div>
-
-                </div>
-            </div>
-
-            {{-- ADMINISTRASI --}}
-            <div class="card mb-4 border">
-                <div class="card-header bg-light">
-                    <strong><i class="fas fa-file-alt"></i> Kelengkapan Administrasi</strong>
-                </div>
-                <div class="card-body">
-
-                    <div class="custom-control custom-checkbox mb-2">
-                        <input type="checkbox" class="custom-control-input" id="kate"
-                               name="surat_katekisasi">
-                        <label class="custom-control-label" for="kate">
-                            Surat Keterangan Katekisasi
-                        </label>
-                    </div>
-
-                    <div class="custom-control custom-checkbox mb-2">
-                        <input type="checkbox" class="custom-control-input" id="sintua-dewasa"
-                               name="surat_sintua">
-                        <label class="custom-control-label" for="sintua-dewasa">
-                            Surat Pengantar Sintua
-                        </label>
-                    </div>
-
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="gereja-lain"
-                               name="surat_gereja_lain">
-                        <label class="custom-control-label" for="gereja-lain">
-                            Surat Pengantar dari Gereja Asal
-                        </label>
-                    </div>
-
-                </div>
-            </div>
-
-            {{-- JADWAL --}}
-            <div class="card mb-4 border">
-                <div class="card-header bg-light">
-                    <strong><i class="fas fa-calendar-alt"></i> Jadwal Baptisan</strong>
-                </div>
-                <div class="card-body">
-                    <div class="form-group mb-0">
-                        <label>Tanggal Kebaktian Baptisan</label>
-                        <input type="date" class="form-control" name="tanggal_ibadah">
-                    </div>
-                </div>
-            </div>
-
-            {{-- SUBMIT --}}
-            <div class="text-right">
-                <button type="submit" class="btn btn-primary px-4">
-                    <i class="fas fa-save"></i> Simpan Pendaftaran
-                </button>
-            </div>
-
-        </div>
-    </div>
-</div>
 
 
                 {{-- ========================= --}}

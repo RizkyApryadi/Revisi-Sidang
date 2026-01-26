@@ -41,32 +41,81 @@
                             <th>No</th>
                             <th>Nama Suami</th>
                             <th>Nama Istri</th>
-                            <th>Tanggal Pernikahan</th>
-                            <th>Tempat</th>
-                            <th>Dipimpin Oleh</th>
+                            <th>Tanggal Perjanjian</th>
+                            <th>Tanggal Pemberkatan</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($pendaftarans as $index => $pendaftaran)
                         @php
-                        $mempelais = $pendaftaran->mempelais;
-                        $pria = $mempelais->where('jenis_kelamin', 'L')->first();
-                        $wanita = $mempelais->where('jenis_kelamin', 'P')->first();
-                        $namaPria = $pria ? $pria->nama : '-';
-                        $namaWanita = $wanita ? $wanita->nama : '-';
+                        // Use explicit relations `pria` and `wanita` defined on the model.
+                        $pria = $pendaftaran->pria ?? null;
+                        $wanita = $pendaftaran->wanita ?? null;
+                        // Jemaat uses `nama_lengkap`; fall back to `nama` if present for compatibility
+                        $namaPria = $pria ? ($pria->nama_lengkap ?? $pria->nama ?? '-') : '-';
+                        $namaWanita = $wanita ? ($wanita->nama_lengkap ?? $wanita->nama ?? '-') : '-';
                         @endphp
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $namaPria }}</td>
                             <td>{{ $namaWanita }}</td>
+                            <td>{{ $pendaftaran->tanggal_perjanjian ?
+                                \Carbon\Carbon::parse($pendaftaran->tanggal_perjanjian)->format('d-m-Y') : '-' }}</td>
                             <td>{{ $pendaftaran->tanggal_pemberkatan ?
                                 \Carbon\Carbon::parse($pendaftaran->tanggal_pemberkatan)->format('d-m-Y') : '-' }}</td>
-                            <td>{{ $pendaftaran->keterangan_pemberkatan ?? '-' }}</td>
-                            <td>{{ $pendaftaran->nama_pendeta ?? '-' }}</td>
+                            <td>
+                                @php $status = $pendaftaran->status ?? 'pending'; @endphp
+
+                                @if($status === 'pending')
+                                    <form action="{{ route('penatua.pelayanan.pernikahan.approve', $pendaftaran->id) }}" method="POST" style="display:inline">
+                                        @csrf
+                                        <button class="btn btn-success btn-sm" type="submit">Terima</button>
+                                    </form>
+
+                                    <form id="reject-form-{{ $pendaftaran->id }}" action="{{ route('penatua.pelayanan.pernikahan.reject', $pendaftaran->id) }}" method="POST" style="display:inline">
+                                        @csrf
+                                        <input type="hidden" name="reason" value="" />
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="promptReject({{ $pendaftaran->id }})">Tolak</button>
+                                    </form>
+
+                                @elseif($status === 'awaiting_publish')
+                                    <span class="badge bg-warning text-dark">Menunggu Publikasi (Disetujui oleh Pendeta)</span>
+
+                                @elseif($status === 'published')
+                                    <span class="text-success">Dipublikasikan</span>
+
+                                @elseif($status === 'approved')
+                                    <span class="text-success">Disetujui</span>
+
+                                @elseif($status === 'rejected')
+                                    <span class="text-danger">Ditolak</span>
+
+                                @else
+                                    <span class="text-muted">{{ ucfirst($status) }}</span>
+                                @endif
+
+                                @if(!empty($pendaftaran->review_reason))
+                                    <div class="small text-muted">Alasan: {{ $pendaftaran->review_reason }}</div>
+                                @endif
+                            </td>
+
+                            <td>
+                                <a href="{{ route('penatua.pelayanan.pernikahan.show', $pendaftaran->id) }}"
+                                    class="btn btn-info btn-sm">Show</a>
+                                <form action="{{ route('penatua.pelayanan.pernikahan.destroy', $pendaftaran->id) }}"
+                                    method="POST" style="display:inline"
+                                    onsubmit="return confirm('Hapus pendaftaran ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted">Tidak ada data pernikahan</td>
+                            <td colspan="7" class="text-center text-muted">Tidak ada data pernikahan</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -78,4 +127,16 @@
 
 </section>
 
+@endsection
+
+@section('scripts')
+<script>
+    function promptReject(id) {
+        var reason = prompt('Masukkan alasan penolakan:');
+        if (reason === null) return; // cancelled
+        var form = document.getElementById('reject-form-' + id);
+        form.querySelector('input[name="reason"]').value = reason;
+        form.submit();
+    }
+</script>
 @endsection

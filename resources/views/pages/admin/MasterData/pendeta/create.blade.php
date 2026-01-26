@@ -19,11 +19,8 @@
                 Nama Lengkap
             </label>
             <input type="hidden" name="user_id" value="{{ optional($user)->id }}">
-            <input type="text"
-                   name="nama_lengkap"
-                   value="{{ old('nama_lengkap', optional($user)->name) }}"
-                   class="w-full border rounded-lg px-4 py-2 bg-gray-100"
-                   readonly>
+            <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', optional($user)->name) }}"
+                class="w-full border rounded-lg px-4 py-2 bg-gray-100" readonly>
         </div>
 
         <!-- Jenis Kelamin -->
@@ -31,11 +28,15 @@
             <label class="block text-gray-700 font-medium mb-2">
                 Jenis Kelamin
             </label>
-            <select name="jenis_kelamin" class="w-full border rounded-lg px-4 py-2">
-                <option>-- Pilih Jenis Kelamin --</option>
-                <option>Laki-laki</option>
-                <option>Perempuan</option>
+            <select name="jenis_kelamin"
+                class="w-full border rounded-lg px-4 py-2 @error('jenis_kelamin') border-red-500 @enderror" required>
+                <option value="">-- Pilih Jenis Kelamin --</option>
+                <option value="Laki-laki" {{ old('jenis_kelamin')=='Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                <option value="Perempuan" {{ old('jenis_kelamin')=='Perempuan' ? 'selected' : '' }}>Perempuan</option>
             </select>
+            @error('jenis_kelamin')
+            <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
         </div>
 
         <!-- Tempat & Tanggal Lahir -->
@@ -44,20 +45,23 @@
                 <label class="block text-gray-700 font-medium mb-2">
                     Tempat Lahir
                 </label>
-                <input type="text"
-                       name="tempat_lahir"
-                       value="{{ old('tempat_lahir') }}"
-                       class="w-full border rounded-lg px-4 py-2"
-                       placeholder="Tempat lahir">
+                <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir') }}"
+                    class="w-full border rounded-lg px-4 py-2 @error('tempat_lahir') border-red-500 @enderror"
+                    placeholder="Tempat lahir" required>
+                @error('tempat_lahir')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
             <div>
                 <label class="block text-gray-700 font-medium mb-2">
                     Tanggal Lahir
                 </label>
-                <input type="date"
-                       name="tanggal_lahir"
-                       value="{{ old('tanggal_lahir') }}"
-                       class="w-full border rounded-lg px-4 py-2">
+                <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
+                    class="w-full border rounded-lg px-4 py-2 @error('tanggal_lahir') border-red-500 @enderror"
+                    required>
+                @error('tanggal_lahir')
+                <span class="text-red-500 text-sm">{{ $message }}</span>
+                @enderror
             </div>
         </div>
 
@@ -66,10 +70,12 @@
             <label class="block text-gray-700 font-medium mb-2">
                 Alamat
             </label>
-            <textarea rows="3"
-                      name="alamat"
-                      class="w-full border rounded-lg px-4 py-2"
-                      placeholder="Alamat lengkap">{{ old('alamat') }}</textarea>
+            <textarea rows="3" name="alamat"
+                class="w-full border rounded-lg px-4 py-2 @error('alamat') border-red-500 @enderror"
+                placeholder="Alamat lengkap" required>{{ old('alamat') }}</textarea>
+            @error('alamat')
+            <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
         </div>
 
         <!-- Nomor HP -->
@@ -77,32 +83,34 @@
             <label class="block text-gray-700 font-medium mb-2">
                 Nomor HP
             </label>
-            <input type="text"
-                   name="no_hp"
-                   value="{{ old('no_hp') }}"
-                   class="w-full border rounded-lg px-4 py-2"
-                   placeholder="08xxxxxxxxxx">
+            <input type="text" name="no_hp" value="{{ old('no_hp') }}"
+                class="w-full border rounded-lg px-4 py-2 @error('no_hp') border-red-500 @enderror"
+                placeholder="08xxxxxxxxxx" required>
+            @error('no_hp')
+            <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
         </div>
 
         <!-- Foto -->
         <div class="mb-8">
             <label class="block text-gray-700 font-medium mb-2">
-                Foto
+                Foto (opsional)
             </label>
-            <input type="file"
-                   name="foto"
-                   class="w-full border rounded-lg px-4 py-2 bg-white">
+            <input type="file" name="foto" accept="image/*"
+                class="w-full border rounded-lg px-4 py-2 bg-white @error('foto') border-red-500 @enderror">
+            @error('foto')
+            <span class="text-red-500 text-sm">{{ $message }}</span>
+            @enderror
         </div>
 
         <!-- Button -->
         <div class="flex justify-end gap-3">
-            <a href="{{ route('admin.pendeta') }}" 
-               class="px-6 py-2 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400">
+            <a href="{{ route('admin.pendeta') }}"
+                class="px-6 py-2 bg-gray-300 rounded-lg text-gray-700 hover:bg-gray-400">
                 Kembali
             </a>
 
-            <button type="submit"
-                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                 Simpan
             </button>
         </div>

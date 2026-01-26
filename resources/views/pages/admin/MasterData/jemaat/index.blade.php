@@ -15,9 +15,6 @@
                         Kepala Keluarga
                     </h6>
                 </div>
-                <div class="card-body" style="padding:0;font-size:15px;font-weight:700;">
-                    {{ number_format($kkCount) }} KK
-                </div>
             </div>
         </div>
     </div>
@@ -34,23 +31,26 @@
                         Total Jemaat
                     </h6>
                 </div>
-                <div class="card-body" style="padding:0;font-size:15px;font-weight:700;">
+                {{-- <div class="card-body" style="padding:0;font-size:15px;font-weight:700;">
                     {{ number_format($totalJemaat) }} Orang
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
 </div>
 
-<div class="jemaat-compact">
+<!-- Data Jemaat removed from this view per request -->
+
+<!-- Keluarga section -->
+<div class="keluarga-section mt-3">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Data Jemaat</h4>
+            <h4 class="mb-0">Data Keluarga</h4>
             <div>
-                <a href="{{ route('admin.jemaat.pending') }}" class="btn btn-outline-warning btn-sm mr-2">
+                <a href="#" class="btn btn-outline-warning btn-sm mr-2">
                     Pengajuan <span class="badge bg-danger">{{ $pendingCount ?? 0 }}</span>
                 </a>
-                <a href="{{ url('/admin/jemaat/create') }}" class="btn btn-primary">
+                <a href="{{ route('admin.jemaat.create') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Tambah Jemaat
                 </a>
             </div>
@@ -60,46 +60,37 @@
             <table class="table table-bordered table-striped w-100">
                 <thead class="thead-dark">
                     <tr class="text-center align-middle">
-                        <th style="width: 4%">No</th>
-                        <th style="width: 9%">No Jemaat</th>
-                        <th style="width: 9%">No KK</th>
-                        <th style="width: 14%">Nama</th>
-                        <th style="width: 16%">Tempat, Tanggal Lahir</th>
-                        <th style="width: 13%">Alamat</th>
-                        <th style="width: 6%">JK</th>
-                        <th style="width: 11%">No HP</th>
-                        <th style="width: 7%">Foto</th>
-                        <th style="width: 11%">Aksi</th>
+                        <th style="width:4%">No</th>
+                        <th style="width:16%">No KK</th>
+                        <th style="width:34%">Alamat</th>
+                        <th style="width:10%">Wijk</th>
+                        <th style="width:6%">Anggota</th>
+                        <th style="width:12%">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="align-middle">
-                    @foreach($jemaats as $index => $j)
+                    @foreach($keluargas as $idx => $kel)
                     <tr>
-                        <td class="text-center">{{ $index + 1 }}</td>
-                        <td class="text-center">{{ $j->nomor_jemaat }}</td>
-                        <td class="text-center">{{ $j->keluarga?->nomor_keluarga }}</td>
-                        <td>{{ $j->nama_lengkap }}</td>
-                        <td class="text-center">{{ $j->tempat_lahir }},<br>{{ $j->tanggal_lahir ?
-                            \Carbon\Carbon::parse($j->tanggal_lahir)->format('d M Y') : '' }}</small></td>
-                        <td style="white-space: normal; word-break: break-word;">{{ $j->keluarga?->alamat }}</td>
-                        <td class="text-center">{{ $j->jenis_kelamin ? (str_contains($j->jenis_kelamin, 'Laki') ? 'L' :
-                            'P') : '' }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ $j->no_hp }}</td>
-                        <td class="text-center">
-                            @if($j->foto)
-                            <img src="{{ asset('storage/'.$j->foto) }}" alt="Foto Jemaat" class="rounded-circle">
-                            @else
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode($j->nama_lengkap) }}&background=ddd&color=444"
-                                alt="Foto Jemaat" class="rounded-circle">
-                            @endif
-                        </td>
+                        <td class="text-center">{{ $idx + 1 }}</td>
+                        <td class="text-center">{{ $kel->nomor_kk }}</td>
+                        <td style="white-space: normal; word-break: break-word;">{{ $kel->alamat }}</td>
+                        <td class="text-center">{{ optional($kel->wijk)->nama_wijk ?? '-' }}</td>
+                        <td class="text-center">{{ $kel->jemaats_count ?? $kel->jemaats->count() }}</td>
                         <td class="text-center" style="white-space: nowrap;">
-                            <a href="{{ route('admin.jemaat.show', $j->id) }}" class="btn btn-info btn-sm mr-1"><i class="fas fa-eye"></i></a>
-                            <a href="{{ route('admin.jemaat.edit', $j->id) }}" class="btn btn-warning btn-sm mr-1"><i class="fas fa-edit"></i></a>
-                            <form action="{{ route('admin.jemaat.destroy', $j->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus jemaat ini?');">
+                            <a href="{{ url('/admin/keluarga/'.$kel->id) }}" class="btn btn-info btn-sm mr-1"
+                                title="Lihat"><i class="fas fa-eye"></i></a>
+                            @php $firstJemaat = $kel->jemaats->first(); @endphp
+                            @if($firstJemaat)
+                            <a href="{{ route('admin.jemaat.edit', $firstJemaat->id) }}" class="btn btn-warning btn-sm mr-1" title="Edit Jemaat"><i class="fas fa-edit"></i></a>
+                            @else
+                            <button class="btn btn-warning btn-sm mr-1" disabled title="Tidak ada anggota untuk diedit"><i class="fas fa-edit"></i></button>
+                            @endif
+                            <form action="{{ url('/admin/keluarga/'.$kel->id) }}" method="POST" style="display:inline;"
+                                onsubmit="return confirm('Yakin ingin menghapus keluarga ini?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus"><i
+                                        class="fas fa-trash"></i></button>
                             </form>
                         </td>
                     </tr>

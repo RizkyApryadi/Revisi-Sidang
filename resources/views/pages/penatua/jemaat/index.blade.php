@@ -3,6 +3,7 @@
 
 @section('content')
 <div class="row mb-3">
+    <!-- Kepala Keluarga -->
     <div class="col-lg-3 col-md-4 col-sm-6">
         <div class="card card-statistic-1 text-center" style="padding:8px;">
             <div class="card-icon bg-success mx-auto" style="width:44px;height:44px;line-height:44px;font-size:18px;">
@@ -10,14 +11,15 @@
             </div>
             <div class="card-wrap mt-2">
                 <div class="card-header" style="padding:0;">
-                    <h6 style="font-size:12px;margin:0;font-weight:600;">Kepala Keluarga</h6>
+                    <h6 style="font-size:12px;margin:0;font-weight:600;">
+                        Kepala Keluarga
+                    </h6>
                 </div>
-                <div class="card-body" style="padding:0;font-size:15px;font-weight:700;">{{ number_format($kkCount ?? 0)
-                    }} KK</div>
             </div>
         </div>
     </div>
 
+    <!-- Total Jemaat -->
     <div class="col-lg-3 col-md-4 col-sm-6">
         <div class="card card-statistic-1 text-center" style="padding:8px;">
             <div class="card-icon bg-warning mx-auto" style="width:44px;height:44px;line-height:44px;font-size:18px;">
@@ -25,71 +27,114 @@
             </div>
             <div class="card-wrap mt-2">
                 <div class="card-header" style="padding:0;">
-                    <h6 style="font-size:12px;margin:0;font-weight:600;">Total Jemaat</h6>
+                    <h6 style="font-size:12px;margin:0;font-weight:600;">
+                        Total Jemaat
+                    </h6>
                 </div>
-                <div class="card-body" style="padding:0;font-size:15px;font-weight:700;">{{ number_format($totalJemaat
-                    ?? 0) }} Orang</div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="jemaat-compact">
+<!-- Keluarga section (same layout as admin) -->
+<div class="keluarga-section mt-3">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Data Jemaat</h4>
-            <a href="{{ route('penatua.jemaat.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Tambah Jemaat
-            </a>
+            <h4 class="mb-0">Data Keluarga</h4>
+            <div>
+                <a href="#" class="btn btn-outline-warning btn-sm mr-2">
+                    Pengajuan <span class="badge bg-danger">{{ $pendingCount ?? 0 }}</span>
+                </a>
+                <a href="{{ route('penatua.jemaat.create') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Tambah Jemaat
+                </a>
+            </div>
         </div>
 
         <div class="card-body pt-2">
             <table class="table table-bordered table-striped w-100">
                 <thead class="thead-dark">
                     <tr class="text-center align-middle">
-                        <th style="width: 4%">No</th>
-                        <th style="width: 9%">No Jemaat</th>
-                        <th style="width: 9%">No KK</th>
-                        <th style="width: 14%">Nama</th>
-                        <th style="width: 16%">Tempat, Tanggal Lahir</th>
-                        <th style="width: 13%">Alamat</th>
-                        <th style="width: 6%">JK</th>
-                        <th style="width: 11%">No HP</th>
-                        <th style="width: 7%">Foto</th>
-                        <th style="width: 11%">Aksi</th>
+                        <th style="width:4%">No</th>
+                        <th style="width:16%">No KK</th>
+                        <th style="width:34%">Alamat</th>
+                        <th style="width:10%">Wijk</th>
+                        <th style="width:6%">Anggota</th>
+                        <th style="width:12%">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="align-middle">
-                    @foreach(($jemaats ?? []) as $index => $j)
+                    @foreach($keluargas as $idx => $kel)
                     <tr>
-                        <td class="text-center">{{ $index + 1 }}</td>
-                        <td class="text-center">{{ $j->nomor_jemaat }}</td>
-                        <td class="text-center">{{ $j->keluarga?->nomor_keluarga }}</td>
-                        <td>{{ $j->nama_lengkap }}</td>
-                        <td class="text-center">{{ $j->tempat_lahir }},<br>{{ $j->tanggal_lahir ?
-                            \Carbon\Carbon::parse($j->tanggal_lahir)->format('d M Y') : '' }}</td>
-                        <td style="white-space: normal; word-break: break-word;">{{ $j->keluarga?->alamat }}</td>
-                        <td class="text-center">{{ $j->jenis_kelamin ? (str_contains($j->jenis_kelamin, 'Laki') ? 'L' :
-                            'P') : '' }}</td>
-                        <td class="text-center" style="white-space: nowrap;">{{ $j->no_hp }}</td>
-                        <td class="text-center">
-                            @if($j->foto)
-                            <img src="{{ asset('storage/'.$j->foto) }}" alt="Foto Jemaat" class="rounded-circle">
-                            @else
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode($j->nama_lengkap) }}&background=ddd&color=444"
-                                alt="Foto Jemaat" class="rounded-circle">
-                            @endif
-                        </td>
+                        <td class="text-center">{{ $idx + 1 }}</td>
+                        <td class="text-center">{{ $kel->nomor_kk }}</td>
+
+                        <td style="white-space: normal; word-break: break-word;">{{ $kel->alamat }}</td>
+                        <td class="text-center">{{ optional($kel->wijk)->nama_wijk ?? '-' }}</td>
+                        <td class="text-center">{{ $kel->jemaats_count ?? $kel->jemaats->count() }}</td>
                         <td class="text-center" style="white-space: nowrap;">
-                            <button class="btn btn-info btn-sm mr-1" disabled title="Lihat"><i
-                                    class="fas fa-eye"></i></button>
-                            <button class="btn btn-warning btn-sm mr-1" disabled title="Edit"><i
-                                    class="fas fa-edit"></i></button>
-                            <button class="btn btn-danger btn-sm" disabled title="Hapus"><i
-                                    class="fas fa-trash"></i></button>
+                            <a href="{{ url('/penatua/keluarga/'.$kel->id) }}" class="btn btn-info btn-sm mr-1"
+                                title="Lihat"><i class="fas fa-eye"></i></a>
+                            <a href="{{ url('/penatua/keluarga/'.$kel->id.'/edit') }}"
+                                class="btn btn-warning btn-sm mr-1" title="Edit"><i class="fas fa-edit"></i></a>
+                            <form action="{{ url('/penatua/keluarga/'.$kel->id) }}" method="POST"
+                                style="display:inline;"
+                                onsubmit="return confirm('Yakin ingin menghapus keluarga ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus"><i
+                                        class="fas fa-trash"></i></button>
+                            </form>
                         </td>
                     </tr>
                     @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Daftar Jemaat untuk Wijk penatua -->
+<div class="jemaat-section mt-4">
+    <div class="card jemaat-compact">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Daftar Jemaat</h4>
+            <small class="text-muted">Total: {{ $jemaats->count() ?? 0 }}</small>
+        </div>
+
+        <div class="card-body pt-2">
+            <table class="table table-sm table-bordered table-striped w-100">
+                <thead>
+                    <tr class="text-center align-middle">
+                        <th style="width:4%">No</th>
+                        <th style="width:28%">Nama</th>
+                        <th style="width:12%">Hubungan</th>
+                        <th style="width:18%">No KK</th>
+                        <th style="width:22%">Alamat</th>
+                        <th style="width:10%">Wijk</th>
+                        <th style="width:6%">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($jemaats as $i => $j)
+                    <tr>
+                        <td class="text-center">{{ $i + 1 }}</td>
+                        <td>{{ $j->nama }}</td>
+                        <td class="text-center">{{ $j->hubungan_keluarga ?? '-' }}</td>
+                        <td class="text-center">{{ optional($j->keluarga)->nomor_kk ?? '-' }}</td>
+                        <td style="white-space: normal; word-break: break-word;">{{ $j->alamat ??
+                            optional($j->keluarga)->alamat ?? '-' }}</td>
+                        <td class="text-center">{{ optional(optional($j->keluarga)->wijk)->nama_wijk ?? '-' }}</td>
+                        <td class="text-center">
+                            <a href="{{ url('/penatua/jemaat/'.$j->id) }}" class="btn btn-info btn-sm" title="Lihat"><i
+                                    class="fas fa-eye"></i></a>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="7" class="text-center">Tidak ada jemaat untuk wijk Anda.</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

@@ -31,11 +31,7 @@
                     <h3 class="font-bold text-gray-800">Baptisan</h3>
                 </a>
 
-                <a href="{{ route('guest.layanan.kedukaan') }}" class="group bg-yellow-50 border border-yellow-200 shadow-md rounded-2xl p-6 text-center 
-                hover:shadow-xl hover:-translate-y-2 transition duration-300">
-                    <div class="text-4xl mb-3 group-hover:scale-110 transition">🕊️</div>
-                    <h3 class="font-bold text-gray-800">Kedukaan</h3>
-                </a>
+
 
                 <a href="{{ route('guest.layanan.pernikahan') }}" class="group bg-yellow-50 border border-yellow-200 shadow-md rounded-2xl p-6 text-center 
                 hover:shadow-xl hover:-translate-y-2 transition duration-300">

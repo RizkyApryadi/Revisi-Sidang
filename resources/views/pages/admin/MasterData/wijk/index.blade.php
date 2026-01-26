@@ -28,7 +28,7 @@
         <h4>Data WIJK HKBP Soposurung</h4>
 
         <!-- Button Tambah -->
-           <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahWIJK">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahWIJK">
             <i class="fas fa-plus"></i> Tambah WIJK
         </button>
     </div>
@@ -43,7 +43,6 @@
                         <th>Keterangan</th>
                         <th>Penatua</th>
                         <th>Jumlah KK</th>
-                        <th>Jumlah Jemaat</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -53,14 +52,14 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $wijk->nama_wijk }}</td>
                         <td>{{ $wijk->keterangan ?? '-' }}</td>
-                        <td>{{ $wijk->penatuas->first()->nama_lengkap ?? '-' }}</td>
+                        {{-- <td>{{ $wijk->penatuas->first()->nama_lengkap ?? '-' }}</td> --}}
                         <td>-</td>
                         <td>-</td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center gap-2">
                                 <!-- Edit button -->
-                                   <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                       data-bs-target="#editWijkModal-{{ $wijk->id }}" title="Edit">
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#editWijkModal-{{ $wijk->id }}" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </button>
 
@@ -85,7 +84,7 @@
 
                                 <div class="modal-header">
                                     <h5 class="modal-title">Edit Data WIJK</h5>
-                                       <button type="button" class="close" data-bs-dismiss="modal">
+                                    <button type="button" class="close" data-bs-dismiss="modal">
                                         <span>&times;</span>
                                     </button>
                                 </div>
@@ -109,8 +108,8 @@
                                     </div>
 
                                     <div class="modal-footer">
-                                           <button type="button" class="btn btn-secondary"
-                                               data-bs-dismiss="modal">Batal</button>
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Batal</button>
                                         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
                                             Simpan</button>
                                     </div>
@@ -138,7 +137,7 @@
 
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTambahWIJKLabel">Tambah Data WIJK</h5>
-                   <button type="button" class="close" data-bs-dismiss="modal">
+                <button type="button" class="close" data-bs-dismiss="modal">
                     <span>&times;</span>
                 </button>
             </div>
@@ -150,7 +149,7 @@
                     <div class="form-group">
                         <label>Nama WIJK</label>
                         <input type="text" name="nama_wijk" class="form-control" placeholder="Contoh: WIJK V"
-                            value="{{ old('nama_wijk') }}">
+                            value="{{ old('nama_wijk') }}" required>
                     </div>
 
                     <div class="form-group">

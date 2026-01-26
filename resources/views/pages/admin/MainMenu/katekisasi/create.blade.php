@@ -11,7 +11,7 @@
     <div class="card">
         <div class="card-body">
             @if(!empty($errorMessage))
-                <div class="alert alert-danger">Terjadi kesalahan: {{ $errorMessage }}</div>
+            <div class="alert alert-danger">Terjadi kesalahan: {{ $errorMessage }}</div>
             @endif
             <form method="POST" action="{{ route('admin.pelayanan.katekisasi.store') }}">
                 @csrf
@@ -25,14 +25,10 @@
                         $jumlah_periode = 5; // tampilkan 5 periode
                         @endphp
 
-                        @for ($i = 0; $i < $jumlah_periode; $i++)
-                            @php
-                                $periode_mulai = $tahun_awal + $i;
-                                $periode_selesai = $periode_mulai + 1;
-                                $periode = $periode_mulai . '/' . $periode_selesai;
-                            @endphp
-                            <option value="{{ $periode }}">{{ $periode }}</option>
-                        @endfor
+                        @for ($i = 0; $i < $jumlah_periode; $i++) @php $periode_mulai=$tahun_awal + $i;
+                            $periode_selesai=$periode_mulai + 1; $periode=$periode_mulai . '/' . $periode_selesai;
+                            @endphp <option value="{{ $periode }}">{{ $periode }}</option>
+                            @endfor
                     </select>
                 </div>
 
@@ -57,7 +53,8 @@
                 {{-- Pendaftaran dibuka sampai --}}
                 <div class="form-group mb-4">
                     <label for="tanggal_pendaftaran_tutup">Pendaftaran Dibuka Sampai</label>
-                    <input type="date" id="tanggal_pendaftaran_tutup" name="tanggal_pendaftaran_tutup" class="form-control">
+                    <input type="date" id="tanggal_pendaftaran_tutup" name="tanggal_pendaftaran_tutup"
+                        class="form-control">
                     <small class="form-text text-muted">
                         Tentukan tanggal terakhir jemaat bisa mendaftar untuk periode katekisasi ini.
                     </small>
@@ -69,11 +66,11 @@
                     <select id="pendeta" name="pendeta_id" class="form-control">
                         <option value="">-- Pilih Pendeta --</option>
                         @if(isset($pendetas) && $pendetas->count())
-                            @foreach($pendetas as $p)
-                                <option value="{{ $p->id }}">{{ $p->nama_lengkap }}</option>
-                            @endforeach
+                        @foreach($pendetas as $p)
+                        <option value="{{ $p->id }}">{{ $p->nama_lengkap }}</option>
+                        @endforeach
                         @else
-                            <option value="">Tidak ada pendeta terdaftar</option>
+                        <option value="">Tidak ada pendeta terdaftar</option>
                         @endif
                     </select>
                 </div>

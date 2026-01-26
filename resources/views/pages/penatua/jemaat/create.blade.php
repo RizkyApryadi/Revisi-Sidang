@@ -2,784 +2,353 @@
 @section('title', 'Add Jemaat')
 
 @section('content')
-
-<div class="section">
+<section class="section">
     <div class="section-body">
-        <div class="bg-white p-4 rounded">
-            <div class="row justify-content-center">
-                <div class="col-lg-11 col-md-12">
-                    <h1><i class="fas fa-users"></i> Add Jemaat</h1>
-                    <div class="border rounded p-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-7">
 
-                        <form method="POST" action="{{ route('penatua.jemaat.store') }}" enctype="multipart/form-data">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h4 class="mb-0">Tambah Jemaat</h4>
+                    </div>
+                    <div class="card-body bg-white">
+                        <form action="{{ route('penatua.jemaat.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
-                            <ul class="nav nav-tabs mb-4" role="tablist">
-                                <li class="nav-item"><a class="nav-link active" id="tab-pribadi" data-bs-toggle="tab"
-                                        href="#data-pribadi" role="tab">Data Pribadi</a></li>
-                                <li class="nav-item"><a class="nav-link" id="tab-baptis" data-bs-toggle="tab"
-                                        href="#data-baptis" role="tab">Data Baptis</a></li>
-                                <li class="nav-item"><a class="nav-link" id="tab-sidi" data-bs-toggle="tab"
-                                        href="#data-sidi" role="tab">Data Sidi</a></li>
-                                <li class="nav-item"><a class="nav-link" id="tab-pernikahan" data-bs-toggle="tab"
-                                        href="#data-pernikahan" role="tab">Data Pernikahan</a></li>
-                                <li class="nav-item"><a class="nav-link" id="tab-pindah" data-bs-toggle="tab"
-                                        href="#data-pindah" role="tab">Data Pindah</a></li>
-                                <li class="nav-item"><a class="nav-link" id="tab-kedukaan" data-bs-toggle="tab"
-                                        href="#data-kedukaan" role="tab">Data Kedukaan</a></li>
-                            </ul>
+                            @if(session('success'))
+                            <div class="alert alert-success">{{ session('success') }}</div>
+                            @endif
+                            @if(session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
+                            @endif
 
+                            @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            @endif
 
-                            <div class="tab-content">
-                                {{-- Data Pribadi --}}
-                                <div class="tab-pane fade show active" id="data-pribadi" role="tabpanel">
+                            <h4 class="mb-2">Formulir Jemaat Baru</h4>
+                            <p>Kami yang bertanda tangan di bawah ini:</p>
 
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Nomor Jemaat :</label>
-                                        <div class="col-md-4">
-                                            <input name="nomor_jemaat" class="form-control form-control-sm">
-                                        </div>
+                            <div class="form-group mb-3">
+                                <label>Nomor KK</label>
+                                <input type="text" name="nomor_kk" class="form-control" required>
+                            </div>
 
-                                        <label class="col-md-2 col-form-label text-md-right">Nomor Keluarga :</label>
-                                        <div class="col-md-4">
-                                            <input name="nomor_keluarga" class="form-control form-control-sm">
-                                        </div>
+                            <div class="form-group mb-3">
+                                <label>Nama Suami</label>
+                                <input type="text" name="ayah_nama" id="ayah_nama" class="form-control">
+                                <input type="hidden" name="ayah_jenis_kelamin" id="ayah_jenis_kelamin" value="">
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label>Nama Istri</label>
+                                <input type="text" name="ibu_nama" id="ibu_nama" class="form-control">
+                                <input type="hidden" name="ibu_jenis_kelamin" id="ibu_jenis_kelamin" value="">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label>HP</label>
+                                        <input type="text" name="hp" class="form-control">
                                     </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Nama Lengkap :</label>
-                                        <div class="col-md-10">
-                                            <input name="nama_lengkap" class="form-control form-control-sm">
-                                        </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label>Email</label>
+                                        <input type="email" name="email" class="form-control">
                                     </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Alamat :</label>
-                                        <div class="col-md-10">
-                                            <textarea name="alamat" class="form-control form-control-sm"
-                                                rows="3"></textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">RT / RW / WIJK :</label>
-                                        <div class="col-md-2">
-                                            <input name="rt" class="form-control form-control-sm text-center"
-                                                placeholder="RT">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <input name="rw" class="form-control form-control-sm text-center"
-                                                placeholder="RW">
-                                        </div>
-                                        <div class="col-md-6">
-                                            {{-- Wijk is determined by authenticated Penatua; include hidden field and display name --}}
-                                            <input type="hidden" name="wijk" value="{{ optional(optional(Auth::user())->penatua)->wijk_id }}">
-                                            <div class="form-control form-control-sm text-center">
-                                                {{ optional(optional(optional(Auth::user())->penatua)->wijk)->nama_wijk ?? 'Umum' }}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Kelurahan :</label>
-                                        <div class="col-md-4">
-                                            <input name="kelurahan" class="form-control form-control-sm">
-                                        </div>
-
-                                        <label class="col-md-2 col-form-label text-md-right">Kecamatan :</label>
-                                        <div class="col-md-4">
-                                            <input name="kecamatan" class="form-control form-control-sm">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Kabupaten :</label>
-                                        <div class="col-md-4">
-                                            <input name="kabupaten" class="form-control form-control-sm">
-                                        </div>
-
-                                        <label class="col-md-2 col-form-label text-md-right">Provinsi :</label>
-                                        <div class="col-md-4">
-                                            <input name="provinsi" class="form-control form-control-sm">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Kode Pos :</label>
-                                        <div class="col-md-4">
-                                            <input name="kode_pos" class="form-control form-control-sm">
-                                        </div>
-
-                                        <label class="col-md-2 col-form-label text-md-right">Email :</label>
-                                        <div class="col-md-4">
-                                            <input type="email" name="email" class="form-control form-control-sm">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Tempat Lahir :</label>
-                                        <div class="col-md-4">
-                                            <input name="tempat_lahir" class="form-control form-control-sm">
-                                        </div>
-
-                                        <label class="col-md-2 col-form-label text-md-right">Tanggal Lahir :</label>
-                                        <div class="col-md-4">
-                                            <input type="date" name="tanggal_lahir"
-                                                class="form-control form-control-sm">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Jenis Kelamin :</label>
-                                        <div class="col-md-4">
-                                            <select name="jenis_kelamin" class="form-control form-control-sm">
-                                                <option value="Laki-laki">Laki-laki</option>
-                                                <option value="Perempuan">Perempuan</option>
-                                            </select>
-                                        </div>
-
-                                        <label class="col-md-2 col-form-label text-md-right">Nomor HP :</label>
-                                        <div class="col-md-4">
-                                            <input name="no_hp" class="form-control form-control-sm">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Nama Ayah :</label>
-                                        <div class="col-md-4">
-                                            <input name="nama_ayah" class="form-control form-control-sm">
-                                        </div>
-
-                                        <label class="col-md-2 col-form-label text-md-right">Nama Ibu :</label>
-                                        <div class="col-md-4">
-                                            <input name="nama_ibu" class="form-control form-control-sm">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Status Pernikahan :</label>
-                                        <div class="col-md-4">
-                                            <select name="status_pernikahan" class="form-control form-control-sm">
-                                                <option value="">-- Pilih --</option>
-                                                <option value="belum">Belum Menikah</option>
-                                                <option value="sudah">Sudah Menikah</option>
-                                            </select>
-                                        </div>
-
-                                        <label class="col-md-2 col-form-label text-md-right">Hubungan Keluarga :</label>
-                                        <div class="col-md-4">
-                                            <select id="hubungan_keluarga" name="hubungan_keluarga"
-                                                class="form-control form-control-sm">
-                                                <option value="">-- Pilih --</option>
-                                                <option value="Ayah">Ayah</option>
-                                                <option value="Ibu">Ibu</option>
-                                                <option value="Anak">Anak</option>
-                                            </select>
-                                        </div>
-                                        <div id="anak-ke-wrapper" class="col-md-2 d-none">
-                                            <input type="number" min="1" name="anak_ke" id="anak_ke"
-                                                class="form-control form-control-sm" placeholder="Anak ke">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Keterangan :</label>
-                                        <div class="col-md-10">
-                                            <textarea name="keterangan" class="form-control form-control-sm"
-                                                rows="2"></textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-4">
-                                        <label class="col-md-2 col-form-label text-md-right">Pas Foto :</label>
-                                        <div class="col-md-10">
-                                            <input type="file" name="foto" class="form-control form-control-sm">
-                                        </div>
-                                    </div>
-
                                 </div>
                             </div>
 
-                            {{-- Data Baptis --}}
-                            <div class="tab-pane fade" id="data-baptis" role="tabpanel">
+                            <div class="form-group mb-3">
+                                <label>Wijk</label>
+                                @if(isset($penatuaWijk) && $penatuaWijk)
+                                <input type="hidden" name="wijk_id" value="{{ $penatuaWijk->id }}">
+                                <input type="text" class="form-control" value="{{ $penatuaWijk->nama_wijk }}" disabled>
+                                @else
+                                <select name="wijk_id" class="form-control">
+                                    <option value="">-- Pilih Wijk --</option>
+                                    @foreach($wijks as $wijk)
+                                    <option value="{{ $wijk->id }}">{{ $wijk->nama_wijk }}</option>
+                                    @endforeach
+                                </select>
+                                @endif
+                            </div>
 
-                                {{-- STATUS BAPTIS --}}
-                                <div class="form-group row mb-3">
-                                    <label class="col-md-2 col-form-label text-md-right">Status Baptis :</label>
-                                    <div class="col-md-4">
-                                        <select class="form-control form-control-sm" id="status_baptis"
-                                            name="status_baptis">
-                                            <option value="">-- Pilih --</option>
-                                            <option value="belum">Belum Baptis</option>
-                                            <option value="sudah">Sudah Baptis</option>
-                                        </select>
-                                    </div>
-                                </div>
+                            <div class="form-group mb-3">
+                                <label>Alamat</label>
+                                <textarea name="alamat" class="form-control" rows="2"></textarea>
+                            </div>
 
-                                <div id="pilihan-gereja" class="d-none">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="card border">
-                                                <div class="card-header">
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" id="gereja_lokal" name="jenis_gereja"
-                                                            class="custom-control-input" value="lokal">
-                                                        <label class="custom-control-label" for="gereja_lokal">Gereja
-                                                            Lokal</label>
-                                                    </div>
-                                                </div>
+                            <div class="form-group mb-3">
+                                <label>Asal Gereja</label>
+                                <input type="text" name="asal_gereja" class="form-control">
+                            </div>
 
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <label>Nomor Kartu</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="lokal_nomor_kartu">
-                                                    </div>
 
-                                                    <div class="form-group">
-                                                        <label>Tanggal Baptisan</label>
-                                                        <input type="date" class="form-control form-control-sm"
-                                                            name="lokal_tgl_baptis">
-                                                    </div>
 
-                                                    <div class="form-group mb-0">
-                                                        <label>Dibaptis Oleh</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="lokal_baptis_oleh">
-                                                    </div>
-                                                </div>
-                                            </div>
+
+                            {{-- ================= DATA ANAK ================= --}}
+                            <h5 class="mt-4 mb-3 border-bottom pb-2 d-flex justify-content-between">
+                                Daftar Anggota Keluarga
+                                <button type="button" class="btn btn-sm btn-success" onclick="addAnak()">+
+                                    Anggota</button>
+                            </h5>
+
+                            <div id="anak-wrapper">
+
+                                <div class="anak-item border rounded p-3 mb-3" data-index="0">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <strong class="anak-number">1. Anggota Keluarga</strong>
+                                        <div>
+                                            <label class="me-2">
+                                                <input type="checkbox" name="anak[0][is_baptis]"
+                                                    onchange="toggleBaptis(this)"> Baptis
+                                            </label>
+                                            <label class="me-2">
+                                                <input type="checkbox" name="anak[0][is_sidi]"
+                                                    onchange="toggleSidi(this)"> Sidi
+                                            </label>
+                                            
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                onclick="removeAnak(this)">Hapus</button>
                                         </div>
-
-                                        <div class="col-md-6">
-                                            <div class="card border">
-                                                <div class="card-header">
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" id="gereja_luar" name="jenis_gereja"
-                                                            class="custom-control-input" value="luar">
-                                                        <label class="custom-control-label" for="gereja_luar">Gereja
-                                                            Luar</label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <label>Nomor Kartu</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="luar_nomor_kartu">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Tanggal Baptisan</label>
-                                                        <input type="date" class="form-control form-control-sm"
-                                                            name="luar_tgl_baptis">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Dibaptis Oleh</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="luar_baptis_oleh">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Di Gereja</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="luar_nama_gereja">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Alamat Gereja</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="luar_alamat_gereja">
-                                                    </div>
-
-                                                    <div class="form-group mb-0">
-                                                        <label>Kota</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="luar_kota">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
                                     </div>
-                                </div>
 
-                                <div class="text-center mt-4">
-                                    <button type="button" class="btn btn-secondary btn-sm px-5 d-none"><i
-                                            class="fas fa-save"></i> Simpan Baptis</button>
+                                    <input type="text" name="anak[0][nama]" class="form-control mt-2"
+                                        placeholder="Nama Anak">
+
+                                    <input type="date" name="anak[0][tanggal_lahir]" class="form-control mt-2">
+
+                                    <select name="anak[0][jenis_kelamin]" class="form-control mt-2">
+                                        <option value="">Jenis Kelamin</option>
+                                        <option value="Laki-laki">Laki-laki</option>
+                                        <option value="Perempuan">Perempuan</option>
+                                    </select>
+
+                                    <input type="text" name="anak[0][tempat_lahir]" class="form-control mt-2"
+                                        placeholder="Tempat Lahir">
+
+                                    <select name="anak[0][hubungan]" class="form-control mt-2">
+                                        <option value="anak">Anak</option>
+                                        <option value="tanggungan">Tanggungan</option>
+                                    </select>
+
+                                    <div class="baptis-fields mt-3" style="display:none">
+                                        <div class="form-group mb-2">
+                                            <label>Tanggal Baptis</label>
+                                            <input type="date" name="anak[0][tanggal_baptis]" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Surat Baptis (scan)</label>
+                                            <input type="file" name="anak[0][surat_baptis]" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="sidi-fields mt-3" style="display:none">
+                                        <div class="form-group mb-2">
+                                            <label>Tanggal Sidi</label>
+                                            <input type="date" name="anak[0][tanggal_sidi]" class="form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Surat Sidi (scan)</label>
+                                            <input type="file" name="anak[0][surat_sidi]" class="form-control">
+                                        </div>
+                                    </div>
                                 </div>
 
                             </div>
 
-                            {{-- Data Sidi --}}
-                            <div class="tab-pane fade" id="data-sidi" role="tabpanel">
+                            <h5 class="mt-4 mb-3 border-bottom pb-2">Kelengkapan Administrasi</h5>
 
-                                {{-- STATUS SIDI --}}
-                                <div class="form-group row mb-3">
-                                    <label class="col-md-2 col-form-label text-md-right">
-                                        Status Sidi :
-                                    </label>
-                                    <div class="col-md-4">
-                                        <select class="form-control form-control-sm" id="status_sidi"
-                                            name="status_sidi">
-                                            <option value="">-- Pilih --</option>
-                                            <option value="belum">Belum Sidi</option>
-                                            <option value="sudah">Sudah Sidi</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                {{-- PILIHAN GEREJA --}}
-                                <div id="pilihan-gereja-sidi" class="d-none">
-                                    <div class="row">
-
-                                        {{-- GEREJA LOKAL --}}
-                                        <div class="col-md-6">
-                                            <div class="card border">
-                                                <div class="card-header">
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" id="sidi_gereja_lokal"
-                                                            name="jenis_gereja_sidi" class="custom-control-input"
-                                                            value="lokal">
-                                                        <label class="custom-control-label" for="sidi_gereja_lokal">
-                                                            Gereja Lokal
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <label>Nomor Kartu</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="sidi_lokal_nomor_kartu">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Tanggal Sidi</label>
-                                                        <input type="date" class="form-control form-control-sm"
-                                                            name="sidi_lokal_tgl">
-                                                    </div>
-
-                                                    <div class="form-group mb-0">
-                                                        <label>Disidi Oleh</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="sidi_lokal_oleh">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {{-- GEREJA LUAR --}}
-                                        <div class="col-md-6">
-                                            <div class="card border">
-                                                <div class="card-header">
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" id="sidi_gereja_luar"
-                                                            name="jenis_gereja_sidi" class="custom-control-input"
-                                                            value="luar">
-                                                        <label class="custom-control-label" for="sidi_gereja_luar">
-                                                            Gereja Luar
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <label>Nomor Kartu</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="sidi_luar_nomor_kartu">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Tanggal Sidi</label>
-                                                        <input type="date" class="form-control form-control-sm"
-                                                            name="sidi_luar_tgl">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Disidi Oleh</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="sidi_luar_oleh">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Di Gereja</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="sidi_luar_nama_gereja">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Alamat Gereja</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="sidi_luar_alamat_gereja">
-                                                    </div>
-
-                                                    <div class="form-group mb-0">
-                                                        <label>Kota</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="sidi_luar_kota">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                {{-- BUTTON --}}
-                                <div class="text-center mt-4">
-                                    <button type="button" class="btn btn-secondary btn-sm px-5 d-none">
-                                        <i class="fas fa-save"></i> Simpan Sidi
-                                    </button>
-                                </div>
-
+                            <div class="form-group mb-3">
+                                <label>Surat Keterangan Gereja (scan)</label>
+                                <input type="file" name="surat_keterangan_gereja" class="form-control">
                             </div>
 
-                            {{-- Data Pernikahan --}}
-                            <div class="tab-pane fade" id="data-pernikahan" role="tabpanel">
-
-                                {{-- STATUS PERNIKAHAN --}}
-                                <div class="form-group row mb-3">
-                                    <label class="col-md-2 col-form-label text-md-right">
-                                        Status Pernikahan :
-                                    </label>
-                                    <div class="col-md-4">
-                                        <select class="form-control form-control-sm" id="status_nikah"
-                                            name="status_nikah">
-                                            <option value="" selected disabled>-- Pilih --</option>
-                                            <option value="belum">Belum Menikah</option>
-                                            <option value="sudah">Sudah Menikah</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                {{-- PILIHAN GEREJA --}}
-                                <div id="pilihan-gereja-nikah" class="d-none">
-                                    <div class="row">
-
-                                        {{-- GEREJA LOKAL --}}
-                                        <div class="col-md-6">
-                                            <div class="card border">
-                                                <div class="card-header">
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" id="nikah_gereja_lokal"
-                                                            name="jenis_gereja_nikah" class="custom-control-input"
-                                                            value="lokal">
-                                                        <label class="custom-control-label" for="nikah_gereja_lokal">
-                                                            Gereja Lokal
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <label>Nomor Kartu Nikah</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="nikah_lokal_nomor_kartu">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Tanggal Pernikahan</label>
-                                                        <input type="date" class="form-control form-control-sm"
-                                                            name="nikah_lokal_tgl">
-                                                    </div>
-
-                                                    <div class="form-group mb-0">
-                                                        <label>Diberkati Oleh</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="nikah_lokal_oleh">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {{-- GEREJA LUAR --}}
-                                        <div class="col-md-6">
-                                            <div class="card border">
-                                                <div class="card-header">
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" id="nikah_gereja_luar"
-                                                            name="jenis_gereja_nikah" class="custom-control-input"
-                                                            value="luar">
-                                                        <label class="custom-control-label" for="nikah_gereja_luar">
-                                                            Gereja Luar
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <label>Nomor Kartu Nikah</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="nikah_luar_nomor_kartu">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Tanggal Pernikahan</label>
-                                                        <input type="date" class="form-control form-control-sm"
-                                                            name="nikah_luar_tgl">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Diberkati Oleh</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="nikah_luar_oleh">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Di Gereja</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="nikah_luar_nama_gereja">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Alamat Gereja</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="nikah_luar_alamat_gereja">
-                                                    </div>
-
-                                                    <div class="form-group mb-0">
-                                                        <label>Kota</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="nikah_luar_kota">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                {{-- BUTTON --}}
-                                <div class="text-center mt-4">
-                                    <button type="button" class="btn btn-secondary btn-sm px-5 d-none">
-                                        <i class="fas fa-save"></i> Simpan Pernikahan
-                                    </button>
-                                </div>
-
+                            <div class="form-group mb-3">
+                                <label>Akte Pernikahan (scan)</label>
+                                <input type="file" name="akte_pernikahan" class="form-control">
                             </div>
 
-                            {{-- Data Pindah Masuk Jemaat --}}
-                            <div class="tab-pane fade" id="data-pindah" role="tabpanel">
-
-                                {{-- STATUS JEMAAT --}}
-                                <div class="form-group row mb-3">
-                                    <label class="col-md-2 col-form-label text-md-right">
-                                        Status Jemaat :
-                                    </label>
-                                    <div class="col-md-4">
-                                        <select class="form-control form-control-sm" id="status_pindah"
-                                            name="status_pindah">
-                                            <option value="" selected disabled>-- Pilih --</option>
-                                            <option value="tetap">Tetap</option>
-                                            <option value="pindah_masuk">Pindah Masuk</option>
-                                        </select>
-                                    </div>
-
-                                </div>
-
-                                {{-- DETAIL PINDAH MASUK --}}
-
-                                <div id="detail-pindah-masuk" class="w-100 d-none">
-                                    <div class="p-3 border rounded mx-auto"
-                                        style="background-color: #f9f9f9; max-width: 700px;">
-
-                                        <div class="form-group row mb-3">
-                                            <label class="col-md-4 col-form-label text-md-right">No. Surat Pindah
-                                                :</label>
-                                            <div class="col-md-6">
-                                                <input type="text" class="form-control form-control-sm"
-                                                    name="no_surat_pindah" placeholder="Contoh: 470/123/2025">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row mb-3">
-                                            <label class="col-md-4 col-form-label text-md-right">Tanggal Pindah Masuk
-                                                :</label>
-                                            <div class="col-md-6">
-                                                <input type="date" class="form-control form-control-sm"
-                                                    name="tgl_pindah_masuk">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row mb-3">
-                                            <label class="col-md-4 col-form-label text-md-right">Gereja Asal :</label>
-                                            <div class="col-md-6">
-                                                <input type="text" class="form-control form-control-sm"
-                                                    name="gereja_asal" placeholder="Nama gereja asal jemaat">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row mb-3">
-                                            <label class="col-md-4 col-form-label text-md-right">Kota Gereja Asal
-                                                :</label>
-                                            <div class="col-md-6">
-                                                <input type="text" class="form-control form-control-sm"
-                                                    name="kota_gereja_asal" placeholder="Kota gereja asal">
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-
-                                {{-- BUTTON --}}
-                                <div class="text-center mt-4">
-                                    <button type="button" class="btn btn-secondary btn-sm px-5 d-none">
-                                        <i class="fas fa-save"></i> Simpan Status Pindah
-                                    </button>
-                                </div>
-
+                            <div class="form-group mb-3">
+                                <label>Akte Baptis (scan)</label>
+                                <input type="file" name="akte_baptis" class="form-control">
                             </div>
 
-                            {{-- Data Wafat Jemaat --}}
-                            <div class="tab-pane fade" id="data-kedukaan" role="tabpanel">
-
-                                {{-- STATUS JEMAAT --}}
-                                <div class="form-group row mb-3">
-                                    <label class="col-md-2 col-form-label text-md-right">
-                                        Status Jemaat :
-                                    </label>
-                                    <div class="col-md-4">
-                                        <select class="form-control form-control-sm" id="status_jemaat"
-                                            name="status_jemaat">
-                                            <option value="" selected disabled>-- Pilih --</option>
-                                            <option value="hidup">Hidup</option>
-                                            <option value="wafat">Wafat</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                {{-- DATA WAFAT --}}
-                                <div id="data-wafat" class="d-none">
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">
-                                            Tanggal Wafat :
-                                        </label>
-                                        <div class="col-md-4">
-                                            <input type="date" class="form-control form-control-sm" name="tgl_wafat">
-                                        </div>
-
-                                        <label class="col-md-2 col-form-label text-md-right">
-                                            No. Surat Kematian :
-                                        </label>
-                                        <div class="col-md-4">
-                                            <input type="text" class="form-control form-control-sm"
-                                                name="no_surat_kematian" placeholder="Contoh: 470/123/2025">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">
-                                            Keterangan :
-                                        </label>
-                                        <div class="col-md-10">
-                                            <textarea class="form-control form-control-sm" rows="2"
-                                                name="keterangan_wafat" placeholder="Opsional"></textarea>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                {{-- BUTTON --}}
-                                <div class="text-center mt-4">
-                                    <button type="submit" class="btn btn-primary btn-sm px-5">
-                                        <i class="fas fa-save"></i> Simpan
-                                    </button>
-                                </div>
+                            <div class="form-group mb-3">
+                                <label>Akte Sidi (scan)</label>
+                                <input type="file" name="akte_sidi" class="form-control">
                             </div>
+
+                            <div class="form-group mb-3">
+                                <label>Surat Pengantar Sintua Wijk (scan)</label>
+                                <input type="file" name="surat_pengantar_sintua_wijk" class="form-control">
+                            </div>
+
+                            <div class="text-right mt-4">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fas fa-save"></i> Simpan Data
+                                </button>
+                            </div>
+
                         </form>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
+{{-- ================= SCRIPT ================= --}}
 <script>
-    // Baptis
-    const statusBaptis = document.getElementById('status_baptis');
-    const pilihanGereja = document.getElementById('pilihan-gereja');
-    if (statusBaptis && pilihanGereja) {
-        statusBaptis.addEventListener('change', function () {
-            pilihanGereja.classList.toggle('d-none', this.value !== 'sudah');
+    function toggleForm(role, status) {
+    const form = document.getElementById('form-' + role);
+    form.style.display = status === 'hidup' ? 'block' : 'none';
+}
+
+// Dynamic anak handlers
+let anakIndex = 1; // next index (0 used by initial item)
+
+function addAnak() {
+    const wrapper = document.getElementById('anak-wrapper');
+    const index = anakIndex++;
+
+    const div = document.createElement('div');
+    div.className = 'anak-item border rounded p-3 mb-3';
+    div.setAttribute('data-index', index);
+
+    div.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center">
+            <strong class="anak-number">${index + 1}. anggota</strong>
+            <div>
+                <label class="me-2">
+                    <input type="checkbox" name="anak[${index}][is_baptis]" onchange="toggleBaptis(this)"> Baptis
+                </label>
+                <label class="me-2">
+                    <input type="checkbox" name="anak[${index}][is_sidi]" onchange="toggleSidi(this)"> Sidi
+                </label>
+                
+                <button type="button" class="btn btn-sm btn-danger" onclick="removeAnak(this)">Hapus</button>
+            </div>
+        </div>
+
+        <input type="text" name="anak[${index}][nama]" class="form-control mt-2" placeholder="Nama Anak">
+        <input type="date" name="anak[${index}][tanggal_lahir]" class="form-control mt-2">
+        <select name="anak[${index}][jenis_kelamin]" class="form-control mt-2">
+            <option value="">Jenis Kelamin</option>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
+        </select>
+        <input type="text" name="anak[${index}][tempat_lahir]" class="form-control mt-2" placeholder="Tempat Lahir">
+        <select name="anak[${index}][hubungan]" class="form-control mt-2">
+            <option value="anak">Anak</option>
+            <option value="tanggungan">Tanggungan</option>
+        </select>
+
+        <div class="baptis-fields mt-3" style="display:none">
+            <div class="form-group mb-2">
+                <label>Tanggal Baptis</label>
+                <input type="date" name="anak[${index}][tanggal_baptis]" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Surat Baptis (scan)</label>
+                <input type="file" name="anak[${index}][surat_baptis]" class="form-control">
+            </div>
+        </div>
+
+        <div class="sidi-fields mt-3" style="display:none">
+            <div class="form-group mb-2">
+                <label>Tanggal Sidi</label>
+                <input type="date" name="anak[${index}][tanggal_sidi]" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Surat Sidi (scan)</label>
+                <input type="file" name="anak[${index}][surat_sidi]" class="form-control">
+            </div>
+        </div>
+    `;
+
+    wrapper.appendChild(div);
+    refreshAnakNumbers();
+}
+
+function removeAnak(button) {
+    const item = button.closest('.anak-item');
+    if (!item) return;
+    item.remove();
+    refreshAnakNumbers();
+}
+
+function refreshAnakNumbers() {
+    const items = document.querySelectorAll('#anak-wrapper .anak-item');
+    items.forEach((el, i) => {
+        const num = el.querySelector('.anak-number');
+        if (num) num.textContent = `${i + 1}. Anak`;
+        // Also update radio values and input names to maintain request keys
+        const idx = Array.from(items).indexOf(el);
+        el.setAttribute('data-index', idx);
+        // update radio
+        const radio = el.querySelector('input[type="radio"][name="kepala_anak"]');
+        if (radio) radio.value = idx;
+        // Update all anak[...] names inside this el
+        el.querySelectorAll('[name]').forEach(input => {
+            const name = input.getAttribute('name');
+            const newName = name.replace(/anak\[\d+\]/, `anak[${idx}]`);
+            input.setAttribute('name', newName);
         });
-    }
-
-    // Sidi
-    const statusSidi = document.getElementById('status_sidi');
-    const pilihanGerejaSidi = document.getElementById('pilihan-gereja-sidi');
-    if (statusSidi && pilihanGerejaSidi) {
-        statusSidi.addEventListener('change', function () {
-            pilihanGerejaSidi.classList.toggle('d-none', this.value !== 'sudah');
-        });
-    }
-
-    // Pernikahan
-    const statusNikah = document.getElementById('status_nikah');
-    const pilihanGerejaNikah = document.getElementById('pilihan-gereja-nikah');
-    if (statusNikah && pilihanGerejaNikah) {
-        statusNikah.addEventListener('change', function () {
-            pilihanGerejaNikah.classList.toggle('d-none', this.value !== 'sudah');
-        });
-    }
-
-    // Kedukaan
-    const statusJemaat = document.getElementById('status_jemaat');
-    const dataWafat = document.getElementById('data-wafat');
-    if (statusJemaat && dataWafat) {
-        statusJemaat.addEventListener('change', function () {
-            dataWafat.classList.toggle('d-none', this.value !== 'wafat');
-        });
-    }
-
-    // Pindah Jemaat
-    const statusPindahEl = document.getElementById('status_pindah');
-    const detailPindahMasukEl = document.getElementById('detail-pindah-masuk');
-    if (statusPindahEl && detailPindahMasukEl) {
-        statusPindahEl.addEventListener('change', function () {
-            detailPindahMasukEl.classList.toggle('d-none', this.value !== 'pindah_masuk');
-        });
-    }
-
-    // Hubungan keluarga -> show anak_ke when 'Anak' selected
-    const hubunganSelect = document.getElementById('hubungan_keluarga');
-    const anakWrapper = document.getElementById('anak-ke-wrapper');
-    if (hubunganSelect && anakWrapper) {
-        hubunganSelect.addEventListener('change', function () {
-            anakWrapper.classList.toggle('d-none', this.value !== 'Anak');
-        });
-    }
-
-    // Robust tab visibility: show only clicked/active pane without relying on Bootstrap events
-    document.addEventListener('DOMContentLoaded', function () {
-        const tabLinks = Array.from(document.querySelectorAll('a[data-bs-toggle="tab"]'));
-
-        function showPane(targetId) {
-            if (!targetId) return;
-            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('d-none'));
-            const el = document.querySelector(targetId);
-            if (el) el.classList.remove('d-none');
-        }
-
-        tabLinks.forEach(link => {
-            link.addEventListener('click', function (e) {
-                const target = this.getAttribute('href') || this.dataset.bsTarget;
-                // allow Bootstrap to toggle classes then enforce visibility shortly after
-                setTimeout(() => showPane(target), 30);
-            });
-        });
-
-        // Initial show: the nav link with 'active' (or first) determines visible pane
-        const activeLink = tabLinks.find(l => l.classList.contains('active')) || tabLinks[0];
-        if (activeLink) {
-            const target = activeLink.getAttribute('href') || activeLink.dataset.bsTarget;
-            showPane(target);
-        }
     });
-</script>
+    // reset anakIndex to current length
+    anakIndex = document.querySelectorAll('#anak-wrapper .anak-item').length;
+    
+}
 
+// ensure state on load
+document.addEventListener('DOMContentLoaded', () => {
+    refreshAnakNumbers();
+    // setup automatic gender for parents
+    const ayahInput = document.getElementById('ayah_nama');
+    const ibuInput = document.getElementById('ibu_nama');
+    const ayahGender = document.getElementById('ayah_jenis_kelamin');
+    const ibuGender = document.getElementById('ibu_jenis_kelamin');
+    if (ayahInput) {
+        ayahInput.addEventListener('input', () => {
+            ayahGender.value = ayahInput.value.trim() ? 'Laki-laki' : '';
+        });
+    }
+    if (ibuInput) {
+        ibuInput.addEventListener('input', () => {
+            ibuGender.value = ibuInput.value.trim() ? 'Perempuan' : '';
+        });
+    }
+});
+
+// Toggle display for Baptis fields inside an anak-item
+function toggleBaptis(el) {
+    const item = el.closest('.anak-item');
+    if (!item) return;
+    const fields = item.querySelector('.baptis-fields');
+    if (!fields) return;
+    const isChecked = (el.type === 'checkbox') ? el.checked : (el.value === 'sudah');
+    fields.style.display = isChecked ? 'block' : 'none';
+}
+
+// Toggle display for Sidi fields inside an anak-item
+function toggleSidi(el) {
+    const item = el.closest('.anak-item');
+    if (!item) return;
+    const fields = item.querySelector('.sidi-fields');
+    if (!fields) return;
+    const isChecked = (el.type === 'checkbox') ? el.checked : (el.value === 'sudah');
+    fields.style.display = isChecked ? 'block' : 'none';
+}
+
+</script>
 @endsection

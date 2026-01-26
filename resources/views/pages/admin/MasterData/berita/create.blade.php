@@ -16,13 +16,13 @@
                 @csrf
 
                 @if($errors->any())
-                    <div class="alert alert-danger">
-                        <ul class="mb-0">
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
                 @endif
                 <div class="form-group mb-3">
                     <label for="tanggal">Tanggal</label>
@@ -41,7 +41,8 @@
 
                 <div class="form-group mb-3">
                     <label for="ringkasan">Ringkasan</label>
-                    <textarea name="ringkasan" id="ringkasan" class="form-control" rows="4">{{ old('ringkasan') }}</textarea>
+                    <textarea name="ringkasan" id="ringkasan" class="form-control"
+                        rows="4">{{ old('ringkasan') }}</textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Simpan</button>

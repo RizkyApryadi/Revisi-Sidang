@@ -46,15 +46,17 @@
                             </td>
 
                             <td class="text-center align-middle">
-                                <a href="#" class="btn btn-info btn-sm">
+                                <a href="#">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="#" class="btn btn-warning btn-sm">
+                                <a href="{{ route('admin.galeri.edit', $galeri->id) }}" class="btn btn-warning btn-sm mx-1" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="#" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </a>
+                                <form action="{{ route('admin.galeri.destroy', $galeri->id) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus galeri ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus"><i class="fas fa-trash"></i></button>
+                                </form>
                             </td>
                         </tr>
                         @empty

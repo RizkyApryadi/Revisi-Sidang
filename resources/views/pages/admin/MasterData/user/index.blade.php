@@ -48,7 +48,7 @@
                     @forelse($users ?? [] as $user)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->pendeta?->nama_lengkap ?? $user->penatua?->nama_lengkap ?? $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->role }}</td>
                         <td class="text-center">

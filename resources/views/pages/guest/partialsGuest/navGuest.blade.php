@@ -32,6 +32,9 @@
             <li><a href="{{ route('guest.layanan') }}" class="hover:text-primary transition">Layanan</a></li>
 
             <li><a href="{{ route('guest.galeri') }}" class="hover:text-primary transition">Galeri</a></li>
+
+            <li><a href="{{ route('guest.renungan') }}" class="hover:text-primary transition">Renungan</a></li>
+
         </ul>
 
         <!-- Button Masuk -->
@@ -46,44 +49,7 @@
 </nav>
 
 
-<!-- Mobile Menu -->
-<div id="mobileMenu"
-    class="fixed top-0 right-[-100%] w-full h-screen bg-slate-900/95 backdrop-blur-lg flex flex-col items-center justify-center transition-right duration-400">
-    <ul class="text-center space-y-6 px-6">
-        <li><a href="{{ route('guest.dashboard') }}"
-                class="text-3xl font-semibold bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-400 bg-clip-text text-transparent">Home</a>
-        </li>
 
-        <li>
-            <details class="text-left">
-                <summary class="text-3xl font-semibold cursor-pointer text-white/95">Tentang</summary>
-                <ul class="mt-4 space-y-3">
-                    <li><a href="#about" class="text-xl text-white/80">Tentang Kami</a></li>
-                    <li><a href="#team" class="text-xl text-white/80">Team</a></li>
-                    <li><a href="#history" class="text-xl text-white/80">Sejarah</a></li>
-                </ul>
-            </details>
-        </li>
-
-        <li><a href="#layanan"
-                class="text-3xl font-semibold bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-400 bg-clip-text text-transparent">Layanan</a>
-        </li>
-
-        <li><a href="{{ route('guest.galeri') }}"
-                class="text-3xl font-semibold bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-400 bg-clip-text text-transparent">Galeri</a>
-        </li>
-        <li><a href="{{ route('guest.layanan') }}"
-                class="text-3xl font-semibold bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-400 bg-clip-text text-transparent">Layanan</a>
-        </li>
-        <li><a href="{{ route('guest.jadwal') }}"
-                class="text-3xl font-semibold bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-400 bg-clip-text text-transparent">Jadwal</a>
-        </li>
-        <li><a href="{{ route('guest.kegiatan') }}"
-                class="text-3xl font-semibold bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-400 bg-clip-text text-transparent">Kegiatan</a>
-        </li>
-        <!-- Warta link removed -->
-    </ul>
-</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

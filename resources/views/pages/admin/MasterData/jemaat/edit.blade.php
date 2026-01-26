@@ -1,754 +1,435 @@
 @extends('layouts.main')
-
 @section('title', 'Edit Jemaat')
 
 @section('content')
-
-<div class="section">
+<section class="section">
     <div class="section-body">
-        <div class="bg-white p-4 rounded">
-            <div class="row justify-content-center">
-                <div class="col-lg-11 col-md-12">
-                    <h1><i class="fas fa-users"></i> Edit Jemaat</h1>
-                    <div class="border rounded p-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-7">
 
-                        <form method="POST" action="{{ route('admin.jemaat.update', $jemaat->id ?? '') }}" enctype="multipart/form-data">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h4 class="mb-0">Edit Jemaat</h4>
+                    </div>
+                    <div class="card-body bg-white">
+                        <form action="{{ route('admin.jemaat.update', $jemaat->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
 
-                            <ul class="nav nav-tabs mb-4" role="tablist">
-                                <li class="nav-item"><a class="nav-link active" id="tab-pribadi" data-bs-toggle="tab"
-                                        href="#data-pribadi" role="tab">Data Pribadi</a></li>
-                                <li class="nav-item"><a class="nav-link" id="tab-baptis" data-bs-toggle="tab"
-                                        href="#data-baptis" role="tab">Data Baptis</a></li>
-                                <li class="nav-item"><a class="nav-link" id="tab-sidi" data-bs-toggle="tab"
-                                        href="#data-sidi" role="tab">Data Sidi</a></li>
-                                <li class="nav-item"><a class="nav-link" id="tab-pernikahan" data-bs-toggle="tab"
-                                        href="#data-pernikahan" role="tab">Data Pernikahan</a></li>
-                                <li class="nav-item"><a class="nav-link" id="tab-pindah" data-bs-toggle="tab"
-                                        href="#data-pindah" role="tab">Data Pindah</a></li>
-                                <li class="nav-item"><a class="nav-link" id="tab-kedukaan" data-bs-toggle="tab"
-                                        href="#data-kedukaan" role="tab">Data Kedukaan</a></li>
-                            </ul>
+                            @if(session('success'))
+                            <div class="alert alert-success">{{ session('success') }}</div>
+                            @endif
+                            @if(session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
+                            @endif
 
+                            @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            @endif
 
-                            <div class="tab-content">
-                                {{-- Data Pribadi --}}
-                                <div class="tab-pane fade show active" id="data-pribadi" role="tabpanel">
+                            <h4 class="mb-2">Formulir Jemaat Edit</h4>
+                            <p>Kami yang bertanda tangan di bawah ini:</p>
 
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Nomor Jemaat :</label>
-                                        <div class="col-md-4">
-                                            <input name="nomor_jemaat" class="form-control form-control-sm" value="{{ old('nomor_jemaat', $jemaat->nomor_jemaat ?? '') }}">
-                                        </div>
+                            <div class="form-group mb-3">
+                                <label>Nomor KK</label>
+                                <input type="text" name="nomor_kk" class="form-control" required value="{{ old('nomor_kk', optional($jemaat->keluarga)->nomor_kk) }}">
+                            </div>
 
-                                        <label class="col-md-2 col-form-label text-md-right">Nomor Keluarga :</label>
-                                        <div class="col-md-4">
-                                            <input name="nomor_keluarga" class="form-control form-control-sm" value="{{ old('nomor_keluarga', optional($jemaat->keluarga)->nomor_keluarga ?? '') }}">
-                                        </div>
+                            <div class="form-group mb-3">
+                                <label>Nama Suami</label>
+                                @php
+                                    $ayah = optional(optional($jemaat->keluarga)->jemaats)->firstWhere('hubungan_keluarga', 'suami');
+                                @endphp
+                                <input type="text" name="ayah_nama" id="ayah_nama" class="form-control" value="{{ old('ayah_nama', optional($ayah)->nama) }}">
+                                <input type="hidden" name="ayah_jenis_kelamin" id="ayah_jenis_kelamin" value="{{ old('ayah_jenis_kelamin', optional($ayah)->jenis_kelamin) }}">
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label>Nama Istri</label>
+                                @php
+                                    $ibu = optional(optional($jemaat->keluarga)->jemaats)->firstWhere('hubungan_keluarga', 'istri');
+                                @endphp
+                                <input type="text" name="ibu_nama" id="ibu_nama" class="form-control" value="{{ old('ibu_nama', optional($ibu)->nama) }}">
+                                <input type="hidden" name="ibu_jenis_kelamin" id="ibu_jenis_kelamin" value="{{ old('ibu_jenis_kelamin', optional($ibu)->jenis_kelamin) }}">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label>No HP Ayah</label>
+                                        <input type="text" name="ayah_no_hp" class="form-control" value="{{ old('ayah_no_hp', optional($ayah)->nomor_hp ?? '') }}">
                                     </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Nama Lengkap :</label>
-                                        <div class="col-md-10">
-                                            <input name="nama_lengkap" class="form-control form-control-sm" value="{{ old('nama_lengkap', $jemaat->nama_lengkap ?? '') }}">
-                                        </div>
+                                    <div class="form-group mb-3">
+                                        <label>No HP Ibu</label>
+                                        <input type="text" name="ibu_no_hp" class="form-control" value="{{ old('ibu_no_hp', optional($ibu)->nomor_hp ?? '') }}">
                                     </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Alamat :</label>
-                                        <div class="col-md-10">
-                                            <textarea name="alamat" class="form-control form-control-sm" rows="3">{{ old('alamat', optional($jemaat->keluarga)->alamat ?? '') }}</textarea>
-                                        </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label>Email Ayah</label>
+                                        <input type="email" name="ayah_email" class="form-control" value="{{ old('ayah_email', optional($ayah)->email ?? '') }}">
                                     </div>
+                                    <div class="form-group mb-3">
+                                        <label>Email Ibu</label>
+                                        <input type="email" name="ibu_email" class="form-control" value="{{ old('ibu_email', optional($ibu)->email ?? '') }}">
+                                    </div>
+                                </div>
+                            </div>
 
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">RT / RW / WIJK :</label>
-                                        <div class="col-md-2">
-                                            <input name="rt" class="form-control form-control-sm text-center" placeholder="RT" value="{{ old('rt', optional($jemaat->keluarga)->rt ?? '') }}">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <input name="rw" class="form-control form-control-sm text-center" placeholder="RW" value="{{ old('rw', optional($jemaat->keluarga)->rw ?? '') }}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <select name="wijk" class="form-control form-control-sm text-center">
-                                                <option value="">-- Pilih Wijk --</option>
-                                                @foreach($wijks as $w)
-                                                <option value="{{ $w->id }}" {{ (string)$w->id === (string)old('wijk', optional($jemaat->keluarga)->wijk_id ?? '') ? 'selected' : '' }}>{{ $w->nama_wijk }}</option>
-                                                @endforeach
+                            <div class="form-group mb-3">
+                                <label>Wijk</label>
+                                <select name="wijk_id" class="form-control">
+                                    <option value="">-- Pilih Wijk --</option>
+                                    @foreach($wijks as $wijk)
+                                    <option value="{{ $wijk->id }}" {{ old('wijk_id', optional($jemaat->keluarga)->wijk_id ?? $jemaat->wijk_id) == $wijk->id ? 'selected' : '' }}>{{ $wijk->nama_wijk }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label>Alamat</label>
+                                <textarea name="alamat" class="form-control" rows="2">{{ old('alamat', optional($jemaat->keluarga)->alamat ?? $jemaat->alamat ?? '') }}</textarea>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label>Asal Gereja</label>
+                                <input type="text" name="asal_gereja" class="form-control" value="{{ old('asal_gereja', $jemaat->asal_gereja ?? '') }}">
+                            </div>
+
+
+
+
+                            {{-- ================= DATA ANAK ================= --}}
+                            <h5 class="mt-4 mb-3 border-bottom pb-2 d-flex justify-content-between">
+                                Daftar Anggota Keluarga
+                                <button type="button" class="btn btn-sm btn-success" onclick="addAnak()">+
+                                    Anggota</button>
+                            </h5>
+
+                            <div id="anak-wrapper">
+                                @php
+                                    $anakItems = optional(optional($jemaat->keluarga)->jemaats)->where('hubungan_keluarga','anak') ?? collect();
+                                @endphp
+
+                                @if($anakItems->isNotEmpty())
+                                    @foreach($anakItems as $i => $anakModel)
+                                        <div class="anak-item border rounded p-3 mb-3" data-index="{{ $i }}">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <strong class="anak-number">{{ $i + 1 }}. Anggota Keluarga</strong>
+                                                <div>
+                                                    <label class="me-2">
+                                                        <input type="checkbox" name="anak[{{ $i }}][is_baptis]" onchange="toggleBaptis(this)" {{ old("anak.$i.is_baptis", (!empty($anakModel->tanggal_baptis) || !empty($anakModel->akte_baptis)) ? 'on' : null) ? 'checked' : '' }}> Baptis
+                                                    </label>
+                                                    <label class="me-2">
+                                                        <input type="checkbox" name="anak[{{ $i }}][is_sidi]" onchange="toggleSidi(this)" {{ old("anak.$i.is_sidi", (!empty($anakModel->tanggal_sidi) || !empty($anakModel->akte_sidi)) ? 'on' : null) ? 'checked' : '' }}> Sidi
+                                                    </label>
+                                                    <button type="button" class="btn btn-sm btn-danger" onclick="removeAnak(this)">Hapus</button>
+                                                </div>
+                                            </div>
+
+                                            <input type="text" name="anak[{{ $i }}][nama]" class="form-control mt-2" placeholder="Nama Anak" value="{{ old("anak.$i.nama", $anakModel->nama) }}">
+
+                                            <input type="text" name="anak[{{ $i }}][nomor_hp]" class="form-control mt-2" placeholder="Nomor HP Anak (opsional)" value="{{ old("anak.$i.nomor_hp", $anakModel->nomor_hp ?? '') }}">
+
+                                            <input type="text" name="anak[{{ $i }}][email]" class="form-control mt-2" placeholder="Email Anak (opsional)" value="{{ old("anak.$i.email", $anakModel->email ?? '') }}">
+
+                                            <input type="date" name="anak[{{ $i }}][tanggal_lahir]" class="form-control mt-2" value="{{ old("anak.$i.tanggal_lahir", optional($anakModel)->tanggal_lahir) }}">
+
+                                            <select name="anak[{{ $i }}][jenis_kelamin]" class="form-control mt-2">
+                                                <option value="">Jenis Kelamin</option>
+                                                <option value="Laki-laki" {{ old("anak.$i.jenis_kelamin", $anakModel->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                                <option value="Perempuan" {{ old("anak.$i.jenis_kelamin", $anakModel->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                                             </select>
-                                        </div>
-                                    </div>
 
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Kelurahan :</label>
-                                        <div class="col-md-4">
-                                            <input name="kelurahan" class="form-control form-control-sm" value="{{ old('kelurahan', optional($jemaat->keluarga)->kelurahan ?? '') }}">
-                                        </div>
+                                            <input type="text" name="anak[{{ $i }}][tempat_lahir]" class="form-control mt-2" placeholder="Tempat Lahir" value="{{ old("anak.$i.tempat_lahir", $anakModel->tempat_lahir ?? '') }}">
 
-                                        <label class="col-md-2 col-form-label text-md-right">Kecamatan :</label>
-                                        <div class="col-md-4">
-                                            <input name="kecamatan" class="form-control form-control-sm" value="{{ old('kecamatan', optional($jemaat->keluarga)->kecamatan ?? '') }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Kabupaten :</label>
-                                        <div class="col-md-4">
-                                            <input name="kabupaten" class="form-control form-control-sm" value="{{ old('kabupaten', optional($jemaat->keluarga)->kabupaten ?? '') }}">
-                                        </div>
-
-                                        <label class="col-md-2 col-form-label text-md-right">Provinsi :</label>
-                                        <div class="col-md-4">
-                                            <input name="provinsi" class="form-control form-control-sm" value="{{ old('provinsi', optional($jemaat->keluarga)->provinsi ?? '') }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Kode Pos :</label>
-                                        <div class="col-md-4">
-                                            <input name="kode_pos" class="form-control form-control-sm" value="{{ old('kode_pos', optional($jemaat->keluarga)->kode_pos ?? '') }}">
-                                        </div>
-
-                                        <label class="col-md-2 col-form-label text-md-right">Email :</label>
-                                        <div class="col-md-4">
-                                            <input type="email" name="email" class="form-control form-control-sm" value="{{ old('email', $jemaat->email ?? '') }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Tempat Lahir :</label>
-                                        <div class="col-md-4">
-                                            <input name="tempat_lahir" class="form-control form-control-sm" value="{{ old('tempat_lahir', $jemaat->tempat_lahir ?? '') }}">
-                                        </div>
-
-                                        <label class="col-md-2 col-form-label text-md-right">Tanggal Lahir :</label>
-                                        <div class="col-md-4">
-                                            <input type="date" name="tanggal_lahir" class="form-control form-control-sm" value="{{ old('tanggal_lahir', $jemaat->tanggal_lahir ?? '') }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Jenis Kelamin :</label>
-                                        <div class="col-md-4">
-                                            <select name="jenis_kelamin" class="form-control form-control-sm">
-                                                <option value="Laki-laki" {{ old('jenis_kelamin', $jemaat->jenis_kelamin ?? '') === 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                                                <option value="Perempuan" {{ old('jenis_kelamin', $jemaat->jenis_kelamin ?? '') === 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                                            <select name="anak[{{ $i }}][hubungan]" class="form-control mt-2">
+                                                <option value="anak" {{ old("anak.$i.hubungan", $anakModel->hubungan_keluarga) == 'anak' ? 'selected' : '' }}>Anak</option>
+                                                <option value="tanggungan" {{ old("anak.$i.hubungan", $anakModel->hubungan_keluarga) == 'tanggungan' ? 'selected' : '' }}>Tanggungan</option>
                                             </select>
+
+                                            <div class="baptis-fields mt-3" style="display:{{ (!empty($anakModel->tanggal_baptis) || !empty($anakModel->akte_baptis)) ? 'block' : 'none' }}">
+                                                <div class="form-group mb-2">
+                                                    <label>Tanggal Baptis</label>
+                                                    <input type="date" name="anak[{{ $i }}][tanggal_baptis]" class="form-control" value="{{ old("anak.$i.tanggal_baptis", optional($anakModel)->tanggal_baptis) }}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Surat Baptis (scan)</label>
+                                                    <input type="file" name="anak[{{ $i }}][surat_baptis]" class="form-control">
+                                                    @if(!empty($anakModel->akte_baptis))
+                                                        <div class="mt-1"><a href="{{ asset('storage/'.$anakModel->akte_baptis) }}" target="_blank">Lihat file</a></div>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <div class="sidi-fields mt-3" style="display:{{ (!empty($anakModel->tanggal_sidi) || !empty($anakModel->akte_sidi)) ? 'block' : 'none' }}">
+                                                <div class="form-group mb-2">
+                                                    <label>Tanggal Sidi</label>
+                                                    <input type="date" name="anak[{{ $i }}][tanggal_sidi]" class="form-control" value="{{ old("anak.$i.tanggal_sidi", optional($anakModel)->tanggal_sidi) }}">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Surat Sidi (scan)</label>
+                                                    <input type="file" name="anak[{{ $i }}][surat_sidi]" class="form-control">
+                                                    @if(!empty($anakModel->akte_sidi))
+                                                        <div class="mt-1"><a href="{{ asset('storage/'.$anakModel->akte_sidi) }}" target="_blank">Lihat file</a></div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="anak-item border rounded p-3 mb-3" data-index="0">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <strong class="anak-number">1. Anggota Keluarga</strong>
+                                            <div>
+                                                <label class="me-2">
+                                                    <input type="checkbox" name="anak[0][is_baptis]" onchange="toggleBaptis(this)"> Baptis
+                                                </label>
+                                                <label class="me-2">
+                                                    <input type="checkbox" name="anak[0][is_sidi]" onchange="toggleSidi(this)"> Sidi
+                                                </label>
+                                                <button type="button" class="btn btn-sm btn-danger" onclick="removeAnak(this)">Hapus</button>
+                                            </div>
                                         </div>
 
-                                        <label class="col-md-2 col-form-label text-md-right">Nomor HP :</label>
-                                        <div class="col-md-4">
-                                            <input name="no_hp" class="form-control form-control-sm" value="{{ old('no_hp', $jemaat->no_hp ?? '') }}">
-                                        </div>
-                                    </div>
+                                        <input type="text" name="anak[0][nama]" class="form-control mt-2" placeholder="Nama Anak">
 
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Nama Ayah :</label>
-                                        <div class="col-md-4">
-                                            <input name="nama_ayah" class="form-control form-control-sm" value="{{ old('nama_ayah', $jemaat->nama_ayah ?? '') }}">
-                                        </div>
+                                        <input type="text" name="anak[0][nomor_hp]" class="form-control mt-2" placeholder="Nomor HP Anak (opsional)">
 
-                                        <label class="col-md-2 col-form-label text-md-right">Nama Ibu :</label>
-                                        <div class="col-md-4">
-                                            <input name="nama_ibu" class="form-control form-control-sm" value="{{ old('nama_ibu', $jemaat->nama_ibu ?? '') }}">
-                                        </div>
-                                    </div>
+                                        <input type="text" name="anak[0][email]" class="form-control mt-2" placeholder="Email Anak (opsional)">
 
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Status Pernikahan :</label>
-                                        <div class="col-md-4">
-                                            <select name="status_pernikahan" class="form-control form-control-sm">
-                                                <option value="">-- Pilih --</option>
-                                                <option value="belum" {{ old('status_pernikahan', $jemaat->status_pernikahan ?? '') === 'belum' ? 'selected' : '' }}>Belum Menikah</option>
-                                                <option value="sudah" {{ old('status_pernikahan', $jemaat->status_pernikahan ?? '') === 'sudah' ? 'selected' : '' }}>Sudah Menikah</option>
-                                            </select>
-                                        </div>
+                                        <input type="date" name="anak[0][tanggal_lahir]" class="form-control mt-2">
 
-                                        <label class="col-md-2 col-form-label text-md-right">Hubungan Keluarga :</label>
-                                        <div class="col-md-4">
-                                            <select id="hubungan_keluarga" name="hubungan_keluarga" class="form-control form-control-sm">
-                                                <option value="">-- Pilih --</option>
-                                                <option value="Ayah" {{ old('hubungan_keluarga', $jemaat->hubungan_keluarga ?? '') === 'Ayah' ? 'selected' : '' }}>Ayah</option>
-                                                <option value="Ibu" {{ old('hubungan_keluarga', $jemaat->hubungan_keluarga ?? '') === 'Ibu' ? 'selected' : '' }}>Ibu</option>
-                                                <option value="Anak" {{ old('hubungan_keluarga', $jemaat->hubungan_keluarga ?? '') === 'Anak' ? 'selected' : '' }}>Anak</option>
-                                            </select>
-                                        </div>
-                                        <div id="anak-ke-wrapper" class="col-md-2" style="display:{{ old('hubungan_keluarga', $jemaat->hubungan_keluarga ?? '') === 'Anak' ? 'block' : 'none' }};">
-                                            <input type="number" min="1" name="anak_ke" id="anak_ke" class="form-control form-control-sm" placeholder="Anak ke" value="{{ old('anak_ke', $jemaat->anak_ke ?? '') }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">Keterangan :</label>
-                                        <div class="col-md-10">
-                                            <textarea name="keterangan" class="form-control form-control-sm" rows="2">{{ old('keterangan', $jemaat->keterangan ?? '') }}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-4">
-                                        <label class="col-md-2 col-form-label text-md-right">Pas Foto :</label>
-                                        <div class="col-md-10">
-                                            <input type="file" name="foto" class="form-control form-control-sm">
-                                            @if(!empty($jemaat->foto))
-                                            <small class="text-muted">Foto saat ini: <a href="{{ asset('storage/'.$jemaat->foto) }}" target="_blank">lihat</a></small>
-                                            @endif
-                                        </div>
-                                    </div>
-
-                                    {{-- BUTTON --}}
-                                    <div class="text-center mt-4">
-                                        <button type="submit" class="btn btn-primary btn-sm px-5">
-                                            <i class="fas fa-save"></i> Simpan
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            {{-- Data Baptis --}}
-                            <div class="tab-pane fade" id="data-baptis" role="tabpanel">
-
-                                {{-- STATUS BAPTIS --}}
-                                <div class="form-group row mb-3">
-                                    <label class="col-md-2 col-form-label text-md-right">
-                                        Status Baptis :
-                                    </label>
-                                    <div class="col-md-4">
-                                        <select class="form-control form-control-sm" id="status_baptis" name="status_baptis">
-                                            <option value="">-- Pilih --</option>
-                                            <option value="belum" {{ old('status_baptis', optional($jemaat->statusBaptis)->status ?? '') === 'belum' ? 'selected' : '' }}>Belum Baptis</option>
-                                            <option value="sudah" {{ old('status_baptis', optional($jemaat->statusBaptis)->status ?? '') === 'sudah' ? 'selected' : '' }}>Sudah Baptis</option>
+                                        <select name="anak[0][jenis_kelamin]" class="form-control mt-2">
+                                            <option value="">Jenis Kelamin</option>
+                                            <option value="Laki-laki">Laki-laki</option>
+                                            <option value="Perempuan">Perempuan</option>
                                         </select>
-                                    </div>
-                                </div>
 
-                                {{-- PILIHAN GEREJA --}}
-                                <div id="pilihan-gereja" style="display:none;">
-                                    <div class="row">
+                                        <input type="text" name="anak[0][tempat_lahir]" class="form-control mt-2" placeholder="Tempat Lahir">
 
-                                        {{-- GEREJA LOKAL --}}
-                                        <div class="col-md-6">
-                                            <div class="card border">
-                                                <div class="card-header">
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" id="gereja_lokal" name="jenis_gereja" class="custom-control-input" value="lokal" {{ old('jenis_gereja', optional($jemaat->statusBaptis)->jenis ?? '') === 'lokal' ? 'checked' : '' }}>
-                                                        <label class="custom-control-label" for="gereja_lokal">
-                                                            Gereja Lokal
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <label>Nomor Kartu</label>
-                                                        <input type="text" class="form-control form-control-sm" name="lokal_nomor_kartu" value="{{ old('lokal_nomor_kartu', optional($jemaat->statusBaptis)->nomor_surat ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Tanggal Baptisan</label>
-                                                        <input type="date" class="form-control form-control-sm" name="lokal_tgl_baptis" value="{{ old('lokal_tgl_baptis', optional($jemaat->statusBaptis)->tanggal ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group mb-0">
-                                                        <label>Dibaptis Oleh</label>
-                                                        <input type="text" class="form-control form-control-sm" name="lokal_baptis_oleh" value="{{ old('lokal_baptis_oleh', optional($jemaat->statusBaptis)->pendeta ?? '') }}">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {{-- GEREJA LUAR --}}
-                                        <div class="col-md-6">
-                                            <div class="card border">
-                                                <div class="card-header">
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" id="gereja_luar" name="jenis_gereja" class="custom-control-input" value="luar" {{ old('jenis_gereja', optional($jemaat->statusBaptis)->jenis ?? '') === 'luar' ? 'checked' : '' }}>
-                                                        <label class="custom-control-label" for="gereja_luar">
-                                                            Gereja Luar
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <label>Nomor Kartu</label>
-                                                        <input type="text" class="form-control form-control-sm" name="luar_nomor_kartu" value="{{ old('luar_nomor_kartu', optional($jemaat->statusBaptis)->nomor_surat ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Tanggal Baptisan</label>
-                                                        <input type="date" class="form-control form-control-sm" name="luar_tgl_baptis" value="{{ old('luar_tgl_baptis', optional($jemaat->statusBaptis)->tanggal ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Dibaptis Oleh</label>
-                                                        <input type="text" class="form-control form-control-sm" name="luar_baptis_oleh" value="{{ old('luar_baptis_oleh', optional($jemaat->statusBaptis)->pendeta ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Di Gereja</label>
-                                                        <input type="text" class="form-control form-control-sm" name="luar_nama_gereja" value="{{ old('luar_nama_gereja', optional($jemaat->statusBaptis)->nama_gereja ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Alamat Gereja</label>
-                                                        <input type="text" class="form-control form-control-sm" name="luar_alamat_gereja" value="{{ old('luar_alamat_gereja', optional($jemaat->statusBaptis)->alamat ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group mb-0">
-                                                        <label>Kota</label>
-                                                        <input type="text" class="form-control form-control-sm" name="luar_kota" value="{{ old('luar_kota', optional($jemaat->statusBaptis)->kota ?? '') }}">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                {{-- BUTTON --}}
-                                <div class="text-center mt-4">
-                                    <button type="submit" class="btn btn-primary btn-sm px-5">
-                                        <i class="fas fa-save"></i> Simpan
-                                    </button>
-                                </div>
-
-                            </div>
-
-                            {{-- Data Sidi --}}
-                            <div class="tab-pane fade" id="data-sidi" role="tabpanel">
-
-                                {{-- STATUS SIDI --}}
-                                <div class="form-group row mb-3">
-                                    <label class="col-md-2 col-form-label text-md-right">
-                                        Status Sidi :
-                                    </label>
-                                    <div class="col-md-4">
-                                        <select class="form-control form-control-sm" id="status_sidi" name="status_sidi">
-                                            <option value="">-- Pilih --</option>
-                                            <option value="belum" {{ old('status_sidi', optional($jemaat->statusSidi)->status ?? '') === 'belum' ? 'selected' : '' }}>Belum Sidi</option>
-                                            <option value="sudah" {{ old('status_sidi', optional($jemaat->statusSidi)->status ?? '') === 'sudah' ? 'selected' : '' }}>Sudah Sidi</option>
+                                        <select name="anak[0][hubungan]" class="form-control mt-2">
+                                            <option value="anak">Anak</option>
+                                            <option value="tanggungan">Tanggungan</option>
                                         </select>
-                                    </div>
-                                </div>
 
-                                {{-- PILIHAN GEREJA --}}
-                                <div id="pilihan-gereja-sidi" style="display:none;">
-                                    <div class="row">
-
-                                        {{-- GEREJA LOKAL --}}
-                                        <div class="col-md-6">
-                                            <div class="card border">
-                                                <div class="card-header">
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" id="sidi_gereja_lokal" name="jenis_gereja_sidi" class="custom-control-input" value="lokal" {{ old('jenis_gereja_sidi', optional($jemaat->statusSidi)->jenis ?? '') === 'lokal' ? 'checked' : '' }}>
-                                                        <label class="custom-control-label" for="sidi_gereja_lokal">
-                                                            Gereja Lokal
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <label>Nomor Kartu</label>
-                                                        <input type="text" class="form-control form-control-sm" name="sidi_lokal_nomor_kartu" value="{{ old('sidi_lokal_nomor_kartu', optional($jemaat->statusSidi)->nomor_surat ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Tanggal Sidi</label>
-                                                        <input type="date" class="form-control form-control-sm" name="sidi_lokal_tgl" value="{{ old('sidi_lokal_tgl', optional($jemaat->statusSidi)->tanggal ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group mb-0">
-                                                        <label>Disidi Oleh</label>
-                                                        <input type="text" class="form-control form-control-sm" name="sidi_lokal_oleh" value="{{ old('sidi_lokal_oleh', optional($jemaat->statusSidi)->pendeta ?? '') }}">
-                                                    </div>
-                                                </div>
+                                        <div class="baptis-fields mt-3" style="display:none">
+                                            <div class="form-group mb-2">
+                                                <label>Tanggal Baptis</label>
+                                                <input type="date" name="anak[0][tanggal_baptis]" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Surat Baptis (scan)</label>
+                                                <input type="file" name="anak[0][surat_baptis]" class="form-control">
                                             </div>
                                         </div>
 
-                                        {{-- GEREJA LUAR --}}
-                                        <div class="col-md-6">
-                                            <div class="card border">
-                                                <div class="card-header">
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" id="sidi_gereja_luar" name="jenis_gereja_sidi" class="custom-control-input" value="luar" {{ old('jenis_gereja_sidi', optional($jemaat->statusSidi)->jenis ?? '') === 'luar' ? 'checked' : '' }}>
-                                                        <label class="custom-control-label" for="sidi_gereja_luar">
-                                                            Gereja Luar
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <label>Nomor Kartu</label>
-                                                        <input type="text" class="form-control form-control-sm" name="sidi_luar_nomor_kartu" value="{{ old('sidi_luar_nomor_kartu', optional($jemaat->statusSidi)->nomor_surat ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Tanggal Sidi</label>
-                                                        <input type="date" class="form-control form-control-sm" name="sidi_luar_tgl" value="{{ old('sidi_luar_tgl', optional($jemaat->statusSidi)->tanggal ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Disidi Oleh</label>
-                                                        <input type="text" class="form-control form-control-sm" name="sidi_luar_oleh" value="{{ old('sidi_luar_oleh', optional($jemaat->statusSidi)->pendeta ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Di Gereja</label>
-                                                        <input type="text" class="form-control form-control-sm" name="sidi_luar_nama_gereja" value="{{ old('sidi_luar_nama_gereja', optional($jemaat->statusSidi)->nama_gereja ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Alamat Gereja</label>
-                                                        <input type="text" class="form-control form-control-sm" name="sidi_luar_alamat_gereja" value="{{ old('sidi_luar_alamat_gereja', optional($jemaat->statusSidi)->alamat ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group mb-0">
-                                                        <label>Kota</label>
-                                                        <input type="text" class="form-control form-control-sm" name="sidi_luar_kota" value="{{ old('sidi_luar_kota', optional($jemaat->statusSidi)->kota ?? '') }}">
-                                                    </div>
-                                                </div>
+                                        <div class="sidi-fields mt-3" style="display:none">
+                                            <div class="form-group mb-2">
+                                                <label>Tanggal Sidi</label>
+                                                <input type="date" name="anak[0][tanggal_sidi]" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Surat Sidi (scan)</label>
+                                                <input type="file" name="anak[0][surat_sidi]" class="form-control">
                                             </div>
                                         </div>
-
                                     </div>
-                                </div>
-
-                                {{-- BUTTON --}}
-                                <div class="text-center mt-4">
-                                    <button type="submit" class="btn btn-primary btn-sm px-5">
-                                        <i class="fas fa-save"></i> Simpan
-                                    </button>
-                                </div>
+                                @endif
 
                             </div>
 
-                            {{-- Data Pernikahan --}}
-                            <div class="tab-pane fade" id="data-pernikahan" role="tabpanel">
+                            <h5 class="mt-4 mb-3 border-bottom pb-2">Kelengkapan Administrasi</h5>
 
-                                {{-- STATUS PERNIKAHAN --}}
-                                <div class="form-group row mb-3">
-                                    <label class="col-md-2 col-form-label text-md-right">
-                                        Status Pernikahan :
-                                    </label>
-                                    <div class="col-md-4">
-                                        <select class="form-control form-control-sm" id="status_nikah" name="status_nikah">
-                                            <option value="" selected disabled>-- Pilih --</option>
-                                            <option value="belum" {{ old('status_nikah', optional($jemaat->statusPernikahan)->status ?? '') === 'belum' ? 'selected' : '' }}>Belum Menikah</option>
-                                            <option value="sudah" {{ old('status_nikah', optional($jemaat->statusPernikahan)->status ?? '') === 'sudah' ? 'selected' : '' }}>Sudah Menikah</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                {{-- PILIHAN GEREJA --}}
-                                <div id="pilihan-gereja-nikah" style="display:none;">
-                                    <div class="row">
-
-                                        {{-- GEREJA LOKAL --}}
-                                        <div class="col-md-6">
-                                            <div class="card border">
-                                                <div class="card-header">
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" id="nikah_gereja_lokal" name="jenis_gereja_nikah" class="custom-control-input" value="lokal" {{ old('jenis_gereja_nikah', optional($jemaat->statusPernikahan)->jenis ?? '') === 'lokal' ? 'checked' : '' }}>
-                                                        <label class="custom-control-label" for="nikah_gereja_lokal">
-                                                            Gereja Lokal
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <label>Nomor Kartu Nikah</label>
-                                                        <input type="text" class="form-control form-control-sm" name="nikah_lokal_nomor_kartu" value="{{ old('nikah_lokal_nomor_kartu', optional($jemaat->statusPernikahan)->nomor_surat ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Tanggal Pernikahan</label>
-                                                        <input type="date" class="form-control form-control-sm" name="nikah_lokal_tgl" value="{{ old('nikah_lokal_tgl', optional($jemaat->statusPernikahan)->tanggal ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group mb-0">
-                                                        <label>Diberkati Oleh</label>
-                                                        <input type="text" class="form-control form-control-sm" name="nikah_lokal_oleh" value="{{ old('nikah_lokal_oleh', optional($jemaat->statusPernikahan)->pendeta ?? '') }}">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {{-- GEREJA LUAR --}}
-                                        <div class="col-md-6">
-                                            <div class="card border">
-                                                <div class="card-header">
-                                                    <div class="custom-control custom-radio">
-                                                        <input type="radio" id="nikah_gereja_luar" name="jenis_gereja_nikah" class="custom-control-input" value="luar" {{ old('jenis_gereja_nikah', optional($jemaat->statusPernikahan)->jenis ?? '') === 'luar' ? 'checked' : '' }}>
-                                                        <label class="custom-control-label" for="nikah_gereja_luar">
-                                                            Gereja Luar
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        <label>Nomor Kartu Nikah</label>
-                                                        <input type="text" class="form-control form-control-sm" name="nikah_luar_nomor_kartu" value="{{ old('nikah_luar_nomor_kartu', optional($jemaat->statusPernikahan)->nomor_surat ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Tanggal Pernikahan</label>
-                                                        <input type="date" class="form-control form-control-sm" name="nikah_luar_tgl" value="{{ old('nikah_luar_tgl', optional($jemaat->statusPernikahan)->tanggal ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Diberkati Oleh</label>
-                                                        <input type="text" class="form-control form-control-sm" name="nikah_luar_oleh" value="{{ old('nikah_luar_oleh', optional($jemaat->statusPernikahan)->pendeta ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Di Gereja</label>
-                                                        <input type="text" class="form-control form-control-sm" name="nikah_luar_nama_gereja" value="{{ old('nikah_luar_nama_gereja', optional($jemaat->statusPernikahan)->nama_gereja ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Alamat Gereja</label>
-                                                        <input type="text" class="form-control form-control-sm" name="nikah_luar_alamat_gereja" value="{{ old('nikah_luar_alamat_gereja', optional($jemaat->statusPernikahan)->alamat ?? '') }}">
-                                                    </div>
-
-                                                    <div class="form-group mb-0">
-                                                        <label>Kota</label>
-                                                        <input type="text" class="form-control form-control-sm" name="nikah_luar_kota" value="{{ old('nikah_luar_kota', optional($jemaat->statusPernikahan)->kota ?? '') }}">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                {{-- BUTTON --}}
-                                <div class="text-center mt-4">
-                                    <button type="submit" class="btn btn-primary btn-sm px-5">
-                                        <i class="fas fa-save"></i> Simpan
-                                    </button>
-                                </div>
-
+                            <div class="form-group mb-3">
+                                <label>Surat Keterangan Gereja (scan)</label>
+                                <input type="file" name="surat_keterangan_gereja" class="form-control">
                             </div>
 
-                            {{-- Data Pindah Masuk Jemaat --}}
-                            <div class="tab-pane fade" id="data-pindah" role="tabpanel">
-
-                                {{-- STATUS JEMAAT --}}
-                                <div class="form-group row mb-3">
-                                    <label class="col-md-2 col-form-label text-md-right">
-                                        Status Jemaat :
-                                    </label>
-                                    <div class="col-md-4">
-                                        <select class="form-control form-control-sm" id="status_pindah" name="status_pindah">
-                                            <option value="" selected disabled>-- Pilih --</option>
-                                            <option value="tetap" {{ old('status_pindah', optional($jemaat->statusPindah)->status ?? '') === 'tetap' ? 'selected' : '' }}>Tetap</option>
-                                            <option value="pindah_masuk" {{ old('status_pindah', optional($jemaat->statusPindah)->status ?? '') === 'pindah_masuk' ? 'selected' : '' }}>Pindah Masuk</option>
-                                        </select>
-                                    </div>
-
-                                </div>
-
-                                {{-- DETAIL PINDAH MASUK --}}
-
-                                <div id="detail-pindah-masuk" class="w-100" style="display:{{ old('status_pindah', optional($jemaat->statusPindah)->status ?? '') === 'pindah_masuk' ? 'block' : 'none' }};">
-                                    <div class="p-3 border rounded mx-auto" style="background-color: #f9f9f9; max-width: 700px;">
-
-                                        <div class="form-group row mb-3">
-                                            <label class="col-md-4 col-form-label text-md-right">No. Surat Pindah :</label>
-                                            <div class="col-md-6">
-                                                <input type="text" class="form-control form-control-sm" name="no_surat_pindah" placeholder="Contoh: 470/123/2025" value="{{ old('no_surat_pindah', optional($jemaat->statusPindah)->nomor_surat ?? '') }}">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row mb-3">
-                                            <label class="col-md-4 col-form-label text-md-right">Tanggal Pindah Masuk :</label>
-                                            <div class="col-md-6">
-                                                <input type="date" class="form-control form-control-sm" name="tgl_pindah_masuk" value="{{ old('tgl_pindah_masuk', optional($jemaat->statusPindah)->tanggal ?? '') }}">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row mb-3">
-                                            <label class="col-md-4 col-form-label text-md-right">Gereja Asal :</label>
-                                            <div class="col-md-6">
-                                                <input type="text" class="form-control form-control-sm" name="gereja_asal" placeholder="Nama gereja asal jemaat" value="{{ old('gereja_asal', optional($jemaat->statusPindah)->nama_gereja ?? '') }}">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group row mb-3">
-                                            <label class="col-md-4 col-form-label text-md-right">Kota Gereja Asal :</label>
-                                            <div class="col-md-6">
-                                                <input type="text" class="form-control form-control-sm" name="kota_gereja_asal" placeholder="Kota gereja asal" value="{{ old('kota_gereja_asal', optional($jemaat->statusPindah)->kota ?? '') }}">
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-
-                                {{-- BUTTON --}}
-                                <div class="text-center mt-4">
-                                    <button type="submit" class="btn btn-primary btn-sm px-5">
-                                        <i class="fas fa-save"></i> Simpan
-                                    </button>
-                                </div>
-
+                            <div class="form-group mb-3">
+                                <label>Akte Pernikahan (scan)</label>
+                                <input type="file" name="akte_pernikahan" class="form-control">
                             </div>
 
-                            {{-- Data Wafat Jemaat --}}
-                            <div class="tab-pane fade" id="data-kedukaan" role="tabpanel">
-
-                                {{-- STATUS JEMAAT --}}
-                                <div class="form-group row mb-3">
-                                    <label class="col-md-2 col-form-label text-md-right">
-                                        Status Jemaat :
-                                    </label>
-                                    <div class="col-md-4">
-                                        <select class="form-control form-control-sm" id="status_jemaat" name="status_jemaat">
-                                            <option value="" selected disabled>-- Pilih --</option>
-                                            <option value="hidup" {{ strtolower(old('status_jemaat', optional($jemaat->statusKedukaan)->status ?? '')) === 'hidup' ? 'selected' : '' }}>Hidup</option>
-                                            <option value="wafat" {{ strtolower(old('status_jemaat', optional($jemaat->statusKedukaan)->status ?? '')) === 'wafat' ? 'selected' : '' }}>Wafat</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                {{-- DATA WAFAT --}}
-                                <div id="data-wafat" style="display:{{ strtolower(old('status_jemaat', optional($jemaat->statusKedukaan)->status ?? '')) === 'wafat' ? 'block' : 'none' }};">
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">
-                                            Tanggal Wafat :
-                                        </label>
-                                        <div class="col-md-4">
-                                            <input type="date" class="form-control form-control-sm" name="tgl_wafat" value="{{ old('tgl_wafat', optional($jemaat->statusKedukaan)->tanggal ?? '') }}">
-                                        </div>
-
-                                        <label class="col-md-2 col-form-label text-md-right">
-                                            No. Surat Kematian :
-                                        </label>
-                                        <div class="col-md-4">
-                                            <input type="text" class="form-control form-control-sm" name="no_surat_kematian" placeholder="Contoh: 470/123/2025" value="{{ old('no_surat_kematian', optional($jemaat->statusKedukaan)->nomor_surat ?? '') }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row mb-3">
-                                        <label class="col-md-2 col-form-label text-md-right">
-                                            Keterangan :
-                                        </label>
-                                        <div class="col-md-10">
-                                            <textarea class="form-control form-control-sm" rows="2" name="keterangan_wafat" placeholder="Opsional">{{ old('keterangan_wafat', optional($jemaat->statusKedukaan)->keterangan ?? '') }}</textarea>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                {{-- BUTTON --}}
-                                <div class="text-center mt-4">
-                                    <button type="submit" class="btn btn-primary btn-sm px-5">
-                                        <i class="fas fa-save"></i> Simpan
-                                    </button>
-                                </div>
+                            <div class="form-group mb-3">
+                                <label>Akte Baptis (scan)</label>
+                                <input type="file" name="akte_baptis" class="form-control">
                             </div>
+
+                            <div class="form-group mb-3">
+                                <label>Akte Sidi (scan)</label>
+                                <input type="file" name="akte_sidi" class="form-control">
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label>Surat Pengantar Sintua Wijk (scan)</label>
+                                <input type="file" name="surat_pengantar_sintua_wijk" class="form-control">
+                            </div>
+
+                            <div class="text-right mt-4">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fas fa-save"></i> Simpan Data
+                                </button>
+                            </div>
+
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-</div>
-</div>
+</section>
 
+{{-- ================= SCRIPT ================= --}}
 <script>
-    // Baptis
-    const statusBaptis = document.getElementById('status_baptis');
-    const pilihanGereja = document.getElementById('pilihan-gereja');
-    if (statusBaptis && pilihanGereja) {
-        statusBaptis.addEventListener('change', function () {
-            pilihanGereja.style.display = this.value === 'sudah' ? 'block' : 'none';
+    function toggleForm(role, status) {
+    const form = document.getElementById('form-' + role);
+    form.style.display = status === 'hidup' ? 'block' : 'none';
+}
+
+// Dynamic anak handlers
+let anakIndex = 1; // next index (0 used by initial item)
+
+function addAnak() {
+    const wrapper = document.getElementById('anak-wrapper');
+    const index = anakIndex++;
+
+    const div = document.createElement('div');
+    div.className = 'anak-item border rounded p-3 mb-3';
+    div.setAttribute('data-index', index);
+
+    div.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center">
+            <strong class="anak-number">${index + 1}. anggota</strong>
+            <div>
+                <label class="me-2">
+                    <input type="checkbox" name="anak[${index}][is_baptis]" onchange="toggleBaptis(this)"> Baptis
+                </label>
+                <label class="me-2">
+                    <input type="checkbox" name="anak[${index}][is_sidi]" onchange="toggleSidi(this)"> Sidi
+                </label>
+                
+                <button type="button" class="btn btn-sm btn-danger" onclick="removeAnak(this)">Hapus</button>
+            </div>
+        </div>
+
+        <input type="text" name="anak[${index}][nama]" class="form-control mt-2" placeholder="Nama Anak">
+        <input type="text" name="anak[${index}][nomor_hp]" class="form-control mt-2" placeholder="Nomor HP Anak (opsional)">
+        <input type="text" name="anak[${index}][email]" class="form-control mt-2" placeholder="Email Anak (opsional)">
+        <input type="date" name="anak[${index}][tanggal_lahir]" class="form-control mt-2">
+        <select name="anak[${index}][jenis_kelamin]" class="form-control mt-2">
+            <option value="">Jenis Kelamin</option>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
+        </select>
+        <input type="text" name="anak[${index}][tempat_lahir]" class="form-control mt-2" placeholder="Tempat Lahir">
+        <select name="anak[${index}][hubungan]" class="form-control mt-2">
+            <option value="anak">Anak</option>
+            <option value="tanggungan">Tanggungan</option>
+        </select>
+
+        <div class="baptis-fields mt-3" style="display:none">
+            <div class="form-group mb-2">
+                <label>Tanggal Baptis</label>
+                <input type="date" name="anak[${index}][tanggal_baptis]" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Surat Baptis (scan)</label>
+                <input type="file" name="anak[${index}][surat_baptis]" class="form-control">
+            </div>
+        </div>
+
+        <div class="sidi-fields mt-3" style="display:none">
+            <div class="form-group mb-2">
+                <label>Tanggal Sidi</label>
+                <input type="date" name="anak[${index}][tanggal_sidi]" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Surat Sidi (scan)</label>
+                <input type="file" name="anak[${index}][surat_sidi]" class="form-control">
+            </div>
+        </div>
+    `;
+
+    wrapper.appendChild(div);
+    refreshAnakNumbers();
+}
+
+function removeAnak(button) {
+    const item = button.closest('.anak-item');
+    if (!item) return;
+    item.remove();
+    refreshAnakNumbers();
+}
+
+function refreshAnakNumbers() {
+    const items = document.querySelectorAll('#anak-wrapper .anak-item');
+    items.forEach((el, i) => {
+        const num = el.querySelector('.anak-number');
+        if (num) num.textContent = `${i + 1}. Anak`;
+        // Also update radio values and input names to maintain request keys
+        const idx = Array.from(items).indexOf(el);
+        el.setAttribute('data-index', idx);
+        // update radio
+        const radio = el.querySelector('input[type="radio"][name="kepala_anak"]');
+        if (radio) radio.value = idx;
+        // Update all anak[...] names inside this el
+        el.querySelectorAll('[name]').forEach(input => {
+            const name = input.getAttribute('name');
+            const newName = name.replace(/anak\[\d+\]/, `anak[${idx}]`);
+            input.setAttribute('name', newName);
         });
-        // initial visibility based on current value
-        pilihanGereja.style.display = statusBaptis.value === 'sudah' ? 'block' : pilihanGereja.style.display;
-    }
-
-    // Sidi
-    const statusSidi = document.getElementById('status_sidi');
-    const pilihanGerejaSidi = document.getElementById('pilihan-gereja-sidi');
-    if (statusSidi && pilihanGerejaSidi) {
-        statusSidi.addEventListener('change', function () {
-            pilihanGerejaSidi.style.display = this.value === 'sudah' ? 'block' : 'none';
-        });
-        pilihanGerejaSidi.style.display = statusSidi.value === 'sudah' ? 'block' : pilihanGerejaSidi.style.display;
-    }
-
-    // Pernikahan
-    const statusNikah = document.getElementById('status_nikah');
-    const pilihanGerejaNikah = document.getElementById('pilihan-gereja-nikah');
-    if (statusNikah && pilihanGerejaNikah) {
-        statusNikah.addEventListener('change', function () {
-            pilihanGerejaNikah.style.display = this.value === 'sudah' ? 'block' : 'none';
-        });
-        pilihanGerejaNikah.style.display = statusNikah.value === 'sudah' ? 'block' : pilihanGerejaNikah.style.display;
-    }
-
-    // Kedukaan
-    const statusJemaat = document.getElementById('status_jemaat');
-    const dataWafat = document.getElementById('data-wafat');
-    if (statusJemaat && dataWafat) {
-        statusJemaat.addEventListener('change', function () {
-            dataWafat.style.display = this.value === 'wafat' ? 'block' : 'none';
-        });
-        dataWafat.style.display = statusJemaat.value === 'wafat' ? 'block' : dataWafat.style.display;
-    }
-
-    // Pindah Jemaat
-    const statusPindahEl = document.getElementById('status_pindah');
-    const detailPindahMasukEl = document.getElementById('detail-pindah-masuk');
-    if (statusPindahEl && detailPindahMasukEl) {
-        statusPindahEl.addEventListener('change', function () {
-            detailPindahMasukEl.style.display = this.value === 'pindah_masuk' ? 'block' : 'none';
-        });
-        detailPindahMasukEl.style.display = statusPindahEl.value === 'pindah_masuk' ? 'block' : detailPindahMasukEl.style.display;
-    }
-
-    // Hubungan keluarga -> show anak_ke when 'Anak' selected
-    const hubunganSelect = document.getElementById('hubungan_keluarga');
-    const anakWrapper = document.getElementById('anak-ke-wrapper');
-    if (hubunganSelect && anakWrapper) {
-        hubunganSelect.addEventListener('change', function () {
-            anakWrapper.style.display = this.value === 'Anak' ? 'block' : 'none';
-        });
-        anakWrapper.style.display = hubunganSelect.value === 'Anak' ? 'block' : anakWrapper.style.display;
-    }
-
-    // Robust tab visibility: show only clicked/active pane without relying on Bootstrap events
-    document.addEventListener('DOMContentLoaded', function () {
-        const tabLinks = Array.from(document.querySelectorAll('a[data-bs-toggle="tab"]'));
-
-        function showPane(targetId) {
-            if (!targetId) return;
-            document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
-            const el = document.querySelector(targetId);
-            if (el) el.style.display = '';
-        }
-
-        tabLinks.forEach(link => {
-            link.addEventListener('click', function (e) {
-                const target = this.getAttribute('href') || this.dataset.bsTarget;
-                setTimeout(() => showPane(target), 30);
-            });
-        });
-
-        const activeLink = tabLinks.find(l => l.classList.contains('active')) || tabLinks[0];
-        if (activeLink) {
-            const target = activeLink.getAttribute('href') || activeLink.dataset.bsTarget;
-            showPane(target);
-        }
     });
+    // reset anakIndex to current length
+    anakIndex = document.querySelectorAll('#anak-wrapper .anak-item').length;
+    
+}
+
+// ensure state on load
+document.addEventListener('DOMContentLoaded', () => {
+    refreshAnakNumbers();
+    // setup automatic gender for parents
+    const ayahInput = document.getElementById('ayah_nama');
+    const ibuInput = document.getElementById('ibu_nama');
+    const ayahGender = document.getElementById('ayah_jenis_kelamin');
+    const ibuGender = document.getElementById('ibu_jenis_kelamin');
+    if (ayahInput) {
+        ayahInput.addEventListener('input', () => {
+            ayahGender.value = ayahInput.value.trim() ? 'Laki-laki' : '';
+        });
+    }
+    if (ibuInput) {
+        ibuInput.addEventListener('input', () => {
+            ibuGender.value = ibuInput.value.trim() ? 'Perempuan' : '';
+        });
+    }
+});
+
+// Toggle display for Baptis fields inside an anak-item
+function toggleBaptis(el) {
+    const item = el.closest('.anak-item');
+    if (!item) return;
+    const fields = item.querySelector('.baptis-fields');
+    if (!fields) return;
+    const isChecked = (el.type === 'checkbox') ? el.checked : (el.value === 'sudah');
+    fields.style.display = isChecked ? 'block' : 'none';
+}
+
+// Toggle display for Sidi fields inside an anak-item
+function toggleSidi(el) {
+    const item = el.closest('.anak-item');
+    if (!item) return;
+    const fields = item.querySelector('.sidi-fields');
+    if (!fields) return;
+    const isChecked = (el.type === 'checkbox') ? el.checked : (el.value === 'sudah');
+    fields.style.display = isChecked ? 'block' : 'none';
+}
+
 </script>
 @endsection

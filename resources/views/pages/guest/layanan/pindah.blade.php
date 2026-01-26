@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HKBP Soposurung - Galeri</title>
+    <title>HKBP Soposurung - Pindah jemaat</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -15,282 +15,248 @@
 
     <div class="max-w-5xl mx-auto px-4">
 
-        {{-- HEADER --}}
-        <div class="bg-indigo-700 text-white p-2 mb-3 flex justify-between items-center rounded">
-            <strong>HURIA KRISTEN BATAK PROTESTAN</strong>
-            <span>{{ now()->translatedFormat('l, d M Y') }}</span>
-        </div>
-
         {{-- FORM UTAMA --}}
         <div class="bg-white border border-green-500 rounded-md shadow-sm">
             <div class="bg-green-600 text-white text-center py-2 rounded-t-md font-semibold">
-                Formulir Pendaftaran Baptisan Kudus
+                Data Jemaat
             </div>
 
             <div class="p-4">
-
-                <p class="mb-4">Kami yang bertanda tangan dibawah ini :</p>
-
                 {{-- DATA ORANG TUA --}}
-                <div class="flex flex-wrap mb-2 items-center">
-                    <label class="w-full md:w-1/6 font-medium">Nama Suami</label>
-                    <div class="w-full md:w-5/6">
-                        <input type="text" class="w-full border border-gray-300 rounded-md p-2">
+                <form method="POST" action="{{ route('guest.layanan.pindah.store') }}">
+                    @csrf
+
+                    {{-- Alert --}}
+                    @if(session('success'))
+                    <div class="mb-4 p-3 rounded bg-green-100 text-green-800">
+                        {{ session('success') }}
                     </div>
-                </div>
+                    @endif
 
-                <div class="flex flex-wrap mb-2 items-center">
-                    <label class="w-full md:w-1/6 font-medium">Nama Istri</label>
-                    <div class="w-full md:w-5/6">
-                        <input type="text" class="w-full border border-gray-300 rounded-md p-2">
+                    @if($errors->any())
+                    <div class="mb-4 p-3 rounded bg-red-50 border border-red-200">
+                        <strong class="text-red-700">Terjadi kesalahan:</strong>
+                        <ul class="mt-2 list-disc list-inside text-red-600">
+                            @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
                     </div>
-                </div>
+                    @endif
 
-                <div class="flex flex-wrap mb-2 items-center">
-                    <label class="w-full md:w-1/6 font-medium">HP</label>
-                    <div class="w-full md:w-5/6">
-                        <input type="text" class="w-full border border-gray-300 rounded-md p-2">
-                    </div>
-                </div>
+                    <p class="mb-4 font-medium">
+                        Kami yang bertanda tangan di bawah ini:
+                    </p>
 
-                <div class="flex flex-wrap mb-2 items-center">
-                    <label class="w-full md:w-1/6 font-medium">Email</label>
-                    <div class="w-full md:w-5/6">
-                        <input type="email" class="w-full border border-gray-300 rounded-md p-2">
-                    </div>
-                </div>
-
-                <div class="flex flex-wrap mb-2 items-center">
-                    <label class="w-full md:w-1/6 font-medium">Wijk</label>
-                    <div class="w-full md:w-5/6">
-                        <select class="block w-full border border-gray-300 rounded-md p-2">
-                            <option>-</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="flex flex-wrap mb-3 items-start">
-                    <label class="w-full md:w-1/6 font-medium">Alamat</label>
-                    <div class="w-full md:w-5/6">
-                        <textarea class="w-full border border-gray-300 rounded-md p-2"></textarea>
-                    </div>
-                </div>
-
-                {{-- Keterangan --}}
-
-                {{-- DATA ANAK --}}
-                <div id="children-section">
-                    <div class="bg-blue-100 border border-blue-200 text-blue-800 p-3 rounded-md mb-3">
-                        Data Anak yang akan menerima Sakramen Baptisan Kudus
+                    {{-- Nomor Keluarga --}}
+                    <div class="flex flex-wrap mb-2 items-center">
+                        <label class="w-full md:w-1/6 font-medium">Nomor Keluarga</label>
+                        <div class="w-full md:w-5/6">
+                            <input type="text" name="nomor_kk" class="w-full border border-gray-300 rounded-md p-2"
+                                value="{{ old('nomor_kk') }}">
+                        </div>
                     </div>
 
-                    <div id="children-list">
-                        @if(old('children'))
-                        @foreach(old('children') as $idx => $child)
-                        <div class="child-block border border-gray-200 p-3 mb-3 rounded" data-child-index="{{ $idx }}">
-                            <div class="flex justify-between items-center mb-2">
-                                <strong>{{ $loop->index + 1 }}.</strong>
-                                <button type="button"
-                                    class="remove-child-btn text-sm text-red-600 hover:underline">Hapus</button>
-                            </div>
+                    {{-- Nama Suami --}}
+                    <div class="flex flex-wrap mb-2 items-center">
+                        <label class="w-full md:w-1/6 font-medium">Nama Suami</label>
+                        <div class="w-full md:w-5/6">
+                            <input type="text" name="nama_suami" class="w-full border border-gray-300 rounded-md p-2"
+                                value="{{ old('nama_suami') }}">
+                        </div>
+                    </div>
 
-                            <div class="flex flex-wrap mb-2 items-center">
-                                <label class="w-full md:w-1/6 font-medium">Nama Anak</label>
-                                <div class="w-full md:w-5/6">
-                                    <input data-field="name" name="children[{{ $idx }}][name]"
-                                        value="{{ $child['name'] ?? '' }}" type="text"
-                                        class="w-full border border-gray-300 rounded-md p-2">
+                    {{-- Nama Istri --}}
+                    <div class="flex flex-wrap mb-2 items-center">
+                        <label class="w-full md:w-1/6 font-medium">Nama Istri</label>
+                        <div class="w-full md:w-5/6">
+                            <input type="text" name="nama_istri" class="w-full border border-gray-300 rounded-md p-2"
+                                value="{{ old('nama_istri') }}">
+                        </div>
+                    </div>
+
+                    {{-- HP --}}
+                    <div class="flex flex-wrap mb-2 items-center">
+                        <label class="w-full md:w-1/6 font-medium">HP</label>
+                        <div class="w-full md:w-5/6">
+                            <input type="text" name="no_hp" class="w-full border border-gray-300 rounded-md p-2"
+                                value="{{ old('no_hp') }}">
+                        </div>
+                    </div>
+
+                    {{-- Email --}}
+                    <div class="flex flex-wrap mb-2 items-center">
+                        <label class="w-full md:w-1/6 font-medium">Email</label>
+                        <div class="w-full md:w-5/6">
+                            <input type="email" name="email" class="w-full border border-gray-300 rounded-md p-2"
+                                value="{{ old('email') }}">
+                        </div>
+                    </div>
+
+                    {{-- Wijk --}}
+                    <div class="flex flex-wrap mb-2 items-center">
+                        <label class="w-full md:w-1/6 font-medium">Wijk</label>
+                        <div class="w-full md:w-5/6">
+                            <select name="wijk_id" class="w-full border border-gray-300 rounded-md p-2">
+                                <option value="">- Pilih Wijk -</option>
+                                @foreach($wijken as $wijk)
+                                <option value="{{ $wijk->id }}" {{ old('wijk_id')==$wijk->id ? 'selected' : '' }}>
+                                    {{ $wijk->nama_wijk }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Alamat --}}
+                    <div class="flex flex-wrap mb-3 items-start">
+                        <label class="w-full md:w-1/6 font-medium">Alamat</label>
+                        <div class="w-full md:w-5/6">
+                            <textarea name="alamat" rows="3"
+                                class="w-full border border-gray-300 rounded-md p-2">{{ old('alamat') }}</textarea>
+                        </div>
+                    </div>
+
+                    {{-- Keterangan --}}
+                    <div class="flex flex-wrap mb-4 items-start">
+                        <label class="w-full md:w-1/6 font-medium">Keterangan</label>
+                        <div class="w-full md:w-5/6">
+                            <textarea name="keterangan" rows="3"
+                                class="w-full border border-gray-300 rounded-md p-2">{{ old('keterangan') }}</textarea>
+                        </div>
+                    </div>
+
+                    {{-- ================= DATA ANAK ================= --}}
+                    <h5 class="mt-4 mb-3 border-b pb-2 flex items-center justify-between">
+                        <span class="font-medium">Daftar Anggota Keluarga</span>
+                        <button type="button" class="ml-3 px-3 py-1 bg-green-600 text-white rounded-md text-sm"
+                            onclick="addAnak()">+ Anak</button>
+                    </h5>
+
+                    <div id="anak-wrapper">
+
+                        <div class="anak-item border rounded p-3 mb-3 bg-white text-sm" data-index="0">
+                            <div class="flex items-center justify-between mb-2">
+                                <strong class="anak-number text-base">1. Anak</strong>
+                                <div class="flex items-center gap-3">
+                                    <button type="button" class="px-2 py-1 bg-red-500 text-white rounded text-sm"
+                                        onclick="removeAnak(this)">Hapus</button>
                                 </div>
                             </div>
 
-                            <div class="flex flex-wrap mb-2 items-center">
-                                <label class="w-full md:w-1/6 font-medium">Tgl. Lahir</label>
-                                <div class="w-full md:w-1/3">
-                                    <input data-field="dob" name="children[{{ $idx }}][dob]"
-                                        value="{{ $child['dob'] ?? '' }}" type="date"
-                                        class="w-full border border-gray-300 rounded-md p-2">
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Nama Anak</label>
+                                    <input type="text" name="anak[0][nama]" class="w-full border rounded p-2"
+                                        placeholder="Nama Anak">
                                 </div>
 
-                                <label class="w-full md:w-1/6 font-medium">Jenis Kelamin</label>
-                                <div class="w-full md:w-1/3">
-                                    <select data-field="gender" name="children[{{ $idx }}][gender]"
-                                        class="block w-full border border-gray-300 rounded-md p-2">
-                                        <option value="Laki-laki" {{ (isset($child['gender']) &&
-                                            $child['gender']=='Laki-laki' ) ? 'selected' : '' }}>Laki-laki</option>
-                                        <option value="Perempuan" {{ (isset($child['gender']) &&
-                                            $child['gender']=='Perempuan' ) ? 'selected' : '' }}>Perempuan</option>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Tanggal Lahir</label>
+                                    <input type="date" name="anak[0][tanggal_lahir]" class="w-full border rounded p-2">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Jenis Kelamin</label>
+                                    <select name="anak[0][jenis_kelamin]" class="w-full border rounded p-2">
+                                        <option value="">Jenis Kelamin</option>
+                                        <option value="L">Laki-laki</option>
+                                        <option value="P">Perempuan</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Tempat Lahir</label>
+                                    <input type="text" name="anak[0][tempat_lahir]" class="w-full border rounded p-2"
+                                        placeholder="Tempat Lahir">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Hubungan</label>
+                                    <select name="anak[0][hubungan]" class="w-full border rounded p-2">
+                                        <option value="anak">Anak</option>
+                                        <option value="tanggungan">Tanggungan</option>
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="flex flex-wrap">
-                                <label class="w-full md:w-1/6 font-medium">Tempat Lahir</label>
-                                <div class="w-full md:w-5/6">
-                                    <input data-field="place" name="children[{{ $idx }}][place]"
-                                        value="{{ $child['place'] ?? '' }}" type="text"
-                                        class="w-full border border-gray-300 rounded-md p-2">
-                                </div>
-                            </div>
                         </div>
-                        @endforeach
-                        @else
-                        <div class="child-block border border-gray-200 p-3 mb-3 rounded" data-child-index="0">
-                            <div class="flex justify-between items-center mb-2">
-                                <strong>1.</strong>
-                                <button type="button"
-                                    class="remove-child-btn text-sm text-red-600 hover:underline">Hapus</button>
-                            </div>
 
-                            <div class="flex flex-wrap mb-2 items-center">
-                                <label class="w-full md:w-1/6 font-medium">Nama Anak</label>
-                                <div class="w-full md:w-5/6">
-                                    <input data-field="name" name="children[0][name]" type="text"
-                                        class="w-full border border-gray-300 rounded-md p-2">
-                                </div>
-                            </div>
-
-                            <div class="flex flex-wrap mb-2 items-center">
-                                <label class="w-full md:w-1/6 font-medium">Tgl. Lahir</label>
-                                <div class="w-full md:w-1/3">
-                                    <input data-field="dob" name="children[0][dob]" type="date"
-                                        class="w-full border border-gray-300 rounded-md p-2">
-                                </div>
-
-                                <label class="w-full md:w-1/6 font-medium">Jenis Kelamin</label>
-                                <div class="w-full md:w-1/3">
-                                    <select data-field="gender" name="children[0][gender]"
-                                        class="block w-full border border-gray-300 rounded-md p-2">
-                                        <option value="Laki-laki">Laki-laki</option>
-                                        <option value="Perempuan">Perempuan</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-wrap">
-                                <label class="w-full md:w-1/6 font-medium">Tempat Lahir</label>
-                                <div class="w-full md:w-5/6">
-                                    <input data-field="place" name="children[0][place]" type="text"
-                                        class="w-full border border-gray-300 rounded-md p-2">
-                                </div>
-                            </div>
-                        </div>
-                        @endif
                     </div>
 
-                    <div class="mt-2">
-                        <button type="button" id="add-child-btn"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded">Tambah Anak</button>
+                    {{-- TOMBOL --}}
+                    <div class="flex justify-end gap-3 mt-4">
+                        <a href="#" class="px-4 py-2 bg-gray-300 text-gray-800 rounded">KEMBALI</a>
+                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">KIRIM</button>
                     </div>
 
-                    <template id="child-template">
-                        <div class="child-block border border-gray-200 p-3 mb-3 rounded" data-child-index="__INDEX__">
-                            <div class="flex justify-between items-center mb-2">
-                                <strong>__NUM__.</strong>
-                                <button type="button"
-                                    class="remove-child-btn text-sm text-red-600 hover:underline">Hapus</button>
-                            </div>
-
-                            <div class="flex flex-wrap mb-2 items-center">
-                                <label class="w-full md:w-1/6 font-medium">Nama Anak</label>
-                                <div class="w-full md:w-5/6">
-                                    <input data-field="name" name="children[__INDEX__][name]" type="text"
-                                        class="w-full border border-gray-300 rounded-md p-2">
-                                </div>
-                            </div>
-
-                            <div class="flex flex-wrap mb-2 items-center">
-                                <label class="w-full md:w-1/6 font-medium">Tgl. Lahir</label>
-                                <div class="w-full md:w-1/3">
-                                    <input data-field="dob" name="children[__INDEX__][dob]" type="date"
-                                        class="w-full border border-gray-300 rounded-md p-2">
-                                </div>
-
-                                <label class="w-full md:w-1/6 font-medium">Jenis Kelamin</label>
-                                <div class="w-full md:w-1/3">
-                                    <select data-field="gender" name="children[__INDEX__][gender]"
-                                        class="block w-full border border-gray-300 rounded-md p-2">
-                                        <option value="Laki-laki">Laki-laki</option>
-                                        <option value="Perempuan">Perempuan</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-wrap">
-                                <label class="w-full md:w-1/6 font-medium">Tempat Lahir</label>
-                                <div class="w-full md:w-5/6">
-                                    <input data-field="place" name="children[__INDEX__][place]" type="text"
-                                        class="w-full border border-gray-300 rounded-md p-2">
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            const list = document.getElementById('children-list');
-                            const addBtn = document.getElementById('add-child-btn');
-                            const template = document.getElementById('child-template').innerHTML;
-
-                            function reindex() {
-                                const blocks = list.querySelectorAll('.child-block');
-                                blocks.forEach((block, i) => {
-                                    block.setAttribute('data-child-index', i);
-                                    // update displayed number
-                                    const strong = block.querySelector('strong');
-                                    if (strong) strong.textContent = (i + 1) + '.';
-                                    // update input names
-                                    block.querySelectorAll('[data-field]').forEach(input => {
-                                        const field = input.getAttribute('data-field');
-                                        input.name = `children[${i}][${field}]`;
-                                    });
-                                });
-                                updateRemoveButtons();
-                            }
-
-                            function updateRemoveButtons() {
-                                const blocks = list.querySelectorAll('.child-block');
-                                const removeBtns = list.querySelectorAll('.remove-child-btn');
-                                removeBtns.forEach(btn => btn.disabled = blocks.length <= 1);
-                            }
-
-                            function removeHandler(e) {
-                                const block = e.currentTarget.closest('.child-block');
-                                if (!block) return;
-                                block.remove();
-                                reindex();
-                            }
-
-                            // attach handlers to existing remove buttons
-                            list.querySelectorAll('.remove-child-btn').forEach(b => b.addEventListener('click', removeHandler));
-
-                            addBtn.addEventListener('click', function () {
-                                const idx = list.querySelectorAll('.child-block').length;
-                                let html = template.replace(/__INDEX__/g, idx).replace(/__NUM__/g, idx + 1);
-                                const temp = document.createElement('div');
-                                temp.innerHTML = html;
-                                const node = temp.firstElementChild;
-                                list.appendChild(node);
-                                // attach remove handler for new node
-                                node.querySelectorAll('.remove-child-btn').forEach(b => b.addEventListener('click', removeHandler));
-                                reindex();
-                            });
-
-                            updateRemoveButtons();
-                        });
-                    </script>
-                </div>
-
- 
-                {{-- TOMBOL --}}
-                <div class="flex justify-end gap-3 mt-4">
-                    <a href="#" class="px-4 py-2 bg-gray-300 text-gray-800 rounded">KEMBALI</a>
-                    <button class="px-4 py-2 bg-green-600 text-white rounded">KIRIM</button>
-                </div>
+                </form>
 
             </div>
         </div>
+    </div>
+    @include('pages.guest.partialsGuest.footer')
 
-        @include('pages.guest.partialsGuest.footer')
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+    function elClosest(el, selector){ return el.closest ? el.closest(selector) : null }
+
+    window.addAnak = function(){
+        const wrapper = document.getElementById('anak-wrapper');
+        const items = wrapper.querySelectorAll('.anak-item');
+        const template = items[0];
+        const clone = template.cloneNode(true);
+
+        // Clear values in cloned inputs
+        clone.querySelectorAll('input, select, textarea').forEach(function(inp){
+            if(inp.type === 'checkbox' || inp.type === 'radio') inp.checked = false;
+            else if(inp.type === 'file') inp.value = '';
+            else inp.value = '';
+        });
+
+        wrapper.appendChild(clone);
+        refreshIndices();
+    }
+
+    window.removeAnak = function(btn){
+        const item = elClosest(btn, '.anak-item');
+        if(!item) return;
+        item.remove();
+        refreshIndices();
+    }
+
+    // Baptis/Sidi removed — no toggle functions needed
+
+    function refreshIndices(){
+        const wrapper = document.getElementById('anak-wrapper');
+        const items = Array.from(wrapper.querySelectorAll('.anak-item'));
+
+        items.forEach(function(item, i){
+            item.setAttribute('data-index', i);
+            const num = item.querySelector('.anak-number');
+            if(num) num.textContent = (i+1) + '. Anak';
+
+            // Update names for inputs that belong to anak[index][...]
+            item.querySelectorAll('[name]').forEach(function(el){
+                const name = el.getAttribute('name');
+                if(!name) return;
+                if(/anak\[\d+\]/.test(name)){
+                    const newName = name.replace(/anak\[\d+\]/, 'anak['+i+']');
+                    el.setAttribute('name', newName);
+                }
+                // update kepala radio value if present
+                if(el.type === 'radio' && el.name === 'kepala_anak'){
+                    el.value = i;
+                }
+            });
+        });
+
+        // kepala radio removed — no visibility or selection handling
+    }
+
+    // initial setup
+    refreshIndices();
+});
+    </script>
 
 </body>
 
