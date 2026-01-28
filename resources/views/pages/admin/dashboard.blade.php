@@ -2,23 +2,6 @@
 @section('title', 'Dashboard')
 
 @section('content')
-@php
-$total_wijks = \App\Models\Wijk::count();
-$total_penatua = \App\Models\Penatua::count();
-$total_pendeta = \App\Models\Pendeta::count();
-
-$jemaats_in_wijk_count = \Illuminate\Support\Facades\DB::table('jemaats as j')
-->join('keluargas as k','j.keluarga_id','=','k.id')
-->whereNotNull('k.wijk_id')
-->count();
-
-$total_ibadah = class_exists(\App\Models\Ibadah::class) ? \App\Models\Ibadah::count() : 0;
-$total_berita = class_exists(\App\Models\Berita::class) ? \App\Models\Berita::count() : 0;
-$total_users = \App\Models\User::count();
-
-$recent_jemaats = \App\Models\Jemaat::with('keluarga.wijk')->orderBy('created_at','desc')->limit(5)->get();
-$recent_keluargas = \App\Models\Keluarga::with('wijk','jemaats')->orderBy('created_at','desc')->limit(5)->get();
-@endphp
 
 <div class="row mb-4">
     <div class="col-12">
@@ -86,34 +69,6 @@ $recent_keluargas = \App\Models\Keluarga::with('wijk','jemaats')->orderBy('creat
 
 </div>
 
-{{-- Diagram Lingkaran: Perbandingan Keluarga per Wijk --}}
-
-@php
-$wijk_rows = \Illuminate\Support\Facades\DB::table('wijks as w')
-->leftJoin('keluargas as k','k.wijk_id','w.id')
-->select('w.id','w.nama_wijk', \Illuminate\Support\Facades\DB::raw('COUNT(k.id) as total'))
-->groupBy('w.id','w.nama_wijk')
-->orderBy('w.nama_wijk')
-->get();
-$wijk_labels = $wijk_rows->pluck('nama_wijk')->map(fn($v)=> $v ?? '—')->toArray();
-$wijk_keluarga_counts = $wijk_rows->pluck('total')->toArray();
-@endphp
-
-@php
-// Gender distribution for jemaat (safe fallback if column missing)
-if(\Illuminate\Support\Facades\Schema::hasColumn('jemaats','jenis_kelamin')){
-$gender_rows = \Illuminate\Support\Facades\DB::table('jemaats')
-->select('jenis_kelamin', \Illuminate\Support\Facades\DB::raw('COUNT(*) as total'))
-->groupBy('jenis_kelamin')
-->get();
-$gender_labels = $gender_rows->pluck('jenis_kelamin')->map(fn($v)=> $v ?? 'Unknown')->toArray();
-$gender_counts = $gender_rows->pluck('total')->toArray();
-} else {
-$gender_labels = ['Laki-laki','Perempuan'];
-$gender_counts = [0,0];
-}
-@endphp
-
 <div class="row mt-4">
     {{-- Perbandingan Keluarga per Wijk (kiri) --}}
     <div class="col-md-6 mb-4">
@@ -170,68 +125,7 @@ $gender_counts = [0,0];
         max-height: 300px;
     }
 </style>
-<script>
-    document.addEventListener('DOMContentLoaded', function(){
-    try{
-        if(typeof Chart === 'undefined'){
-            console.warn('Chart.js not loaded');
-            return;
-        }
 
-        const buildColors = (n)=>{
-            const palette = ['#4e73df','#1cc88a','#36b9cc','#f6c23e','#e74a3b','#6f42c1','#20c997','#fd7e14','#6610f2'];
-            return Array.from({length:n}, (_,i)=> palette[i % palette.length]);
-        };
-
-        // Keluarga per Wijk
-        const el = document.getElementById('keluargaWijkChart');
-        if(el){
-            const labels = @json($wijk_labels);
-            const data = @json($wijk_keluarga_counts);
-            const bg = buildColors(labels.length || data.length || 1);
-            try{
-                new Chart(el.getContext('2d'), {
-                    type: 'pie',
-                    data: { labels: labels, datasets: [{ data: data, backgroundColor: bg }] },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15 } } }
-                    }
-                });
-            }catch(e){ console.error('Failed to render keluargaWijkChart', e); }
-        }
-
-        // Gender chart
-        const genderEl = document.getElementById('genderChart');
-        if(genderEl){
-            let gLabels = @json($gender_labels);
-            let gData = @json($gender_counts);
-            console.debug('gender labels:', gLabels, 'counts:', gData, 'genderEl size:', genderEl.clientWidth, genderEl.clientHeight);
-            // ensure numeric counts
-            gData = (gData || []).map(v => Number(v) || 0);
-            const total = gData.reduce((s,v)=>s+v, 0);
-            let gBg;
-            if(total === 0){
-                // render a neutral placeholder so chart area is visible
-                gLabels = ['No Data'];
-                gData = [1];
-                gBg = ['#e9ecef'];
-            } else {
-                gBg = buildColors(Math.max(gLabels.length, gData.length, 1));
-            }
-            try{
-                new Chart(genderEl.getContext('2d'), {
-                    type: 'doughnut',
-                    data: { labels: gLabels, datasets: [{ data: gData, backgroundColor: gBg }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-                });
-            }catch(e){ console.error('Failed to render genderChart', e); }
-        }
-
-    }catch(err){ console.error('Chart init error', err); }
-});
-</script>
 @endpush
 
 @endsection

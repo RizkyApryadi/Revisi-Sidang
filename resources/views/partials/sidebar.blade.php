@@ -36,7 +36,7 @@
                                         </li>
 
                                         <!-- PELAYANAN (Dropdown) -->
-                                        <li class="{{ request()->routeIs('admin.pelayanan.*') ? 'active' : '' }}">
+                                        {{-- <li class="{{ request()->routeIs('admin.pelayanan.*') ? 'active' : '' }}">
                                                 <a href="#" class="nav-link has-dropdown"><i
                                                                 class="fas fa-hands-helping"></i>
                                                         <span>Pelayanan Gereja</span></a>
@@ -73,7 +73,7 @@
                                                                         Pindah</a>
                                                         </li>
                                                 </ul>
-                                        </li>
+                                        </li> --}}
                                 </ul>
                         </li>
 
@@ -89,7 +89,13 @@
                                                         <i class="fas fa-map-marker-alt"></i> <span>WIJK</span>
                                                 </a>
                                         </li>
-                                        
+
+                                        <li class="{{ request()->routeIs('admin.jemaat') ? 'active' : '' }}">
+                                                <a class="nav-link" href="{{ route('admin.jemaat') }}">
+                                                        <i class="fas fa-users"></i> <span>Jemaat</span>
+                                                </a>
+                                        </li>
+
                                         <li class="{{ request()->routeIs('admin.penatua') ? 'active' : '' }}">
                                                 <a class="nav-link" href="{{ route('admin.penatua') }}">
                                                         <i class="fas fa-user-friends"></i> <span>Penatua</span>
@@ -102,11 +108,6 @@
                                                 </a>
                                         </li>
 
-                                        <li class="{{ request()->routeIs('admin.jemaat') ? 'active' : '' }}">
-                                                <a class="nav-link" href="{{ route('admin.jemaat') }}">
-                                                        <i class="fas fa-users"></i> <span>Jemaat</span>
-                                                </a>
-                                        </li>
 
                                         <li class="{{ request()->routeIs('admin.ibadah') ? 'active' : '' }}">
                                                 <a class="nav-link" href="{{ route('admin.ibadah') }}">
@@ -133,7 +134,7 @@
                                         </li>
 
                                         <li class="{{ request()->routeIs('admin.user') ? 'active' : '' }}">
-                                                <a class="nav-link" href="{{ route('admin.user') }}">
+                                                <a class="nav-link" href="#">
                                                         <i class="fas fa-cog"></i> <span>User</span>
                                                 </a>
                                         </li>
@@ -186,27 +187,32 @@
                                         </li>
 
                                         <!-- Pelayanan links for Penatua -->
-                                        <li class="{{ request()->routeIs('penatua.pelayanan.baptisan') ? 'active' : '' }}">
+                                        <li
+                                                class="{{ request()->routeIs('penatua.pelayanan.baptisan') ? 'active' : '' }}">
                                                 <a class="nav-link" href="{{ route('penatua.pelayanan.baptisan') }}">
                                                         <i class="fas fa-tint"></i> <span>Baptisan</span>
                                                 </a>
                                         </li>
-                                        <li class="{{ request()->routeIs('penatua.pelayanan.katekisasi') ? 'active' : '' }}">
+                                        <li
+                                                class="{{ request()->routeIs('penatua.pelayanan.katekisasi') ? 'active' : '' }}">
                                                 <a class="nav-link" href="{{ route('penatua.pelayanan.katekisasi') }}">
                                                         <i class="fas fa-book"></i> <span>Katekisasi</span>
                                                 </a>
                                         </li>
-                                        <li class="{{ request()->routeIs('penatua.pelayanan.kedukaan') ? 'active' : '' }}">
+                                        <li
+                                                class="{{ request()->routeIs('penatua.pelayanan.kedukaan') ? 'active' : '' }}">
                                                 <a class="nav-link" href="{{ route('penatua.pelayanan.kedukaan') }}">
                                                         <i class="fas fa-cross"></i> <span>Kedukaan</span>
                                                 </a>
                                         </li>
-                                        <li class="{{ request()->routeIs('penatua.pelayanan.pernikahan') ? 'active' : '' }}">
+                                        <li
+                                                class="{{ request()->routeIs('penatua.pelayanan.pernikahan') ? 'active' : '' }}">
                                                 <a class="nav-link" href="{{ route('penatua.pelayanan.pernikahan') }}">
                                                         <i class="fas fa-heart"></i> <span>Pernikahan</span>
                                                 </a>
                                         </li>
-                                        <li class="{{ request()->routeIs('penatua.pelayanan.pindah') ? 'active' : '' }}">
+                                        <li
+                                                class="{{ request()->routeIs('penatua.pelayanan.pindah') ? 'active' : '' }}">
                                                 <a class="nav-link" href="{{ route('penatua.pelayanan.pindah') }}">
                                                         <i class="fas fa-sign-out-alt"></i> <span>Pindah</span>
                                                 </a>

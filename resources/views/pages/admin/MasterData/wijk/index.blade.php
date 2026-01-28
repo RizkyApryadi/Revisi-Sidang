@@ -3,6 +3,14 @@
 
 @section('content')
 
+{{-- ===== FIX BACKDROP MODAL (LEBIH GELAP, TIDAK MERUSAK MODAL) ===== --}}
+<style>
+    .modal-backdrop.show {
+        opacity: 0.8 !important;
+        /* default bootstrap: 0.5 */
+    }
+</style>
+
 <div class="row">
     <!-- Total WIJK -->
     <div class="col-lg-4 col-md-6 col-12">
@@ -27,7 +35,6 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <h4>Data WIJK HKBP Soposurung</h4>
 
-        <!-- Button Tambah -->
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahWIJK">
             <i class="fas fa-plus"></i> Tambah WIJK
         </button>
@@ -41,86 +48,36 @@
                         <th>No</th>
                         <th>Nama WIJK</th>
                         <th>Keterangan</th>
-                        <th>Penatua</th>
-                        <th>Jumlah KK</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {{-- data wijk --}}
                     @forelse($wijks as $index => $wijk)
                     <tr>
                         <td>{{ $index + 1 }}</td>
-                        <td>{{ $wijk->nama_wijk }}</td>
+                        <td>{{ $wijk->nama_wijk ?? '-' }}</td>
                         <td>{{ $wijk->keterangan ?? '-' }}</td>
-                        {{-- <td>{{ $wijk->penatuas->first()->nama_lengkap ?? '-' }}</td> --}}
-                        <td>-</td>
-                        <td>-</td>
-                        <td class="text-center">
-                            <div class="d-flex justify-content-center gap-2">
-                                <!-- Edit button -->
-                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                    data-bs-target="#editWijkModal-{{ $wijk->id }}" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </button>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-info" title="Lihat">
+                                <i class="fas fa-eye"></i>
+                            </a>
 
-                                <!-- Delete form -->
-                                <form action="{{ route('admin.wijk.destroy', $wijk->id) }}" method="POST"
-                                    onsubmit="return confirm('Hapus WIJK ini?');" style="display:inline-block">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
+                            <button type="button" class="btn btn-sm btn-warning ms-1 btn-edit" title="Ubah"
+                                data-id="{{ $wijk->id }}" data-nama="{{ $wijk->nama_wijk }}"
+                                data-keterangan="{{ $wijk->keterangan }}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+
+                            <button type="button" class="btn btn-sm btn-danger ms-1 btn-delete" title="Hapus"
+                                data-id="{{ $wijk->id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </td>
                     </tr>
-
-                    <!-- Edit Modal for Wijk -->
-                    <div class="modal fade" id="editWijkModal-{{ $wijk->id }}" tabindex="-1" role="dialog"
-                        aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Edit Data WIJK</h5>
-                                    <button type="button" class="close" data-bs-dismiss="modal">
-                                        <span>&times;</span>
-                                    </button>
-                                </div>
-
-                                <form id="formEditWijk-{{ $wijk->id }}"
-                                    action="{{ route('admin.wijk.update', $wijk->id) }}" method="POST">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="modal-body">
-                                        <div class="form-group">
-                                            <label>Nama WIJK</label>
-                                            <input type="text" name="nama_wijk" class="form-control"
-                                                value="{{ old('nama_wijk', $wijk->nama_wijk) }}">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Deskripsi WIJK</label>
-                                            <textarea name="keterangan" class="form-control"
-                                                rows="3">{{ old('keterangan', $wijk->keterangan) }}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Batal</button>
-                                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
-                                            Simpan</button>
-                                    </div>
-                                </form>
-
-                            </div>
-                        </div>
-                    </div>
                     @empty
                     <tr>
-                        <td colspan="6" class="text-center">Tidak ada data WIJK.</td>
+                        <td colspan="4" class="text-center">Belum ada data WIJK.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -130,9 +87,8 @@
 </div>
 
 <!-- Modal Tambah WIJK -->
-<div class="modal fade" id="modalTambahWIJK" tabindex="-1" role="dialog" aria-labelledby="modalTambahWIJKLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="modalTambahWIJK" tabindex="-1" aria-labelledby="modalTambahWIJKLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document"> {{-- JANGAN centered --}}
         <div class="modal-content">
 
             <div class="modal-header">
@@ -142,27 +98,27 @@
                 </button>
             </div>
 
-            <!-- Modal Body -->
             <div class="modal-body">
                 <form id="formTambahWijk" action="{{ route('admin.wijk.store') }}" method="POST">
                     @csrf
+
                     <div class="form-group">
                         <label>Nama WIJK</label>
-                        <input type="text" name="nama_wijk" class="form-control" placeholder="Contoh: WIJK V"
-                            value="{{ old('nama_wijk') }}" required>
+                        <input type="text" name="nama_wijk" class="form-control" placeholder="Contoh: WIJK V" required>
                     </div>
 
                     <div class="form-group">
                         <label>Deskripsi WIJK</label>
                         <textarea name="keterangan" class="form-control" rows="3"
-                            placeholder="Keterangan wilayah pelayanan WIJK">{{ old('keterangan') }}</textarea>
+                            placeholder="Keterangan wilayah pelayanan WIJK"></textarea>
                     </div>
                 </form>
             </div>
 
-            <!-- Modal Footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Batal
+                </button>
                 <button type="button" class="btn btn-primary"
                     onclick="document.getElementById('formTambahWijk').submit();">
                     <i class="fas fa-save"></i> Simpan
@@ -173,5 +129,89 @@
     </div>
 </div>
 
+<!-- Modal Edit WIJK -->
+<div class="modal fade" id="modalEditWIJK" tabindex="-1" aria-labelledby="modalEditWIJKLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditWIJKLabel">Ubah Data WIJK</h5>
+                <button type="button" class="close" data-bs-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="formEditWijk" action="" method="POST">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="form-group">
+                        <label>Nama WIJK</label>
+                        <input type="text" name="nama_wijk" class="form-control" placeholder="Contoh: WIJK V" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Deskripsi WIJK</label>
+                        <textarea name="keterangan" class="form-control" rows="3"
+                            placeholder="Keterangan wilayah pelayanan WIJK"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-primary"
+                    onclick="document.getElementById('formEditWijk').submit();">
+                    <i class="fas fa-save"></i> Simpan
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Hidden Delete Form -->
+<form id="formDeleteWijk" action="" method="POST" style="display:none;">
+    @csrf
+    @method('DELETE')
+</form>
+
+@push('script')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+            // Edit button opens modal and populates form
+            document.querySelectorAll('.btn-edit').forEach(function(btn){
+            btn.addEventListener('click', function(){
+                const id = this.dataset.id;
+                const nama = this.dataset.nama || '';
+                const keterangan = this.dataset.keterangan || '';
+
+                const form = document.getElementById('formEditWijk');
+                form.action = '/admin/wijk/' + id;
+                form.querySelector('input[name="nama_wijk"]').value = nama;
+                form.querySelector('textarea[name="keterangan"]').value = keterangan;
+
+                // remove any existing backdrops to avoid double overlay (makes modal too dark)
+                document.querySelectorAll('.modal-backdrop').forEach(function(el){ el.parentNode && el.parentNode.removeChild(el); });
+
+                const modalEl = document.getElementById('modalEditWIJK');
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            });
+            });
+
+            // Delete button confirmation
+            document.querySelectorAll('.btn-delete').forEach(function(btn){
+                btn.addEventListener('click', function(){
+                    const id = this.dataset.id;
+                    if (!confirm('Yakin ingin menghapus WIJK ini?')) return;
+                    const form = document.getElementById('formDeleteWijk');
+                    form.action = '/admin/wijk/' + id;
+                    form.submit();
+                });
+            });
+        });
+</script>
+@endpush
 
 @endsection
