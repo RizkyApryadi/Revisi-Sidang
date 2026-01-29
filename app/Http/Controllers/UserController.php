@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Penatua;
 use App\Models\Pendeta;
+// removed Jemaat import; not needed for user creation here
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -18,18 +19,68 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'role' => ['required', 'in:penatua,pendeta'],
+            'role' => ['nullable', 'in:penatua,pendeta'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'source_type' => ['nullable', 'in:penatua,pendeta'],
+            'person_id' => ['nullable', 'integer'],
         ]);
 
-        User::create([
-            'name' => $validated['name'],
+        // Determine role: if a source_type is selected, role is derived from it.
+        $role = $validated['role'] ?? null;
+        if (!empty($validated['source_type'])) {
+            $role = $validated['source_type'];
+        }
+
+        // Compute a name if not provided: use related jemaat name when available
+        $name = $validated['name'] ?? null;
+        if (empty($name) && !empty($validated['source_type']) && !empty($validated['person_id'])) {
+            if ($validated['source_type'] === 'penatua') {
+                $penatua = Penatua::with('jemaat')->find($validated['person_id']);
+                if ($penatua) {
+                    $name = $penatua->jemaat?->nama ?? ('Penatua ' . $penatua->id);
+                }
+            }
+
+            if ($validated['source_type'] === 'pendeta') {
+                $pendeta = Pendeta::with('jemaat')->find($validated['person_id']);
+                if ($pendeta) {
+                    $name = $pendeta->jemaat?->nama ?? ('Pendeta ' . $pendeta->id);
+                }
+            }
+        }
+
+        // fallback name
+        if (empty($name)) {
+            $name = explode('@', $validated['email'])[0];
+        }
+
+        $user = User::create([
+            'name' => $name,
             'email' => $validated['email'],
-            'role' => $validated['role'],
+            'role' => $role ?? 'penatua',
             'password' => Hash::make($validated['password']),
         ]);
+
+        // Attach user to the selected Penatua or Pendeta when provided
+        if (!empty($validated['source_type']) && !empty($validated['person_id'])) {
+            if ($validated['source_type'] === 'penatua') {
+                $penatua = Penatua::find($validated['person_id']);
+                if ($penatua) {
+                    $penatua->user_id = $user->id;
+                    $penatua->save();
+                }
+            }
+
+            if ($validated['source_type'] === 'pendeta') {
+                $pendeta = Pendeta::find($validated['person_id']);
+                if ($pendeta) {
+                    $pendeta->user_id = $user->id;
+                    $pendeta->save();
+                }
+            }
+        }
 
         return redirect()->route('admin.user')->with('success', 'User berhasil dibuat.');
     }
@@ -40,7 +91,24 @@ class UserController extends Controller
     public function index()
     {
         $users = User::orderBy('created_at', 'asc')->get();
-        return view('pages.admin.MasterData.user.index', compact('users'));
+        // Prepare lightweight lists (id, nama_lengkap, email) for the create-user modal
+        $penatuas = Penatua::with(['jemaat', 'user'])->get()->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'nama_lengkap' => $p->jemaat?->nama ?? null,
+                'email' => $p->user?->email ?? null,
+            ];
+        })->values();
+
+        $pendetas = Pendeta::with(['jemaat', 'user'])->get()->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'nama_lengkap' => $p->jemaat?->nama ?? null,
+                'email' => $p->user?->email ?? null,
+            ];
+        })->values();
+
+        return view('pages.admin.MasterData.user.index', compact('users', 'penatuas', 'pendetas'));
     }
 
     /**

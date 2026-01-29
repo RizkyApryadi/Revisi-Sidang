@@ -25,44 +25,25 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($beritas as $index => $berita)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $berita->tanggal ? $berita->tanggal->format('d-m-Y') : '-' }}</td>
-                            <td>{{ $berita->judul }}</td>
-                            <td>{{ Str::limit($berita->ringkasan, 100) }}</td>
-                            <td>
-                                @if($berita->file)
-                                <a href="{{ asset('storage/' . $berita->file) }}" target="_blank">Lihat</a>
-                                @else
-                                -
-                                @endif
-                            </td>
-                            <td class="text-center align-middle">
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <a href="{{ route('admin.berita.show', $berita->id) }}"
-                                        class="btn btn-info btn-sm mx-1" title="Lihat">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('admin.berita.edit', $berita->id) }}"
-                                        class="btn btn-warning btn-sm mx-1" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('admin.berita.destroy', $berita->id) }}" method="POST"
-                                        onsubmit="return confirm('Hapus data?')" class="m-0">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm mx-1" title="Hapus">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
+                        @forelse($beritas ?? [] as $idx => $b)
+                            <tr>
+                                <td>{{ $idx + 1 }}</td>
+                                <td>{{ $b->tanggal ? \Carbon\Carbon::parse($b->tanggal)->translatedFormat('j F Y') : '-' }}</td>
+                                <td>{{ $b->judul }}</td>
+                                <td>{{ \Illuminate\Support\Str::limit($b->ringkasan, 120) }}</td>
+                                <td>
+                                    @if(!empty($b->file))
+                                        <a href="{{ asset('storage/' . $b->file) }}" target="_blank" class="btn btn-sm btn-outline-primary">Unduh</a>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="text-center">-</td>
+                            </tr>
                         @empty
-                        <tr>
-                            <td colspan="6" class="text-center">Belum ada data berita.</td>
-                        </tr>
+                            <tr>
+                                <td colspan="6" class="text-center">Belum ada berita.</td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>

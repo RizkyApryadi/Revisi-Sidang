@@ -27,36 +27,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($wartas as $index => $w)
+                        @forelse($wartas ?? [] as $idx => $w)
                         <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td class="text-center">{{ $w->tanggal ? $w->tanggal->format('d-m-Y') : '' }}</td>
+                            <td>{{ $idx + 1 }}</td>
+                            <td>{{ $w->tanggal ? \Carbon\Carbon::parse($w->tanggal)->translatedFormat('j F Y') : '-' }}
+                            </td>
                             <td>{{ $w->nama_minggu }}</td>
-                            <td style="white-space: normal;">{{ $w->deskripsi }}</td>
-                            <td class="text-center" style="width:110px">
-                                <a href="{{ route('admin.ibadah.warta.show', $w->id) }}" class="btn btn-sm btn-outline-primary" title="Lihat">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                    <button type="button" class="btn btn-sm btn-outline-success btn-edit-warta" title="Edit"
-                                        data-id="{{ $w->id }}"
-                                        data-nama_minggu="{{ e($w->nama_minggu) }}"
-                                        data-tanggal="{{ $w->tanggal ? $w->tanggal->format('Y-m-d') : '' }}"
-                                        data-deskripsi='@json($w->deskripsi)'
-                                    >
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                <form action="{{ route('admin.ibadah.warta.destroy', $w->id) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus warta ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                            <td>{{ \Illuminate\Support\Str::limit($w->pengumuman, 120) }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary btn-edit-warta" data-id="{{ $w->id }}"
+                                    data-tanggal="{{ $w->tanggal }}" data-nama_minggu="{{ e($w->nama_minggu) }}"
+                                    data-deskripsi="{{ e($w->pengumuman) }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="text-center">Tidak ada warta jemaat.</td>
+                            <td colspan="5" class="text-center">Belum ada warta.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -65,29 +53,31 @@
         </div>
     </div>
 
-            <!-- Modal: PDF Text Viewer -->
-            <div class="modal fade" id="modalPdfTextView" tabindex="-1" aria-labelledby="modalPdfTextViewLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modalPdfTextViewLabel">Teks PDF</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <pre id="pdfTextContent" style="white-space:pre-wrap; word-wrap:break-word;">-</pre>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                        </div>
-                    </div>
+    <!-- Modal: PDF Text Viewer -->
+    <div class="modal fade" id="modalPdfTextView" tabindex="-1" aria-labelledby="modalPdfTextViewLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalPdfTextViewLabel">Teks PDF</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <pre id="pdfTextContent" style="white-space:pre-wrap; word-wrap:break-word;">-</pre>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
+        </div>
+    </div>
 
     {{-- ================= IBADAH ================= --}}
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="mb-0">Jadwal Ibadah</h4>
-            <button id="btnCreateIbadah" class="btn btn-primary btn-sm" type="button">
+            <button id="btnCreateIbadah" class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal"
+                data-bs-target="#modalCreateIbadah">
                 <i class="fas fa-plus"></i> Tambah Ibadah
             </button>
         </div>
@@ -104,69 +94,37 @@
                             <th>Tema</th>
                             <th>Ayat</th>
                             <th>File</th>
-                            <th>Teks</th>
                             <th style="width:8%">Aksi</th>
                         </tr>
                     </thead>
 
-                    <tbody>
-                        @forelse($ibadahs as $index => $item)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ optional($item->warta)->nama_minggu ?? '-' }}</td>
-                            <td>{{ optional($item->pendeta)->nama_lengkap ?? '-' }}</td>
-                            <td class="text-center">{{ $item->waktu }}</td>
-                            <td>{{ $item->tema }}</td>
-                            <td>{{ $item->ayat }}</td>
-                            <td>
-                                @if($item->file)
-                                <a href="{{ route('admin.ibadah.file', $item->id) }}" class="btn btn-sm btn-outline-primary" target="_blank">Lihat</a>
-                                @else
-                                -
-                                @endif
-                            </td>
-                            <td class="text-center" style="width:90px">
-                                @if($item->pdf_text)
-                                <button type="button" class="btn btn-sm btn-outline-secondary btn-show-pdf-text" data-pdf='@json($item->pdf_text)'>Lihat Teks</button>
-                                @else
-                                -
-                                @endif
-                            </td>
-                            <td class="text-center align-middle">
-                                <div class="d-flex justify-content-center">
-                                    @if($item->file)
-                                        <a href="{{ route('admin.ibadah.file', $item->id) }}" class="btn btn-sm btn-outline-primary mx-1" title="Lihat" target="_blank">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                    @else
-                                        <a href="{{ route('admin.ibadah.edit', $item->id) }}" class="btn btn-sm btn-outline-primary mx-1" title="Lihat">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                    @endif
 
-                                    <button type="button" class="btn btn-sm btn-outline-success btn-edit-ibadah mx-1" title="Edit"
-                                        data-id="{{ $item->id }}"
-                                        data-warta_id="{{ $item->warta_id }}"
-                                        data-pendeta_id="{{ $item->pendeta_id }}"
-                                        data-waktu="{{ $item->waktu }}"
-                                        data-tema="{{ e($item->tema) }}"
-                                        data-ayat="{{ e($item->ayat) }}"
-                                    >
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                        <form action="{{ route('admin.ibadah.destroy', $item->id) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus jadwal ibadah ini?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger mx-1" title="Hapus">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                </div>
+                    </tbody>
+                    <tbody>
+                        @forelse($ibadahs ?? [] as $idx => $i)
+                        <tr>
+                            <td>{{ $idx + 1 }}</td>
+                            <td>{{ $i->nama_minggu ?? '-' }}</td>
+                            <td>{{ $i->pendeta_name ?? ('Pendeta #' . ($i->pendeta_id ?? '-')) }}</td>
+                            <td>{{ $i->waktu ?? '-' }}</td>
+                            <td>{{ $i->tema ?? '-' }}</td>
+                            <td>{{ $i->ayat ?? '-' }}</td>
+                            <td>
+                                @if(!empty($i->tata_ibadah))
+                                <a href="{{ asset('storage/' . $i->tata_ibadah) }}" target="_blank" class="btn btn-sm btn-secondary">Lihat</a>
+                                @else
+                                -
+                                @endif
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary btn-edit-ibadah" data-id="{{ $i->id }}" data-warta_id="{{ $i->warta_id }}" data-pendeta_id="{{ $i->pendeta_id }}" data-waktu="{{ $i->waktu }}" data-tema="{{ e($i->tema) }}" data-ayat="{{ e($i->ayat) }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center">Tidak ada jadwal ibadah.</td>
+                            <td colspan="9" class="text-center">Belum ada jadwal ibadah.</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -196,8 +154,9 @@
                                     <label>Warta / Nama Minggu</label>
                                     <select name="warta_id" class="form-control" required>
                                         <option value="">-- Pilih Warta --</option>
-                                        @foreach($wartas as $w)
-                                        <option value="{{ $w->id }}">{{ $w->tanggal ? $w->tanggal->format('d-m-Y') . ' - ' : '' }}{{ $w->nama_minggu }}</option>
+                                        @foreach($wartas ?? [] as $w)
+                                        <option value="{{ $w->id }}">{{ $w->nama_minggu }} — {{ $w->tanggal ?
+                                            \Carbon\Carbon::parse($w->tanggal)->format('j M Y') : '' }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -208,9 +167,20 @@
                                     <label>Pendeta</label>
                                     <select name="pendeta_id" class="form-control" required>
                                         <option value="">-- Pilih Pendeta --</option>
+                                        @if(!empty($pendetas) && count($pendetas))
                                         @foreach($pendetas as $p)
-                                        <option value="{{ $p->id }}">{{ $p->nama_lengkap }}</option>
+                                        <option value="{{ $p->id }}">{{ $p->name ?? $p->nama ?? 'Pendeta #'.$p->id }}
+                                        </option>
                                         @endforeach
+                                        @else
+                                        @php
+                                        $fallback = \App\Models\User::where('role', 'pendeta')->get();
+                                        @endphp
+                                        @foreach($fallback as $p)
+                                        <option value="{{ $p->id }}">{{ $p->name ?? $p->email ?? 'Pendeta #'.$p->id }}
+                                        </option>
+                                        @endforeach
+                                        @endif
                                     </select>
                                 </div>
                             </div>
@@ -225,26 +195,40 @@
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label>Tema</label>
-                                    <input type="text" name="tema" class="form-control" placeholder="Contoh: Terang Kristus" required>
+                                    <input type="text" name="tema" class="form-control"
+                                        placeholder="Contoh: Terang Kristus" required>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Ayat Alkitab</label>
-                                    <input type="text" name="ayat" class="form-control" placeholder="Contoh: Matius 2:1–12">
+                                    <input type="text" name="ayat" class="form-control"
+                                        placeholder="Contoh: Matius 2:1–12">
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>File Liturgi (PDF)</label>
-                                    <input type="file" name="file" id="ibadahFileInput" class="form-control" accept="application/pdf">
-                                    <small class="text-muted">PDF (opsional). Jika PDF diupload, teks PDF akan otomatis terisi ke kolom bawah.</small>
+                                    <input type="file" name="file" id="ibadahFileInput" class="form-control"
+                                        accept="application/pdf">
+                                    <small class="text-muted">PDF (opsional). Jika PDF diupload, teks PDF akan otomatis
+                                        terisi ke kolom bawah.</small>
                                 </div>
                             </div>
 
-                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Foto (opsional)</label>
+                                    <input type="file" name="photo" id="ibadahPhotoInput" class="form-control"
+                                        accept="image/*">
+                                    <small class="text-muted">Gambar (JPG/PNG). Opsional — akan ditampilkan pada halaman
+                                        jadwal.</small>
+                                </div>
+                            </div>
+
+
 
                         </div>
 
@@ -262,8 +246,11 @@
             </div>
         </div>
     </div>
+
+
     {{-- ================= MODAL EDIT IBADAH ================= --}}
-    <div class="modal fade" id="modalEditIbadah" tabindex="-1" role="dialog" aria-labelledby="modalEditIbadahLabel" aria-hidden="true">
+    <div class="modal fade" id="modalEditIbadah" tabindex="-1" role="dialog" aria-labelledby="modalEditIbadahLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -280,9 +267,7 @@
                                 <label>Warta / Nama Minggu</label>
                                 <select name="warta_id" id="edit_ibadah_warta_id" class="form-control" required>
                                     <option value="">-- Pilih Warta --</option>
-                                    @foreach($wartas as $w)
-                                    <option value="{{ $w->id }}">{{ $w->tanggal ? $w->tanggal->format('d-m-Y') . ' - ' : '' }}{{ $w->nama_minggu }}</option>
-                                    @endforeach
+
                                 </select>
                             </div>
 
@@ -290,9 +275,7 @@
                                 <label>Pendeta</label>
                                 <select name="pendeta_id" id="edit_ibadah_pendeta_id" class="form-control" required>
                                     <option value="">-- Pilih Pendeta --</option>
-                                    @foreach($pendetas as $p)
-                                    <option value="{{ $p->id }}">{{ $p->nama_lengkap }}</option>
-                                    @endforeach
+
                                 </select>
                             </div>
 
@@ -313,7 +296,8 @@
 
                             <div class="col-md-6 mb-3">
                                 <label>File Liturgi (PDF)</label>
-                                <input type="file" name="file" id="edit_ibadah_file" class="form-control" accept="application/pdf">
+                                <input type="file" name="file" id="edit_ibadah_file" class="form-control"
+                                    accept="application/pdf">
                                 <small class="text-muted">Upload baru untuk mengganti file (opsional).</small>
                             </div>
                         </div>
@@ -330,7 +314,8 @@
 
 
     {{-- ================= MODAL EDIT WARTA ================= --}}
-    <div class="modal fade" id="modalEditWarta" tabindex="-1" role="dialog" aria-labelledby="modalEditWartaLabel" aria-hidden="true">
+    <div class="modal fade" id="modalEditWarta" tabindex="-1" role="dialog" aria-labelledby="modalEditWartaLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -354,7 +339,8 @@
 
                         <div class="mb-3">
                             <label class="form-label">Deskripsi / Pengumuman</label>
-                            <textarea name="deskripsi" class="form-control" id="edit_warta_deskripsi" rows="6"></textarea>
+                            <textarea name="deskripsi" class="form-control" id="edit_warta_deskripsi"
+                                rows="6"></textarea>
                         </div>
 
                         <div class="text-end">
@@ -500,12 +486,13 @@
         .modal.show {
             z-index: 1060;
         }
+
         .modal-backdrop.show {
             z-index: 1055;
         }
     </style>
 
-    
+
 
 
 </section>

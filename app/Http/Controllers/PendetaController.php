@@ -21,7 +21,11 @@ class PendetaController extends Controller
 
         try {
             if (Schema::hasTable('pendetas')) {
-                $pendetas = DB::table('pendetas')->orderBy('created_at', 'desc')->get();
+                $pendetas = DB::table('pendetas')
+                    ->leftJoin('jemaats', 'pendetas.jemaat_id', '=', 'jemaats.id')
+                    ->select('pendetas.*', 'jemaats.nama as jemaat_nama', 'jemaats.no_telp as jemaat_no_telp')
+                    ->orderBy('pendetas.created_at', 'desc')
+                    ->get();
                 $userIds = DB::table('pendetas')->pluck('user_id')->toArray();
                 $pendingPendetas = User::where('role', 'pendeta')
                     ->whereNotIn('id', $userIds)

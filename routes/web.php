@@ -12,6 +12,7 @@ use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\PelayanController;
 use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\PendetaController;
+use App\Http\Controllers\WartaController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -48,7 +49,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
         return view('pages.admin.dashboard');
     })->name('dashboard');
-    
+
     // Wijk 
     Route::get('/wijk', [WijkController::class, 'index'])->name('wijk');
     Route::post('/wijk', [WijkController::class, 'store'])->name('wijk.store');
@@ -69,7 +70,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/keluarga/create', [KeluargaController::class, 'create'])->name('keluarga.create');
     Route::post('/keluarga', [KeluargaController::class, 'store'])->name('keluarga.store');
     Route::delete('/keluarga/{id}', [KeluargaController::class, 'destroy'])->name('keluarga.destroy');
-    
+
     // Penatua
     Route::get('/penatua', [PenatuaController::class, 'index'])->name('penatua');
     Route::get('/penatua/create', [PenatuaController::class, 'create'])->name('penatua.create');
@@ -77,23 +78,37 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/penatua/{id}/edit', [PenatuaController::class, 'edit'])->name('penatua.edit');
     Route::put('/penatua/{id}', [PenatuaController::class, 'update'])->name('penatua.update');
     Route::delete('/penatua/{id}', [PenatuaController::class, 'destroy'])->name('penatua.destroy');
-    
+
     // Ibadah 
-    Route::get('/ibadah', [IbadahController::class, 'index'])->name('ibadah');
-    
+    Route::get('/ibadah', [WartaController::class, 'index'])->name('ibadah');
+    Route::post('/ibadah', [IbadahController::class, 'store'])->name('ibadah.store');
+    // Warta (create/store)
+    Route::get('/ibadah/warta/create', [WartaController::class, 'create'])->name('ibadah.warta.create');
+    Route::post('/ibadah/warta', [WartaController::class, 'store'])->name('ibadah.warta.store');
+
     // Berita
     Route::get('/berita', [BeritaController::class, 'index'])->name('berita');
-    
+    Route::get('/berita/create', [BeritaController::class, 'create'])->name('berita.create');
+    Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
+
     // Pelayan
     Route::get('/pelayan', [PelayanController::class, 'index'])->name('pelayan');
-    
+    Route::get('/pelayan/create', [PelayanController::class, 'create'])->name('pelayan.create');
+    Route::post('/pelayan', [PelayanController::class, 'store'])->name('pelayan.store');
+    Route::get('/pelayan/{id}', [PelayanController::class, 'show'])->name('pelayan.show');
+
     // Galeri
     Route::get('/galeri', [GaleriController::class, 'index'])->name('galeri');
+    Route::get('/galeri/create', [GaleriController::class, 'create'])->name('galeri.create');
+    Route::post('/galeri', [GaleriController::class, 'store'])->name('galeri.store');
 
     // Pendeta
     Route::get('/pendeta', [PendetaController::class, 'index'])->name('pendeta');
     Route::get('/pendeta/create', [PendetaController::class, 'create'])->name('pendeta.create');
     Route::post('/pendeta', [PendetaController::class, 'store'])->name('pendeta.store');
+
+    // User 
+    Route::get('/user', [UserController::class, 'index'])->name('user');
 });
 
 

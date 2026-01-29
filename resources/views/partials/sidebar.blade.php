@@ -134,7 +134,7 @@
                                         </li>
 
                                         <li class="{{ request()->routeIs('admin.user') ? 'active' : '' }}">
-                                                <a class="nav-link" href="#">
+                                                <a class="nav-link" href="{{ route('admin.user') }}">
                                                         <i class="fas fa-cog"></i> <span>User</span>
                                                 </a>
                                         </li>

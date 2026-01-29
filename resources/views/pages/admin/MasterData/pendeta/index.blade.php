@@ -49,13 +49,47 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Pendeta</th>
-                        <th>Nama WIJK</th>
                         <th>No. HP</th>
+                        <th>Tanggal Ditahbis</th>
+                        <th>Status</th>
+                        <th>No. SK Tahbisan</th>
+                        <th>Keterangan</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
-
+                <tbody>
+                    @forelse($pendetas ?? [] as $pendeta)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ data_get($pendeta, 'jemaat.nama') ?? data_get($pendeta, 'jemaat_nama') ?? data_get($pendeta, 'nama') ?? '-' }}</td>
+                        <td>{{ data_get($pendeta, 'jemaat.no_telp') ?? data_get($pendeta, 'jemaat_no_telp') ?? data_get($pendeta, 'no_telp') ?? '-' }}</td>
+                        <td>{{ data_get($pendeta, 'tanggal_tahbis') ?? '-' }}</td>
+                        <td>{{ data_get($pendeta, 'status') ?? '-' }}</td>
+                        <td>{{ data_get($pendeta, 'no_sk_tahbis') ?? '-' }}</td>
+                        <td>{{ data_get($pendeta, 'keterangan') ?? '-' }}</td>
+                        <td class="text-center">
+                            <a href="#" class="btn btn-sm btn-warning">Edit</a>
+                            <form action="#" method="post" style="display:inline-block"
+                                onsubmit="return confirm('Hapus data pendeta ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-danger">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="8" class="text-center">Tidak ada data pendeta.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
             </table>
+
+            @if(isset($pendetas) && method_exists($pendetas, 'links'))
+            <div class="mt-3">
+                {!! $pendetas->links() !!}
+            </div>
+            @endif
         </div>
     </div>
 </div>
@@ -67,3 +101,20 @@
 
 
 @endsection
+
+@push('script')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if(session('success') || session('message') || session('status'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const msg = @json(session('success') ?? session('message') ?? session('status'));
+        Swal.fire({
+            title: 'Berhasil',
+            text: msg || 'Data berhasil disimpan',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    });
+</script>
+@endif
+@endpush
