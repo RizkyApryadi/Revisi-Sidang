@@ -323,6 +323,7 @@
 
 
 @push('script')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Update total penatua count
@@ -330,6 +331,54 @@
         if(totalCount) {
             totalCount.textContent = '{{ isset($penatuas) ? $penatuas->count() : 0 }} Orang';
         }
+
+        // SweetAlert2 - session flash messages
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: {!! json_encode(session('success')) !!},
+                timer: 2200,
+                showConfirmButton: false
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: {!! json_encode(session('error')) !!},
+            });
+        @endif
+
+        @if(session('warning'))
+            Swal.fire({
+                icon: 'warning',
+                title: 'Peringatan',
+                text: {!! json_encode(session('warning')) !!},
+            });
+        @endif
+
+        @if(session('info'))
+            Swal.fire({
+                icon: 'info',
+                title: 'Informasi',
+                text: {!! json_encode(session('info')) !!},
+                timer: 2200,
+                showConfirmButton: false
+            });
+        @endif
+
+        @if(session('status'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Status',
+                text: {!! json_encode(session('status')) !!},
+                timer: 2200,
+                showConfirmButton: false
+            });
+        @endif
+
     });
 </script>
 @endpush

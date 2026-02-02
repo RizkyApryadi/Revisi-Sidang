@@ -17,27 +17,21 @@
                 {{-- Tanggal --}}
                 <div class="form-group">
                     <label for="tanggal">Tanggal</label>
-                    <input type="date" name="tanggal" id="tanggal"
-                           class="form-control"
-                           required>
+                    <input type="date" name="tanggal" id="tanggal" class="form-control" required>
                 </div>
 
                 {{-- Nama Minggu --}}
                 <div class="form-group">
                     <label for="nama_minggu">Nama Minggu</label>
-                    <input type="text" name="nama_minggu" id="nama_minggu"
-                           class="form-control"
-                           placeholder="Contoh: Minggu Epifani"
-                           required>
+                    <input type="text" name="nama_minggu" id="nama_minggu" class="form-control"
+                        placeholder="Contoh: Minggu Epifani" required>
                 </div>
 
                 {{-- Pengumuman --}}
                 <div class="form-group">
                     <label for="pengumuman">Pengumuman</label>
-                    <textarea name="pengumuman" id="pengumuman"
-                              class="form-control"
-                              rows="4"
-                              placeholder="Isi pengumuman (opsional)"></textarea>
+                    <textarea name="pengumuman" id="pengumuman" class="form-control tinymce" rows="4"
+                        placeholder="Isi pengumuman (opsional)">{!! old('pengumuman') !!}</textarea>
                 </div>
 
                 {{-- Tombol --}}

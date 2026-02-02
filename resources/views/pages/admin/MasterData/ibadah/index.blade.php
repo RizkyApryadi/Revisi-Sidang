@@ -34,12 +34,112 @@
                             </td>
                             <td>{{ $w->nama_minggu }}</td>
                             <td>{{ \Illuminate\Support\Str::limit($w->pengumuman, 120) }}</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary btn-edit-warta" data-id="{{ $w->id }}"
-                                    data-tanggal="{{ $w->tanggal }}" data-nama_minggu="{{ e($w->nama_minggu) }}"
-                                    data-deskripsi="{{ e($w->pengumuman) }}">
-                                    <i class="fas fa-edit"></i>
-                                </button>
+                            <td class="text-center align-middle">
+                                <div class="btn-group" role="group" aria-label="Actions">
+                                    <a href="#" class="btn btn-info btn-sm me-1" title="Lihat" data-bs-toggle="modal" data-bs-target="#showWartaModal-{{ $w->id }}">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+
+                                    <a href="{{ route('admin.ibadah.warta.edit', $w->id) }}" class="btn btn-warning btn-sm me-1" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <form action="{{ route('admin.ibadah.warta.destroy', $w->id) }}" method="POST" style="display:inline-block; margin:0;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Hapus warta ini?');">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- SHOW MODAL WARTA -->
+                                <div class="modal fade show-warta-modal" id="showWartaModal-{{ $w->id }}" tabindex="-1" aria-labelledby="showWartaLabel-{{ $w->id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-light">
+                                                <div>
+                                                    <h5 class="modal-title fw-semibold" id="showWartaLabel-{{ $w->id }}">Detail Warta</h5>
+                                                    <small class="text-muted">{{ $w->nama_minggu ?? '-' }}</small>
+                                                </div>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <div class="container-fluid">
+                                                    <div class="row small">
+                                                        <div class="col-12 mb-2">
+                                                            <strong>Tanggal</strong><br>
+                                                            {{ $w->tanggal ? \Carbon\Carbon::parse($w->tanggal)->translatedFormat('j F Y') : '-' }}
+                                                        </div>
+                                                        <div class="col-12 mb-2">
+                                                            <strong>Nama Minggu</strong><br>
+                                                            {{ $w->nama_minggu ?? '-' }}
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <strong>Pengumuman</strong><br>
+                                                            @php
+                                                                $raw = $w->pengumuman ?? '';
+                                                                $decoded = $raw ? html_entity_decode($raw) : '';
+                                                                $hasHtml = $decoded && preg_match('/<\/?[a-z][\s\S]*>/i', $decoded);
+                                                            @endphp
+
+                                                            @if($hasHtml)
+                                                                {{-- already HTML, if it contains a table render inside an iframe to avoid CSS conflicts --}}
+                                                                @php $containsTable = stripos($decoded, '<table') !== false; @endphp
+                                                                    @if($containsTable)
+                                                                    @php $dataUrl = 'data:text/html;base64,' . base64_encode($decoded); @endphp
+                                                                    <div class="table-responsive">
+                                                                        <iframe src="{{ $dataUrl }}" style="width:100%;min-height:360px;border:0;" sandbox="allow-same-origin"></iframe>
+                                                                    </div>
+                                                                @else
+                                                                    {!! $decoded !!}
+                                                                @endif
+                                                            @elseif(trim($decoded) === '')
+                                                                -
+                                                            @else
+                                                                @php
+                                                                    $lines = preg_split('/\r\n|\r|\n/', $decoded);
+                                                                    $useTab = false; $usePipe = false; $useMulti = false;
+                                                                    foreach($lines as $ln) {
+                                                                        if(strpos($ln, "\t") !== false) { $useTab = true; break; }
+                                                                        if(strpos($ln, '|') !== false) { $usePipe = true; break; }
+                                                                    }
+                                                                    if(!$useTab && !$usePipe) {
+                                                                        foreach($lines as $ln) { if(preg_match('/\s{2,}/', $ln)) { $useMulti = true; break; } }
+                                                                    }
+                                                                @endphp
+
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-bordered">
+                                                                        @foreach($lines as $r)
+                                                                            @php $r = trim($r); if($r === '') continue; @endphp
+                                                                            @php
+                                                                                if($useTab) $cols = explode("\t", $r);
+                                                                                elseif($usePipe) $cols = explode('|', $r);
+                                                                                elseif($useMulti) $cols = preg_split('/\s{2,}/', $r);
+                                                                                else $cols = preg_split('/\s+/', $r);
+                                                                            @endphp
+                                                                            <tr>
+                                                                                @foreach($cols as $c)
+                                                                                    <td>{!! nl2br(e(trim($c))) !!}</td>
+                                                                                @endforeach
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    </table>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-footer bg-light">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                         @empty
@@ -478,6 +578,16 @@
                 if (!el) return;
                 if (el.parentNode !== document.body) document.body.appendChild(el);
             });
+
+            // Move any per-row showWartaModal-* modals to document.body as well
+            try {
+                var showModals = document.querySelectorAll('[id^="showWartaModal-"]');
+                showModals.forEach(function (m) {
+                    if (m.parentNode !== document.body) document.body.appendChild(m);
+                });
+            } catch (e) {
+                // silent
+            }
         })();
     </script>
 
@@ -489,6 +599,20 @@
 
         .modal-backdrop.show {
             z-index: 1055;
+        }
+        /* Warta show modal tweaks: make a bit taller and wider so long tables look balanced */
+        .show-warta-modal .modal-dialog {
+            max-width: 900px;
+        }
+
+        .show-warta-modal .modal-body {
+            min-height: 320px;
+            max-height: calc(100vh - 200px);
+            overflow: auto;
+        }
+
+        .show-warta-modal iframe {
+            min-height: 360px;
         }
     </style>
 

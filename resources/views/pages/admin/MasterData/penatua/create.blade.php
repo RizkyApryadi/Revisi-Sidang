@@ -32,8 +32,7 @@
                         Informasi:
                     </p>
                     <p class="text-sm font-semibold text-blue-700">
-                        Setelah penatua ditambahkan, gelar <span class="font-bold">"Pt."</span>
-                        akan otomatis ditambahkan ke nama anggota yang dipilih.
+                        Silahkan pilih penatua dari anggota jemaat yang sudah terdaftar. Gunakan
                     </p>
                 </div>
             </div>
@@ -53,11 +52,6 @@
                             placeholder="Ketik 1-2 huruf untuk mencari...">
 
                         <input type="hidden" name="jemaat_id" id="jemaat_id">
-
-                        <div id="jemaat_selected_info" class="mt-2 text-sm text-gray-700 hidden">
-                            <strong>Terpilih:</strong> ID <span id="jemaat_selected_id">-</span> —
-                            <span id="jemaat_selected_name">-</span>
-                        </div>
 
                         <div id="jemaat_suggestions"
                             class="absolute z-50 w-full bg-white border rounded mt-1 shadow max-h-56 overflow-auto hidden">
@@ -117,8 +111,6 @@
                    focus:border-indigo-600 focus:ring-0 font-medium"
                         placeholder="Keterangan tambahan (opsional)"></textarea>
                 </div>
-            </form>
-
 
         </div>
 

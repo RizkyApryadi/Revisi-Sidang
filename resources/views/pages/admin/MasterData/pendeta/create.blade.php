@@ -28,7 +28,7 @@
                         d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
                 </svg>
                 <p class="text-sm font-semibold text-blue-700">
-                    Silahkan pilih anggota jemaat yang akan ditambahkan sebagai pendeta. Isian dengan tanda
+                    Silahkan pilih anggota jemaat yang akan ditambahkan sebagai pendeta
                 </p>
             </div>
 
@@ -48,10 +48,7 @@
 
                         <input type="hidden" name="jemaat_id" id="jemaat_id">
 
-                        <div id="jemaat_selected_info" class="mt-2 text-sm text-gray-700 hidden">
-                            <strong>Terpilih:</strong> ID <span id="jemaat_selected_id">-</span> —
-                            <span id="jemaat_selected_name">-</span>
-                        </div>
+
 
                         <div id="jemaat_suggestions"
                             class="absolute z-50 w-full bg-white border rounded mt-1 shadow max-h-56 overflow-auto hidden">
@@ -62,7 +59,7 @@
                     </p>
                 </div>
 
-              
+
 
                 <!-- TANGGAL TAHBIS -->
                 <div>
@@ -92,7 +89,7 @@
                     <label class="block text-sm font-bold text-gray-800 mb-2">
                         No. SK Tahbisan
                     </label>
-                        <input type="text" name="no_sk_tahbis" class="w-full rounded-lg border-2 border-gray-300 px-3 py-2.5
+                    <input type="text" name="no_sk_tahbis" class="w-full rounded-lg border-2 border-gray-300 px-3 py-2.5
                     focus:border-indigo-600 focus:ring-0 font-medium" placeholder="Contoh: SK-012/PGI/2024">
                 </div>
 
@@ -105,17 +102,18 @@
             focus:border-indigo-600 focus:ring-0 font-medium" placeholder="Keterangan tambahan (opsional)"></textarea>
                 </div>
 
-        <!-- FOOTER buttons inside form -->
-        <div class="px-8 py-5 border-t-2 flex justify-end gap-3 bg-gray-50 rounded-b-xl">
-            <a href="{{ route('admin.pendeta') }}" class="px-5 py-2 rounded-lg bg-gray-600 text-white font-bold">
-                ← Batal
-            </a>
-            <button type="submit" class="px-6 py-2 rounded-lg bg-indigo-700 text-white font-bold">
-                ✓ Simpan
-            </button>
-        </div>
+                <!-- FOOTER buttons inside form -->
+                <div class="px-8 py-5 border-t-2 flex justify-end gap-3 bg-gray-50 rounded-b-xl">
+                    <a href="{{ route('admin.pendeta') }}"
+                        class="px-5 py-2 rounded-lg bg-gray-600 text-white font-bold">
+                        ← Batal
+                    </a>
+                    <button type="submit" class="px-6 py-2 rounded-lg bg-indigo-700 text-white font-bold">
+                        ✓ Simpan
+                    </button>
+                </div>
 
-        </form>
+            </form>
 
         </div>
 

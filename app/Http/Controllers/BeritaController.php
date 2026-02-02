@@ -38,12 +38,17 @@ class BeritaController extends Controller
 			'judul' => 'required|string|max:255',
 			'ringkasan' => 'required|string',
 			'file' => 'nullable|file|max:10240',
+			'foto' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
 		]);
 
 		try {
 			$filePath = null;
+			$fotoPath = null;
 			if ($request->hasFile('file')) {
 				$filePath = $request->file('file')->store('beritas/files', 'public');
+			}
+			if ($request->hasFile('foto')) {
+				$fotoPath = $request->file('foto')->store('beritas/foto', 'public');
 			}
 
 			DB::table('beritas')->insert([
@@ -52,6 +57,7 @@ class BeritaController extends Controller
 				'judul' => $validated['judul'],
 				'ringkasan' => $validated['ringkasan'],
 				'file' => $filePath,
+				'foto' => $fotoPath,
 				'created_at' => now(),
 				'updated_at' => now(),
 			]);
@@ -63,4 +69,3 @@ class BeritaController extends Controller
 		}
 	}
 }
-

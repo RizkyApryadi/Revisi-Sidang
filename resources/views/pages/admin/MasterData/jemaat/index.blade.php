@@ -602,11 +602,12 @@
                         }).then(function(res){
                             if(!res.isConfirmed) return hideContextMenu();
 
-                            // If Penatua: redirect to create penatua with jemaat id and name prefilled
-                            if (role === 'penatua') {
+                            // If Penatua or Pendeta: redirect to respective create form with jemaat id and name prefilled
+                            if (role === 'penatua' || role === 'pendeta') {
                                 try {
                                     const name = currentJemaatRow ? (currentJemaatRow.querySelector('td:nth-child(2)') && currentJemaatRow.querySelector('td:nth-child(2)').innerText.trim()) : '';
-                                    let url = '/admin/penatua/create?jemaat_id=' + encodeURIComponent(currentJemaatId);
+                                    const base = role === 'penatua' ? '/admin/penatua/create' : '/admin/pendeta/create';
+                                    let url = base + '?jemaat_id=' + encodeURIComponent(currentJemaatId);
                                     if (name) url += '&nama=' + encodeURIComponent(name);
                                     hideContextMenu();
                                     window.location.href = url;
@@ -615,8 +616,6 @@
                                 }
                                 return;
                             }
-
-                            // For other roles (e.g., pendeta) keep existing AJAX flow
                             fetch('/admin/jemaat/' + encodeURIComponent(currentJemaatId) + '/assign-role', {
                                 method: 'POST',
                                 headers: {

@@ -85,6 +85,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     // Warta (create/store)
     Route::get('/ibadah/warta/create', [WartaController::class, 'create'])->name('ibadah.warta.create');
     Route::post('/ibadah/warta', [WartaController::class, 'store'])->name('ibadah.warta.store');
+    Route::get('/ibadah/warta/{id}/edit', [WartaController::class, 'edit'])->name('ibadah.warta.edit');
+    Route::post('/ibadah/warta', [WartaController::class, 'store'])->name('ibadah.warta.store');
+    Route::put('/ibadah/warta/{id}', [WartaController::class, 'update'])->name('ibadah.warta.update');
+    Route::delete('/ibadah/warta/{id}', [WartaController::class, 'destroy'])->name('ibadah.warta.destroy');
 
     // Berita
     Route::get('/berita', [BeritaController::class, 'index'])->name('berita');
@@ -106,6 +110,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/pendeta', [PendetaController::class, 'index'])->name('pendeta');
     Route::get('/pendeta/create', [PendetaController::class, 'create'])->name('pendeta.create');
     Route::post('/pendeta', [PendetaController::class, 'store'])->name('pendeta.store');
+    Route::get('/pendeta/{id}/edit', [PendetaController::class, 'edit'])->name('pendeta.edit');
+    Route::put('/pendeta/{id}', [PendetaController::class, 'update'])->name('pendeta.update');
+    Route::delete('/pendeta/{id}', [PendetaController::class, 'destroy'])->name('pendeta.destroy');
 
     // User 
     Route::get('/user', [UserController::class, 'index'])->name('user');

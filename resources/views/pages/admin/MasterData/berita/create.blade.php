@@ -25,6 +25,10 @@
                 </div>
                 @endif
                 <div class="form-group mb-3">
+                    <label for="foto">Foto Utama (opsional)</label>
+                    <input type="file" name="foto" id="foto" class="form-control">
+                </div>
+                <div class="form-group mb-3">
                     <label for="tanggal">Tanggal</label>
                     <input type="date" name="tanggal" id="tanggal" class="form-control" value="{{ old('tanggal') }}">
                 </div>
@@ -41,8 +45,8 @@
 
                 <div class="form-group mb-3">
                     <label for="ringkasan">Ringkasan</label>
-                    <textarea name="ringkasan" id="ringkasan" class="form-control"
-                        rows="4">{{ old('ringkasan') }}</textarea>
+                    <textarea name="ringkasan" id="ringkasan" class="form-control tinymce"
+                        rows="4">{!! old('ringkasan') !!}</textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Simpan</button>

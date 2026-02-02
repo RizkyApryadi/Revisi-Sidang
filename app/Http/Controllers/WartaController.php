@@ -120,4 +120,65 @@ class WartaController extends Controller
             return redirect()->back()->with('error', 'Gagal menyimpan warta.')->withInput();
         }
     }
+
+    /**
+     * Show the form for editing the specified warta.
+     */
+    public function edit($id)
+    {
+        try {
+            $warta = DB::table('wartas')->where('id', $id)->first();
+        } catch (\Exception $e) {
+            Log::error('Warta edit fetch error: ' . $e->getMessage());
+            $warta = null;
+        }
+
+        if (!$warta) {
+            return redirect()->route('admin.ibadah')->with('error', 'Warta tidak ditemukan.');
+        }
+
+        return view('pages.admin.MasterData.ibadah.editWarta', compact('warta'));
+    }
+
+    /**
+     * Update the specified warta in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        $data = $request->validate([
+            'tanggal' => 'required|date',
+            'nama_minggu' => 'required|string|max:255',
+            'pengumuman' => 'nullable|string',
+        ]);
+
+        try {
+            DB::table('wartas')->where('id', $id)->update([
+                'tanggal' => $data['tanggal'],
+                'nama_minggu' => $data['nama_minggu'],
+                'pengumuman' => $data['pengumuman'] ?? null,
+                'updated_at' => now(),
+            ]);
+
+            return redirect()->route('admin.ibadah')->with('success', 'Warta berhasil diperbarui.');
+        } catch (\Exception $e) {
+            Log::error('Warta update error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui warta.')->withInput();
+        }
+    }
+
+    /**
+     * Remove the specified warta from storage.
+     */
+    public function destroy($id)
+    {
+        try {
+            if (Schema::hasTable('wartas')) {
+                DB::table('wartas')->where('id', $id)->delete();
+            }
+            return redirect()->route('admin.ibadah')->with('success', 'Warta berhasil dihapus.');
+        } catch (\Exception $e) {
+            Log::error('Warta destroy error: ' . $e->getMessage());
+            return redirect()->route('admin.ibadah')->with('error', 'Gagal menghapus warta.');
+        }
+    }
 }

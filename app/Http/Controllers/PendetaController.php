@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
+use App\Models\Pendeta;
 
 class PendetaController extends Controller
 {
@@ -21,12 +22,11 @@ class PendetaController extends Controller
 
         try {
             if (Schema::hasTable('pendetas')) {
-                $pendetas = DB::table('pendetas')
-                    ->leftJoin('jemaats', 'pendetas.jemaat_id', '=', 'jemaats.id')
-                    ->select('pendetas.*', 'jemaats.nama as jemaat_nama', 'jemaats.no_telp as jemaat_no_telp')
-                    ->orderBy('pendetas.created_at', 'desc')
+                // use Eloquent with eager-loading so Blade can access related jemaat/user attributes
+                $pendetas = Pendeta::with(['jemaat', 'user'])
+                    ->orderBy('created_at', 'desc')
                     ->get();
-                $userIds = DB::table('pendetas')->pluck('user_id')->toArray();
+                $userIds = Pendeta::pluck('user_id')->toArray();
                 $pendingPendetas = User::where('role', 'pendeta')
                     ->whereNotIn('id', $userIds)
                     ->get();
@@ -87,6 +87,81 @@ class PendetaController extends Controller
         } catch (\Exception $e) {
             Log::error('Pendeta store error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menyimpan pendeta.')->withInput();
+        }
+    }
+
+    /**
+     * Show the form for editing the specified pendeta.
+     */
+    public function edit($id)
+    {
+        try {
+            if (Schema::hasTable('pendetas')) {
+                $pendeta = Pendeta::with(['jemaat', 'user'])->where('id', $id)->first();
+            } else {
+                $pendeta = User::find($id);
+            }
+        } catch (\Exception $e) {
+            Log::error('Pendeta edit error: ' . $e->getMessage());
+            $pendeta = null;
+        }
+
+        if (!$pendeta) {
+            return redirect()->route('admin.pendeta')->with('error', 'Data pendeta tidak ditemukan.');
+        }
+
+        return view('pages.admin.MasterData.pendeta.edit', compact('pendeta'));
+    }
+
+    /**
+     * Update the specified pendeta in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        $rules = [
+            'jemaat_id' => 'required|integer|exists:jemaats,id|unique:pendetas,jemaat_id,' . $id . ',id',
+            'tanggal_tahbis' => 'required|date|before_or_equal:today',
+            'status' => 'required|in:aktif,nonaktif,selesai',
+            'no_sk_tahbis' => 'nullable|string|max:255',
+            'keterangan' => 'nullable|string',
+        ];
+
+        $validated = $request->validate($rules);
+
+        try {
+            $update = [
+                'jemaat_id' => $validated['jemaat_id'],
+                'tanggal_tahbis' => $validated['tanggal_tahbis'],
+                'status' => $validated['status'],
+                'no_sk_tahbis' => $validated['no_sk_tahbis'] ?? null,
+                'keterangan' => $validated['keterangan'] ?? null,
+                'updated_at' => now(),
+            ];
+
+            DB::table('pendetas')->where('id', $id)->update($update);
+
+            return redirect()->route('admin.pendeta')->with('success', 'Pendeta berhasil diperbarui.');
+        } catch (\Exception $e) {
+            Log::error('Pendeta update error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui pendeta.')->withInput();
+        }
+    }
+
+    /**
+     * Remove the specified pendeta from storage.
+     */
+    public function destroy($id)
+    {
+        try {
+            if (Schema::hasTable('pendetas')) {
+                DB::table('pendetas')->where('id', $id)->delete();
+            } else {
+                // nothing to delete, but return success if using users fallback
+            }
+            return redirect()->route('admin.pendeta')->with('success', 'Pendeta berhasil dihapus.');
+        } catch (\Exception $e) {
+            Log::error('Pendeta destroy error: ' . $e->getMessage());
+            return redirect()->route('admin.pendeta')->with('error', 'Gagal menghapus pendeta.');
         }
     }
 }
