@@ -123,54 +123,97 @@
         </div>
     </section>
 
-    <!-- Berita Gereja Section -->
+    <!-- Berita Section -->
     <section id="berita"
         class="bg-[linear-gradient(135deg,#1e3c72_0%,#2a5298_40%,#6dd5fa_100%)] text-white py-12 md:py-16">
-        <div class="max-w-[1400px] mx-auto px-8 py-8 md:py-12">
-            <h2 class="text-3xl md:text-4xl font-extrabold text-center mb-8 text-white tracking-wide drop-shadow-md">
+
+        <div class="max-w-[1400px] mx-auto px-8">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-center mb-10">
                 Berita Gereja
             </h2>
 
+            @if(isset($beritas) && $beritas->count())
+            @php
+            $featured = $beritas->first();
+            $others = $beritas->slice(1);
+            @endphp
+
+            <!-- Featured (latest) -->
+            <div class="mb-8">
+                <a href="{{ route('guest.berita.show', $featured->id) }}" class="group block">
+                    <div class="grid md:grid-cols-2 bg-white rounded-2xl overflow-hidden shadow-xl">
+
+                        <!-- FOTO FEATURED (ADA SPACE HALUS) -->
+                        <div class="p-3 bg-gray-100">
+                            <div class="aspect-[16/9] overflow-hidden rounded-xl">
+                                <img src="{{ asset('storage/'.$featured->foto) }}"
+                                    class="w-full h-full object-cover object-center group-hover:scale-105 transition">
+                            </div>
+                        </div>
+
+                        <div class="p-8 text-gray-800">
+                            <span class="inline-block mb-3 bg-gradient-to-r from-pink-500 to-purple-600
+                            text-white text-xs font-bold px-3 py-1 rounded-full uppercase">
+                                Berita Terbaru
+                            </span>
+
+                            <h3 class="text-3xl font-extrabold text-indigo-700 mb-4">
+                                {{ $featured->judul }}
+                            </h3>
+
+                            <p class="text-gray-500 mb-4">
+                                {{ \Carbon\Carbon::parse($featured->tanggal)->format('j F Y') }}
+                            </p>
+
+                            <p class="text-gray-700 text-lg leading-relaxed">
+                                {{ \Illuminate\Support\Str::limit(strip_tags($featured->ringkasan), 220) }}
+                            </p>
+                        </div>
+
+                    </div>
+                </a>
+            </div>
+
+            <!-- Smaller news grid -->
+            @if($others->count())
             <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
-                @if(isset($beritas) && $beritas->count())
-                @foreach($beritas as $index => $b)
+                @foreach($others as $b)
                 <a href="{{ route('guest.berita.show', $b->id) }}" class="group block">
-                    <div
-                        class="relative bg-white rounded-2xl shadow-lg p-6 text-gray-800 hover:shadow-2xl transition duration-300">
 
-                        @if($index === 0)
-                        <span
-                            class="absolute top-3 right-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md animate-pulse uppercase">
-                            NEW
-                        </span>
-                        @endif
+                    <div class="bg-white rounded-2xl shadow-lg p-6 text-gray-800 hover:shadow-2xl transition">
 
-                        <h3 class="text-2xl font-bold text-indigo-700 mb-3">{{ $b->judul ?? 'Berita' }}</h3>
+                        <!-- FOTO KECIL (ADA SPACE HALUS) -->
+                        <div class="p-2 bg-gray-100 rounded-xl mb-4">
+                            <div class="aspect-[16/9] overflow-hidden rounded-lg">
+                                <img src="{{ asset('storage/'.$b->foto) }}"
+                                    class="w-full h-full object-cover object-center group-hover:scale-105 transition">
+                            </div>
+                        </div>
 
-                        <p class="text-gray-600 font-medium mb-2">{{ $b->tanggal ?
-                            \Carbon\Carbon::parse($b->tanggal)->format('j F Y') : '-' }}</p>
+                        <h3 class="text-lg font-semibold text-indigo-700 mb-2">
+                            {{ $b->judul }}
+                        </h3>
 
-                        <p class="text-gray-700 leading-relaxed">{{
-                            \Illuminate\Support\Str::limit(strip_tags($b->ringkasan ?? ''), 130, '...') }}</p>
+                        <p class="text-gray-500 text-sm mb-2">
+                            {{ \Carbon\Carbon::parse($b->tanggal)->format('j F Y') }}
+                        </p>
+
+                        <p class="text-gray-700 text-sm">
+                            {{ \Illuminate\Support\Str::limit(strip_tags($b->ringkasan), 100) }}
+                        </p>
 
                     </div>
                 </a>
                 @endforeach
-                @else
-                <div class="col-span-full text-center text-white/90 text-lg">Belum ada berita.</div>
-                @endif
             </div>
+            @endif
 
-            @if(isset($beritas) && $beritas->count())
-            <div class="mt-8 flex justify-center">
-                <a href="{{ route('guest.kegiatan') }}"
-                    class="px-6 py-3 rounded-xl bg-white text-indigo-700 font-bold hover:bg-white/90 transition">
-                    Lihat Selengkapnya
-                </a>
-            </div>
+            @else
+            <div class="text-center text-white">Belum ada berita.</div>
             @endif
         </div>
     </section>
+
 
     <!-- Galeri Section -->
     <section id="galeri" class="py-12 md:py-16 bg-gray-50">

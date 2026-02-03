@@ -225,3 +225,55 @@
     });
 </script>
 @endpush
+
+@push('script')
+<script>
+    (function(){
+        // Show flash messages (success/error/warning) via SweetAlert
+        @if(session()->has('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Sukses',
+                text: {!! json_encode(session('success')) !!},
+                timer: 2200,
+                showConfirmButton: false
+            });
+        @endif
+
+        @if(session()->has('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: {!! json_encode(session('error')) !!},
+                timer: 3200,
+                showConfirmButton: false
+            });
+        @endif
+
+        @if(session()->has('warning'))
+            Swal.fire({
+                icon: 'warning',
+                title: 'Peringatan',
+                text: {!! json_encode(session('warning')) !!},
+                timer: 2500,
+                showConfirmButton: false
+            });
+        @endif
+
+        // Show validation errors (if any) as a list inside SweetAlert
+        @if ($errors->any())
+            const _errs = @json($errors->all());
+            let _html = '<div style="text-align:left; margin-top:6px;"><ul style="padding-left:18px;margin:0;">';
+            _errs.forEach(function(m){ _html += '<li>' + (m || '') + '</li>'; });
+            _html += '</ul></div>';
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal',
+                html: _html,
+                showCloseButton: true,
+                confirmButtonText: 'Tutup'
+            });
+        @endif
+    })();
+</script>
+@endpush

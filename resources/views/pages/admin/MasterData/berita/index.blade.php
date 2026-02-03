@@ -38,7 +38,25 @@
                                         -
                                     @endif
                                 </td>
-                                <td class="text-center">-</td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group" aria-label="Actions">
+                                        <a href="{{ route('admin.berita.show', $b->id) }}" class="btn btn-info btn-sm me-1" title="Lihat">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+
+                                        <a href="{{ route('admin.berita.edit', $b->id) }}" class="btn btn-warning btn-sm me-1" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+
+                                        <form action="{{ route('admin.berita.destroy', $b->id) }}" method="POST" style="display:inline-block; margin:0;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Hapus berita ini?');">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                         @empty
                             <tr>
@@ -53,3 +71,20 @@
 
 </section>
 @endsection
+
+@push('script')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if(session('success') || session('message') || session('status'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const msg = @json(session('success') ?? session('message') ?? session('status'));
+        Swal.fire({
+            title: 'Berhasil',
+            text: msg || 'Data berhasil disimpan',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    });
+</script>
+@endif
+@endpush

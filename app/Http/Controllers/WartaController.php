@@ -31,7 +31,8 @@ class WartaController extends Controller
             if (Schema::hasTable('pendetas')) {
                 $pendetas = DB::table('pendetas')
                     ->leftJoin('jemaats', 'pendetas.jemaat_id', '=', 'jemaats.id')
-                    ->select('pendetas.id', DB::raw("COALESCE(jemaats.nama, pendetas.nama) as name"))
+                    ->leftJoin('users', 'pendetas.user_id', '=', 'users.id')
+                    ->select('pendetas.id', DB::raw("COALESCE(jemaats.nama, users.name) as name"))
                     ->orderBy('pendetas.created_at', 'desc')
                     ->get();
             } else {

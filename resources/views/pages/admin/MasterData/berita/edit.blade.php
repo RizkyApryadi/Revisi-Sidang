@@ -26,7 +26,7 @@
 
                 <div class="form-group mb-3">
                     <label for="tanggal">Tanggal</label>
-                    <input type="date" name="tanggal" id="tanggal" class="form-control" value="{{ old('tanggal', optional($berita->tanggal)->format('Y-m-d')) }}">
+                    <input type="date" name="tanggal" id="tanggal" class="form-control" value="{{ old('tanggal', $berita->tanggal ? \Carbon\Carbon::parse($berita->tanggal)->format('Y-m-d') : '') }}">
                 </div>
 
                 <div class="form-group mb-3">
@@ -44,7 +44,7 @@
 
                 <div class="form-group mb-3">
                     <label for="ringkasan">Ringkasan</label>
-                    <textarea name="ringkasan" id="ringkasan" class="form-control" rows="4">{{ old('ringkasan', $berita->ringkasan) }}</textarea>
+                    <textarea name="ringkasan" id="ringkasan" class="form-control tinymce" rows="6">{{ old('ringkasan', $berita->ringkasan) }}</textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Simpan</button>

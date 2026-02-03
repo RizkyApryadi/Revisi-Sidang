@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Pendeta;
+use App\Models\Penatua;
 
 class PendetaController extends Controller
 {
@@ -70,6 +71,10 @@ class PendetaController extends Controller
         $validated = $request->validate($rules);
 
         try {
+            // Cross-table: jemaat already a penatua cannot be pendeta
+            if (Penatua::where('jemaat_id', $validated['jemaat_id'])->exists()) {
+                return redirect()->back()->with('error', 'Jemaat sudah terdaftar sebagai Penatua, tidak bisa menjadi Pendeta.')->withInput();
+            }
             $insert = [
                 'user_id' => null,
                 'jemaat_id' => $validated['jemaat_id'],
@@ -137,7 +142,10 @@ class PendetaController extends Controller
                 'keterangan' => $validated['keterangan'] ?? null,
                 'updated_at' => now(),
             ];
-
+            // Cross-table: ensure the target jemaat is not registered as penatua
+            if (Penatua::where('jemaat_id', $validated['jemaat_id'])->exists()) {
+                return redirect()->back()->with('error', 'Jemaat sudah terdaftar sebagai Penatua, tidak bisa menjadi Pendeta.')->withInput();
+            }
             DB::table('pendetas')->where('id', $id)->update($update);
 
             return redirect()->route('admin.pendeta')->with('success', 'Pendeta berhasil diperbarui.');

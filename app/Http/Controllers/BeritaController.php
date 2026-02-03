@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 
 class BeritaController extends Controller
 {
@@ -66,6 +67,98 @@ class BeritaController extends Controller
 		} catch (\Exception $e) {
 			Log::error('Berita store error: ' . $e->getMessage());
 			return redirect()->back()->with('error', 'Gagal menyimpan berita.')->withInput();
+		}
+	}
+
+	/**
+	 * Display the specified berita.
+	 */
+	public function show($id)
+	{
+		$berita = DB::table('beritas')->where('id', $id)->first();
+		if (!$berita) {
+			return redirect()->route('admin.berita')->with('error', 'Berita tidak ditemukan.');
+		}
+		return view('pages.admin.MasterData.berita.show', compact('berita'));
+	}
+
+	/**
+	 * Show the form for editing the specified berita.
+	 */
+	public function edit($id)
+	{
+		$berita = DB::table('beritas')->where('id', $id)->first();
+		if (!$berita) {
+			return redirect()->route('admin.berita')->with('error', 'Berita tidak ditemukan.');
+		}
+		return view('pages.admin.MasterData.berita.edit', compact('berita'));
+	}
+
+	/**
+	 * Update the specified berita in storage.
+	 */
+	public function update(Request $request, $id)
+	{
+		$validated = $request->validate([
+			'tanggal' => 'required|date',
+			'judul' => 'required|string|max:255',
+			'ringkasan' => 'required|string',
+			'file' => 'nullable|file|max:10240',
+			'foto' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:5120',
+		]);
+
+		$berita = DB::table('beritas')->where('id', $id)->first();
+		if (!$berita) {
+			return redirect()->route('admin.berita')->with('error', 'Berita tidak ditemukan.');
+		}
+
+		try {
+			$filePath = $berita->file ?? null;
+			$fotoPath = $berita->foto ?? null;
+			if ($request->hasFile('file')) {
+				// delete old file
+				if (!empty($filePath)) Storage::disk('public')->delete($filePath);
+				$filePath = $request->file('file')->store('beritas/files', 'public');
+			}
+			if ($request->hasFile('foto')) {
+				if (!empty($fotoPath)) Storage::disk('public')->delete($fotoPath);
+				$fotoPath = $request->file('foto')->store('beritas/foto', 'public');
+			}
+
+			DB::table('beritas')->where('id', $id)->update([
+				'tanggal' => $validated['tanggal'],
+				'judul' => $validated['judul'],
+				'ringkasan' => $validated['ringkasan'],
+				'file' => $filePath,
+				'foto' => $fotoPath,
+				'updated_at' => now(),
+			]);
+
+			return redirect()->route('admin.berita')->with('success', 'Berita berhasil diperbarui.');
+		} catch (\Exception $e) {
+			Log::error('Berita update error: ' . $e->getMessage());
+			return redirect()->back()->with('error', 'Gagal memperbarui berita.')->withInput();
+		}
+	}
+
+	/**
+	 * Remove the specified berita from storage.
+	 */
+	public function destroy($id)
+	{
+		$berita = DB::table('beritas')->where('id', $id)->first();
+		if (!$berita) {
+			return redirect()->route('admin.berita')->with('error', 'Berita tidak ditemukan.');
+		}
+
+		try {
+			if (!empty($berita->file)) Storage::disk('public')->delete($berita->file);
+			if (!empty($berita->foto)) Storage::disk('public')->delete($berita->foto);
+			DB::table('beritas')->where('id', $id)->delete();
+			return redirect()->route('admin.berita')->with('success', 'Berita berhasil dihapus.');
+		} catch (\Exception $e) {
+			Log::error('Berita destroy error: ' . $e->getMessage());
+			return redirect()->route('admin.berita')->with('error', 'Gagal menghapus berita.');
 		}
 	}
 }

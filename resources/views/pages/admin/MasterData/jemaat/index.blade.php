@@ -604,16 +604,51 @@
 
                             // If Penatua or Pendeta: redirect to respective create form with jemaat id and name prefilled
                             if (role === 'penatua' || role === 'pendeta') {
-                                try {
-                                    const name = currentJemaatRow ? (currentJemaatRow.querySelector('td:nth-child(2)') && currentJemaatRow.querySelector('td:nth-child(2)').innerText.trim()) : '';
-                                    const base = role === 'penatua' ? '/admin/penatua/create' : '/admin/pendeta/create';
-                                    let url = base + '?jemaat_id=' + encodeURIComponent(currentJemaatId);
-                                    if (name) url += '&nama=' + encodeURIComponent(name);
-                                    hideContextMenu();
-                                    window.location.href = url;
-                                } catch (e) {
-                                    hideContextMenu();
-                                }
+                                // perform quick AJAX check to ensure jemaat isn't already registered in the other role
+                                const checkUrl = '/admin/jemaat/' + encodeURIComponent(currentJemaatId) + '/check-role';
+                                fetch(checkUrl, { headers: { 'Accept': 'application/json' } })
+                                    .then(function(r){ return r.json(); })
+                                    .then(function(info){
+                                        if (!info) {
+                                            Swal.fire({ icon: 'error', title: 'Gagal', text: 'Tidak dapat memeriksa status jemaat.' });
+                                            return hideContextMenu();
+                                        }
+                                        if (role === 'penatua') {
+                                            if (info.is_pendeta) {
+                                                Swal.fire({ icon: 'error', title: 'Dilarang', text: 'Jemaat sudah terdaftar sebagai Pendeta, tidak bisa menjadi Penatua.' });
+                                                return hideContextMenu();
+                                            }
+                                            if (info.is_penatua) {
+                                                Swal.fire({ icon: 'info', title: 'Info', text: 'Jemaat sudah terdaftar sebagai Penatua.' });
+                                                return hideContextMenu();
+                                            }
+                                        }
+                                        if (role === 'pendeta') {
+                                            if (info.is_penatua) {
+                                                Swal.fire({ icon: 'error', title: 'Dilarang', text: 'Jemaat sudah terdaftar sebagai Penatua, tidak bisa menjadi Pendeta.' });
+                                                return hideContextMenu();
+                                            }
+                                            if (info.is_pendeta) {
+                                                Swal.fire({ icon: 'info', title: 'Info', text: 'Jemaat sudah terdaftar sebagai Pendeta.' });
+                                                return hideContextMenu();
+                                            }
+                                        }
+
+                                        // allowed: redirect to create form with prefilled jemaat_id and nama
+                                        try {
+                                            const name = currentJemaatRow ? (currentJemaatRow.querySelector('td:nth-child(2)') && currentJemaatRow.querySelector('td:nth-child(2)').innerText.trim()) : '';
+                                            const base = role === 'penatua' ? '/admin/penatua/create' : '/admin/pendeta/create';
+                                            let url = base + '?jemaat_id=' + encodeURIComponent(currentJemaatId);
+                                            if (name) url += '&nama=' + encodeURIComponent(name);
+                                            hideContextMenu();
+                                            window.location.href = url;
+                                        } catch (e) {
+                                            hideContextMenu();
+                                        }
+                                    }).catch(function(err){
+                                        Swal.fire({ icon: 'error', title: 'Error', text: 'Gagal memeriksa status jemaat.' });
+                                        hideContextMenu();
+                                    });
                                 return;
                             }
                             fetch('/admin/jemaat/' + encodeURIComponent(currentJemaatId) + '/assign-role', {

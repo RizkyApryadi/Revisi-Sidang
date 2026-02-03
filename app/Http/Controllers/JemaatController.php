@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Wijk;
 use App\Models\Jemaat;
 use App\Models\Keluarga;
+use App\Models\Penatua;
+use App\Models\Pendeta;
 use App\Http\Controllers\KeluargaController;
 
 class JemaatController extends Controller
@@ -39,14 +41,54 @@ class JemaatController extends Controller
 		]);
 
 		$jemaat = Jemaat::findOrFail($id);
-		// For now this is a backend stub: log and return success JSON.
-		// TODO: implement actual creation of Penatua/Pendeta records as needed.
-		\Illuminate\Support\Facades\Log::info('assignRole called', ['jemaat_id' => $id, 'role' => $validated['role']]);
+		// Perform cross-table validation: a jemaat cannot be both penatua and pendeta
+		try {
+			if ($validated['role'] === 'penatua') {
+				if (Pendeta::where('jemaat_id', $jemaat->id)->exists()) {
+					return response()->json([
+						'success' => false,
+						'message' => 'Jemaat sudah terdaftar sebagai Pendeta, tidak bisa menjadi Penatua.'
+					], 422);
+				}
+			}
+			if ($validated['role'] === 'pendeta') {
+				if (Penatua::where('jemaat_id', $jemaat->id)->exists()) {
+					return response()->json([
+						'success' => false,
+						'message' => 'Jemaat sudah terdaftar sebagai Penatua, tidak bisa menjadi Pendeta.'
+					], 422);
+				}
+			}
 
-		return response()->json([
-			'success' => true,
-			'message' => 'Permintaan "' . $validated['role'] . '" diterima untuk jemaat: ' . ($jemaat->nama ?? $jemaat->id)
-		]);
+			\Illuminate\Support\Facades\Log::info('assignRole called', ['jemaat_id' => $id, 'role' => $validated['role']]);
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Permintaan "' . $validated['role'] . '" diterima untuk jemaat: ' . ($jemaat->nama ?? $jemaat->id)
+			]);
+		} catch (\Exception $e) {
+			\Illuminate\Support\Facades\Log::error('assignRole error: ' . $e->getMessage());
+			return response()->json(['success' => false, 'message' => 'Terjadi kesalahan server.'], 500);
+		}
+	}
+
+	/**
+	 * AJAX endpoint to check whether a jemaat is already registered as penatua or pendeta.
+	 */
+	public function checkRole($id)
+	{
+		try {
+			$isPenatua = Penatua::where('jemaat_id', $id)->exists();
+			$isPendeta = Pendeta::where('jemaat_id', $id)->exists();
+
+			return response()->json([
+				'is_penatua' => $isPenatua,
+				'is_pendeta' => $isPendeta,
+			]);
+		} catch (\Exception $e) {
+			\Illuminate\Support\Facades\Log::error('checkRole error: ' . $e->getMessage());
+			return response()->json(['error' => 'Terjadi kesalahan server'], 500);
+		}
 	}
 
 	/**

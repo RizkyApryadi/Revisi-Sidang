@@ -55,4 +55,44 @@
     </div>
 
 </section>
+@push('script')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: {!! json_encode(session('success')) !!}
+        });
+    @endif
+
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: {!! json_encode(session('error')) !!}
+        });
+    @endif
+
+    @if(session('info'))
+        Swal.fire({
+            icon: 'info',
+            title: 'Informasi',
+            text: {!! json_encode(session('info')) !!}
+        });
+    @endif
+
+    @if($errors->any())
+        var errs = {!! json_encode($errors->all()) !!};
+        Swal.fire({
+            icon: 'error',
+            title: 'Validasi Gagal',
+            html: errs.map(function(e){ return '<div>' + e + '</div>'; }).join('')
+        });
+    @endif
+});
+</script>
+@endpush
+
 @endsection

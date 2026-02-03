@@ -23,14 +23,20 @@ use Illuminate\Support\Facades\Route;
 | are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |*/
-
+// Root guest dashboard
+Route::get('/', [GuestController::class, 'dashboard'])->name('pages.guest.dashboard');
 
 // Guest pages used by blade navigation
 Route::get('/jadwal', [GuestController::class, 'jadwal'])->name('guest.jadwal');
 Route::get('/kegiatan', [GuestController::class, 'kegiatan'])->name('guest.kegiatan');
 Route::get('/layanan', [GuestController::class, 'layanan'])->name('guest.layanan');
+Route::get('/layanan/baptisan', [GuestController::class, 'baptisan'])->name('guest.layanan.baptisan');
+Route::get('/layanan/pernikahan', [GuestController::class, 'pernikahan'])->name('guest.layanan.pernikahan');
+Route::get('/layanan/pindah', [GuestController::class, 'pindah'])->name('guest.layanan.pindah');
+Route::get('/layanan/sidi', [GuestController::class, 'sidi'])->name('guest.layanan.sidi');
 Route::get('/galeri', [GuestController::class, 'galeri'])->name('guest.galeri');
 Route::get('/renungan', [GuestController::class, 'renungan'])->name('guest.renungan');
+Route::get('/berita/{id}', [GuestController::class, 'beritaShow'])->name('guest.berita.show');
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -48,6 +54,7 @@ require __DIR__ . '/auth.php';
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
         return view('pages.admin.dashboard');
+
     })->name('dashboard');
 
     // Wijk 
@@ -60,6 +67,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/jemaat', [JemaatController::class, 'index'])->name('jemaat');
     Route::get('/jemaat/create', [JemaatController::class, 'create'])->name('jemaat.create');
     Route::get('/jemaat/search', [JemaatController::class, 'ajaxSearch'])->name('jemaat.search');
+    Route::get('/jemaat/{id}/check-role', [JemaatController::class, 'checkRole'])->name('jemaat.checkRole');
     Route::post('/jemaat', [JemaatController::class, 'store'])->name('jemaat.store');
     Route::get('/jemaat/{id}/edit', [JemaatController::class, 'edit'])->name('jemaat.edit');
     Route::put('/jemaat/{id}', [JemaatController::class, 'update'])->name('jemaat.update');
@@ -94,6 +102,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/berita', [BeritaController::class, 'index'])->name('berita');
     Route::get('/berita/create', [BeritaController::class, 'create'])->name('berita.create');
     Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
+    Route::get('/berita/{id}', [BeritaController::class, 'show'])->name('berita.show');
+    Route::get('/berita/{id}/edit', [BeritaController::class, 'edit'])->name('berita.edit');
+    Route::put('/berita/{id}', [BeritaController::class, 'update'])->name('berita.update');
+    Route::delete('/berita/{id}', [BeritaController::class, 'destroy'])->name('berita.destroy');
 
     // Pelayan
     Route::get('/pelayan', [PelayanController::class, 'index'])->name('pelayan');

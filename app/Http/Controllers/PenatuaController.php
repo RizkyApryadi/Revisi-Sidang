@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Wijk;
 use App\Models\Penatua;
 use App\Models\User;
+use App\Models\Pendeta;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
@@ -104,6 +105,11 @@ class PenatuaController extends Controller
                 if ($existsByUser) {
                     return redirect()->back()->with('error', 'Akun pengguna yang dipilih sudah terdaftar sebagai penatua. Silakan pilih akun user lain.')->withInput();
                 }
+            }
+
+            // Cross-table: jemaat already a pendeta cannot be penatua
+            if (Pendeta::where('jemaat_id', $validated['jemaat_id'])->exists()) {
+                return redirect()->back()->with('error', 'Jemaat sudah terdaftar sebagai Pendeta, tidak bisa menjadi Penatua.')->withInput();
             }
 
             $penatua = Penatua::create([
