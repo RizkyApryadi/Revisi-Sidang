@@ -23,10 +23,26 @@
                 <a href="{{ route('guest.galeri') }}" class="text-sm text-indigo-600">Kembali</a>
             </div>
 
-            @if($galeri->foto_path)
+            @if($galeri->fotos && $galeri->fotos->count())
             <div class="mt-4">
-                <img src="{{ asset('storage/' . $galeri->foto_path) }}" alt="{{ $galeri->judul }}" class="w-full rounded-lg shadow-md">
+                @php $first = $galeri->fotos->first(); @endphp
+                <div class="aspect-[16/9] overflow-hidden rounded-lg">
+                    <img id="mainImage" src="{{ asset('storage/' . $first->foto) }}" alt="{{ $galeri->judul }}"
+                        class="w-full h-full object-cover rounded-lg shadow-md">
+                </div>
             </div>
+
+            @if($galeri->fotos->count() > 1)
+            <div class="mt-4 grid grid-cols-3 sm:grid-cols-6 gap-3">
+                @foreach($galeri->fotos as $foto)
+                <button type="button" onclick="document.getElementById('mainImage').src='{{ asset('storage/' . $foto->foto) }}'"
+                    class="focus:outline-none">
+                    <img src="{{ asset('storage/' . $foto->foto) }}" alt="thumb-{{ $loop->index }}"
+                        class="w-full h-24 object-cover rounded-lg border hover:opacity-90 transition">
+                </button>
+                @endforeach
+            </div>
+            @endif
             @endif
 
             @if(!empty($galeri->deskripsi))

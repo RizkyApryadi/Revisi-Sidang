@@ -35,6 +35,18 @@
                 </div>
 
                 <div class="form-group mb-3">
+                    <label for="foto">Foto Utama (opsional)</label>
+                    <input type="file" name="foto" id="foto" class="form-control">
+                    @if(!empty($berita->foto))
+                    <div class="mt-2">
+                        <a href="{{ asset('storage/' . $berita->foto) }}" target="_blank">
+                            <img src="{{ asset('storage/' . $berita->foto) }}" alt="Foto Berita" style="max-width:200px; height:auto; border:1px solid #ddd; padding:4px;" />
+                        </a>
+                        <div><small class="text-muted">Foto saat ini</small></div>
+                    </div>
+                    @endif
+                </div>
+                <div class="form-group mb-3">
                     <label for="file">File (opsional)</label>
                     <input type="file" name="file" id="file" class="form-control">
                     @if($berita->file)

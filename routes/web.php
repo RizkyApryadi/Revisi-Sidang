@@ -28,6 +28,8 @@ Route::get('/', [GuestController::class, 'dashboard'])->name('pages.guest.dashbo
 
 // Guest pages used by blade navigation
 Route::get('/jadwal', [GuestController::class, 'jadwal'])->name('guest.jadwal');
+Route::get('/jadwal/{id}', [GuestController::class, 'jadwalShow'])->name('guest.jadwal.show');
+Route::get('/jadwal/{id}/file', [GuestController::class, 'jadwalFile'])->name('guest.jadwal.file');
 Route::get('/kegiatan', [GuestController::class, 'kegiatan'])->name('guest.kegiatan');
 Route::get('/layanan', [GuestController::class, 'layanan'])->name('guest.layanan');
 Route::get('/layanan/baptisan', [GuestController::class, 'baptisan'])->name('guest.layanan.baptisan');
@@ -35,6 +37,7 @@ Route::get('/layanan/pernikahan', [GuestController::class, 'pernikahan'])->name(
 Route::get('/layanan/pindah', [GuestController::class, 'pindah'])->name('guest.layanan.pindah');
 Route::get('/layanan/sidi', [GuestController::class, 'sidi'])->name('guest.layanan.sidi');
 Route::get('/galeri', [GuestController::class, 'galeri'])->name('guest.galeri');
+Route::get('/galeri/{id}', [GuestController::class, 'galeriShow'])->name('guest.galeri.show');
 Route::get('/renungan', [GuestController::class, 'renungan'])->name('guest.renungan');
 Route::get('/berita/{id}', [GuestController::class, 'beritaShow'])->name('guest.berita.show');
 Route::get('/dashboard', function () {
@@ -54,7 +57,6 @@ require __DIR__ . '/auth.php';
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
         return view('pages.admin.dashboard');
-
     })->name('dashboard');
 
     // Wijk 
@@ -102,6 +104,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/berita', [BeritaController::class, 'index'])->name('berita');
     Route::get('/berita/create', [BeritaController::class, 'create'])->name('berita.create');
     Route::post('/berita', [BeritaController::class, 'store'])->name('berita.store');
+    Route::post('/berita/upload-image', [BeritaController::class, 'uploadImage'])->name('berita.uploadImage');
     Route::get('/berita/{id}', [BeritaController::class, 'show'])->name('berita.show');
     Route::get('/berita/{id}/edit', [BeritaController::class, 'edit'])->name('berita.edit');
     Route::put('/berita/{id}', [BeritaController::class, 'update'])->name('berita.update');

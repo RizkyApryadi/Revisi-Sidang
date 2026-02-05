@@ -59,6 +59,85 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    if (typeof tinymce === 'undefined') {
+        console.warn('TinyMCE not loaded from layout. Make sure tinymce is available.');
+    } else {
+        // remove existing instances to avoid duplicate-init conflicts
+        try { tinymce.remove(); } catch (e) { /* ignore */ }
+        tinymce.init({
+        selector: 'textarea.tinymce',
+        plugins: 'image link media code lists advlist',
+        toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | image link media | code',
+        file_picker_types: 'image',
+        file_picker_callback: function (callback, value, meta) {
+            if (meta.filetype === 'image') {
+                var input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+                input.setAttribute('multiple', 'multiple');
+                input.onchange = function () {
+                    var files = input.files;
+                    var formData = new FormData();
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append('files[]', files[i]);
+                    }
+                    formData.append('_token', '{{ csrf_token() }}');
+
+                    fetch("{{ route('admin.berita.uploadImage') }}", {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'same-origin',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    }).then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        if (data && data.location) {
+                            callback(data.location);
+                        } else if (data && data.locations && data.locations.length) {
+                            // Insert all images inside a single paragraph so they appear side-by-side
+                            var imgs = '';
+                            for (var j = 0; j < data.locations.length; j++) {
+                                imgs += '<img src="' + data.locations[j] + '" style="display:inline-block; width:48%; margin-right:8px; vertical-align:middle;" />';
+                            }
+                            var html = '<p>' + imgs + '</p>';
+                            tinymce.activeEditor.execCommand('mceInsertContent', false, html);
+                        } else {
+                            alert('Gagal mengunggah gambar');
+                        }
+                    }).catch(function (err) { alert('HTTP Error: ' + err.message); });
+                };
+                input.click();
+            }
+        },
+        images_upload_handler: function (blobInfo, success, failure) {
+            var formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+            formData.append('_token', '{{ csrf_token() }}');
+
+            fetch("{{ route('admin.berita.uploadImage') }}", {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            }).then(function (res) { return res.json(); })
+            .then(function (data) {
+                if (data && data.location) {
+                    success(data.location);
+                } else if (data && data.locations && data.locations.length) {
+                    // Insert all images into a single paragraph so they appear side-by-side
+                    var imgs = '';
+                    for (var k = 0; k < data.locations.length; k++) {
+                        imgs += '<img src="' + data.locations[k] + '" style="display:inline-block; width:48%; margin-right:8px; vertical-align:middle;" />';
+                    }
+                    var html = '<p>' + imgs + '</p>';
+                    tinymce.activeEditor.execCommand('mceInsertContent', false, html);
+                } else {
+                    failure('Invalid JSON response');
+                }
+            }).catch(function (err) { failure('HTTP Error: ' + err.message); });
+        },
+        height: 300
+    });
+
     @if(session('success'))
         Swal.fire({
             icon: 'success',

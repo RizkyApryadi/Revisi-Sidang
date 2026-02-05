@@ -71,6 +71,51 @@ class BeritaController extends Controller
 	}
 
 	/**
+	 * Handle image uploads from the editor (TinyMCE).
+	 */
+	public function uploadImage(Request $request)
+	{
+		// Support single file named 'file' or multiple files 'file[]' / 'files'
+		$files = [];
+		if ($request->hasFile('file')) {
+			$files = [$request->file('file')];
+		} elseif ($request->hasFile('files')) {
+			$files = $request->file('files');
+		} elseif ($request->hasFile('file') && is_array($request->file('file'))) {
+			$files = $request->file('file');
+		}
+
+		if (empty($files)) {
+			return response()->json(['error' => 'No files uploaded'], 400);
+		}
+
+		$locations = [];
+		foreach ($files as $f) {
+			try {
+				// validate each file
+				if (!$f->isValid()) continue;
+				$mime = $f->getClientMimeType();
+				if (!preg_match('/image\//', $mime)) continue;
+				$path = $f->store('beritas/content', 'public');
+				$locations[] = asset('storage/' . $path);
+			} catch (\Exception $e) {
+				Log::error('Upload image error: ' . $e->getMessage());
+			}
+		}
+
+		if (empty($locations)) {
+			return response()->json(['error' => 'Gagal mengunggah gambar.'], 500);
+		}
+
+		// If only one image, return 'location' for TinyMCE default. If multiple, return 'locations' array.
+		if (count($locations) === 1) {
+			return response()->json(['location' => $locations[0]], 200);
+		}
+
+		return response()->json(['locations' => $locations], 200);
+	}
+
+	/**
 	 * Display the specified berita.
 	 */
 	public function show($id)

@@ -22,4 +22,9 @@ class Galeri extends Model
     {
         return $this->hasMany(GaleriFoto::class, 'galeri_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
+    }
 }

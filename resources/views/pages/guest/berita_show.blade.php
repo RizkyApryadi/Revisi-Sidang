@@ -7,6 +7,14 @@
     <title>HKBP Soposurung - Berita</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Allow multiple images in the same paragraph to appear side-by-side
+           while keeping single-image paragraphs full-width. Overrides the
+           Tailwind Typography (.prose) default which makes images block-level. */
+        .prose p img { display: inline-block; max-width: 48%; margin-right: 0.5rem; vertical-align: middle; }
+        .prose p:only-child img { display: block; max-width: 100%; margin-right: 0; }
+        .prose p img.full-width { display: block; max-width: 100%; }
+    </style>
 
 </head>
 

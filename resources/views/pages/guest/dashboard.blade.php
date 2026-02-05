@@ -13,115 +13,86 @@
 <body class="pb-24 md:pb-32">
     @include('pages.guest.partialsGuest.navGuest')
 
-    <!-- Hero Section    -->
+    <!-- Hero Section -->
     <section id="home"
-        class="min-h-[90vh] flex items-center justify-center relative overflow-hidden bg-[linear-gradient(135deg,#1e3c72_0%,#2a5298_40%,#6dd5fa_100%)]">
+        class="min-h-[72vh] flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-indigo-700 via-cyan-600 to-sky-400 text-white">
 
-        <!-- Border Box Wrapper -->
         <div class="w-full flex justify-center px-4">
-            <div class="w-full max-w-[1200px] border border-white/30 rounded-2xl 
-                px-6 md:px-10 lg:px-14 py-10 md:py-14 bg-white/0 backdrop-blur-sm">
+            <div
+                class="w-full max-w-[1200px] rounded-2xl px-6 md:px-10 lg:px-14 py-10 md:py-14 bg-white/5 backdrop-blur-sm border border-white/10">
 
-                <!-- Content Wrapper -->
-                <div class="flex flex-col md:flex-row items-center gap-10 md:gap-16">
+                <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
 
-                    <!-- Image -->
-                    <div class="flex justify-center md:justify-start w-full md:w-[45%]">
-                        <img src="{{ asset('img/Jesus.png') }}" class="max-w-[270px] md:max-w-[360px] lg:max-w-[400px] 
-                           object-contain
-                           mt-4 md:mt-8 lg:mt-10
-                           drop-shadow-[0_0_40px_rgba(255,255,255,0.7)]
-                           transition-transform duration-500 hover:scale-105">
+                    <div class="flex justify-center md:justify-start w-full md:w-1/2">
+                        <img src="{{ asset('img/Jesus.png') }}" alt="Jesus"
+                            class="max-w-[260px] md:max-w-[340px] lg:max-w-[420px] object-contain mt-2 md:mt-6 drop-shadow-[0_10px_30px_rgba(0,0,0,0.4)] transition-transform duration-500 hover:scale-105">
                     </div>
 
-                    <!-- Text -->
-                    <div class="w-full md:w-[55%] text-center md:text-left text-white">
-                        <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight drop-shadow mb-6">
-                            “Aku adalah Jalan,<br> Kebenaran, dan Hidup”
-                        </h1>
-                        <p class="text-base md:text-lg lg:text-xl text-white/90 mb-6 leading-relaxed">
-                            Tidak ada seorang pun datang kepada Bapa,<br>
-                            kalau tidak melalui Aku.
-                        </p>
-                        <p class="text-base md:text-lg italic text-white/85">
-                            — Yohanes 14:6
-                        </p>
+                    <div class="w-full md:w-1/2 text-center md:text-left">
+                        <span class="inline-block mb-3 px-3 py-1 rounded-full bg-white/10 text-sm font-semibold">Selamat
+                            Datang di HKBP Soposurung</span>
+                        <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mt-3 mb-4">“Aku adalah
+                            Jalan,<br> Kebenaran, dan Hidup”</h1>
+                        <p class="text-base md:text-lg lg:text-xl text-white/90 mb-5 leading-relaxed">Tidak ada seorang
+                            pun datang kepada Bapa, kalau tidak melalui Aku.</p>
+                        <p class="text-sm italic text-white/85">— Yohanes 14:6</p>
+
+                        <div class="mt-6 flex items-center justify-center md:justify-start gap-3">
+                            <a href="#berita"
+                                class="px-5 py-2 rounded-lg bg-white text-indigo-700 font-semibold shadow hover:scale-105 transition">Lihat
+                                Berita</a>
+                            <a href="#galeri"
+                                class="px-5 py-2 rounded-lg border border-white/30 text-white hover:bg-white/10 transition">Galeri
+                                Foto</a>
+                        </div>
                     </div>
 
                 </div>
 
             </div>
         </div>
+
     </section>
 
     <!-- Jadwal Ibadah Section -->
-    <section id="about" class="bg-slate-50 py-12 md:py-16 relative">
-        <div class="max-w-[1400px] mx-auto px-8 pb-6">
 
-            <!-- Title -->
-            <h2 class="text-4xl md:text-3xl font-bold text-center mb-8 bg-clip-text text-transparent 
-        bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500" style="scroll-margin-top:5rem;">
-                Jadwal Ibadah Mingguan
-            </h2>
+    <div class="max-w-5xl mx-auto bg-white rounded-xl shadow divide-y">
 
-            <!-- Grid (tampilkan semua jadwal sebagai grid responsif) -->
-            <div id="dashboardJadwalGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                @if(isset($ibadahs) && $ibadahs->count())
-                @foreach($ibadahs as $index => $ibadah)
-                <a href="{{ route('guest.jadwal.show', $ibadah->id) }}" class="group block">
-                    <div class="relative bg-white rounded-2xl shadow-md p-6 border border-indigo-100 
-                hover:shadow-xl hover:-translate-y-1 transition duration-300">
-
-                        <!-- NEW Badge -->
-                        @if($index === 0)
-                        <span
-                            class="absolute top-3 right-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md animate-pulse uppercase tracking-wide">
-                            NEW
-                        </span>
-                        @endif
-
-                        <h3 class="text-xl font-semibold text-indigo-700 mb-2">
-                            {{ optional($ibadah->warta)->nama_minggu ?? 'Ibadah' }}
-                        </h3>
-
-                        <p class="text-gray-600 font-medium">
-                            {{ optional($ibadah->warta)->tanggal ?
-                            \Carbon\Carbon::parse(optional($ibadah->warta)->tanggal)->translatedFormat('j F Y') : '-' }}
-                            • {{ $ibadah->waktu ?? '-' }} WIB
-                        </p>
-
-                        @if(!empty($ibadah->tema))
-                        <p class="text-gray-600 mt-2 leading-relaxed">
-                            <strong class="text-indigo-600">Topik:</strong>
-                            {{ \Illuminate\Support\Str::limit(strip_tags($ibadah->tema), 100) }}
-                        </p>
-                        @elseif(!empty($ibadah->keterangan))
-                        @php $k = strip_tags($ibadah->keterangan); @endphp
-                        <p class="text-gray-600 mt-2 leading-relaxed">
-                            {{ \Illuminate\Support\Str::limit($k, 120, '...') }}
-                        </p>
-                        @endif
-
+        @if(isset($ibadahs) && $ibadahs->count())
+        @foreach($ibadahs as $ibadah)
+        <a href="{{ route('guest.jadwal.show', $ibadah->id) }}" class="group block">
+            <div class="flex items-center justify-between p-5 hover:bg-gray-50 transition">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-cyan-500 rounded-lg flex items-center justify-center">
+                        ⏰
                     </div>
-                </a>
-                @endforeach
-                @else
-                <div class="col-span-full text-center text-gray-600">Belum ada jadwal ibadah.</div>
-                @endif
-            </div>
+                    <div>
+                        <h3 class="font-semibold text-lg">{{ $ibadah->nama_minggu ?? $ibadah->nama ?? 'Ibadah' }}</h3>
+                        @php
+                        $tanggal = data_get($ibadah, 'tanggal') ?? data_get($ibadah, 'warta.tanggal') ?? null;
+                        @endphp
+                        <p class="text-sm text-gray-500">{{ $tanggal ?
+                            \Carbon\Carbon::parse($tanggal)->locale('id')->translatedFormat('j F Y') : '-' }}</p>
+                    </div>
+                </div>
 
-            <!-- View all button -->
-            @if(isset($ibadahs) && $ibadahs->count())
-            <div class="mt-10 flex justify-center">
-                <a href="{{ route('guest.jadwal') }}" class="px-6 py-3 rounded-xl bg-indigo-600 text-white font-bold shadow-md 
-                hover:bg-indigo-700 hover:shadow-lg transition">
-                    Lihat Semua Jadwal
-                </a>
+                <div class="flex items-center gap-4">
+                    <span class="text-lg font-semibold">{{ data_get($ibadah, 'hari') ?? (data_get($ibadah, 'tanggal') ?
+                        \Carbon\Carbon::parse(data_get($ibadah, 'tanggal'))->locale('id')->translatedFormat('l') : '-')
+                        }}</span>
+                    <span class="text-gray-600">/ {{ $ibadah->waktu ?
+                        \Carbon\Carbon::parse($ibadah->waktu)->format('H.i') : ($ibadah->jam ?
+                        \Carbon\Carbon::parse($ibadah->jam)->format('H.i') : '-') }} WIB</span>
+                </div>
             </div>
-            @endif
+        </a>
+        @endforeach
+        @else
+        <div class="p-5 text-center text-gray-600">Belum ada jadwal ibadah.</div>
+        @endif
 
-        </div>
-    </section>
+    </div>
+
 
     <!-- Berita Section -->
     <section id="berita"
@@ -224,10 +195,47 @@
                 Galeri Gereja
             </h2>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+            @if(isset($galeris) && $galeris->count())
+            @php
+            $featured = $galeris->first();
+            $others = $galeris->slice(1);
+            @endphp
 
-                @if(isset($galeris) && $galeris->count())
-                @foreach($galeris as $g)
+            <!-- Featured gallery item -->
+            <div class="mb-8">
+                <a href="{{ route('guest.galeri.show', $featured->id) }}" class="group block">
+                    <div class="grid md:grid-cols-2 bg-white rounded-2xl overflow-hidden shadow-xl">
+
+                        <div class="p-3 bg-gray-100">
+                            <div class="aspect-[16/9] overflow-hidden rounded-xl">
+                                <img src="{{ $featured->foto_path ? asset('storage/' . $featured->foto_path) : asset('images/galeri-placeholder.jpg') }}"
+                                    class="w-full h-full object-cover object-center group-hover:scale-105 transition">
+                            </div>
+                        </div>
+
+                        <div class="p-8 text-gray-800">
+                            <h3 class="text-3xl font-extrabold text-indigo-700 mb-4">
+                                {{ $featured->judul ?? 'Galeri' }}
+                            </h3>
+
+                            <p class="text-gray-500 mb-4">
+                                {{ $featured->tanggal ? \Carbon\Carbon::parse($featured->tanggal)->format('j F Y') : '-'
+                                }}
+                            </p>
+
+                            <p class="text-gray-700 text-lg leading-relaxed">
+                                {{ \Illuminate\Support\Str::limit(strip_tags($featured->deskripsi ?? ''), 220) }}
+                            </p>
+                        </div>
+
+                    </div>
+                </a>
+            </div>
+
+            <!-- Smaller gallery grid for the rest -->
+            @if($others->count())
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                @foreach($others as $g)
                 <a href="{{ route('guest.galeri.show', $g->id) }}" class="group block">
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-400">
                         <div class="w-full h-48 overflow-hidden">
@@ -247,11 +255,12 @@
                     </div>
                 </a>
                 @endforeach
-                @else
-                <div class="col-span-full text-center text-gray-600">Belum ada foto galeri.</div>
-                @endif
-
             </div>
+            @endif
+
+            @else
+            <div class="col-span-full text-center text-gray-600">Belum ada foto galeri.</div>
+            @endif
 
             @if(isset($galeris) && $galeris->count())
             <div class="mt-10 flex justify-center">
