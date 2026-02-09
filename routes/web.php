@@ -13,6 +13,10 @@ use App\Http\Controllers\PelayanController;
 use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\PendetaController;
 use App\Http\Controllers\WartaController;
+use App\Http\Controllers\Penatua\PenatuaController as PenatuaAreaController;
+use App\Http\Controllers\Penatua\PenatuaJemaatController;
+use App\Http\Controllers\Pendeta\PendetaController as PendetaAreaController;
+use App\Http\Controllers\Pendeta\PendetaRenunganController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -39,6 +43,7 @@ Route::get('/layanan/sidi', [GuestController::class, 'sidi'])->name('guest.layan
 Route::get('/galeri', [GuestController::class, 'galeri'])->name('guest.galeri');
 Route::get('/galeri/{id}', [GuestController::class, 'galeriShow'])->name('guest.galeri.show');
 Route::get('/renungan', [GuestController::class, 'renungan'])->name('guest.renungan');
+Route::get('/renungan/{id}', [GuestController::class, 'renunganShow'])->name('guest.renungan.show');
 Route::get('/berita/{id}', [GuestController::class, 'beritaShow'])->name('guest.berita.show');
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -138,18 +143,29 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
    Penatua Routes
    --------------------------------------------------------------------------*/
 Route::middleware('auth')->prefix('penatua')->name('penatua.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('pages.penatua.dashboard');
-    })->name('dashboard');
-    // add other penatua routes here
+    Route::get('/dashboard', [PenatuaAreaController::class, 'index'])->name('dashboard');
+    // Penatua - jemaat area
+    Route::get('/jemaat', [PenatuaJemaatController::class, 'index'])->name('jemaat');
+    Route::get('/jemaat/create', [PenatuaJemaatController::class, 'create'])->name('jemaat.create');
+    Route::post('/jemaat', [PenatuaJemaatController::class, 'store'])->name('jemaat.store');
+    Route::get('/jemaat/{id}', [PenatuaJemaatController::class, 'show'])->name('jemaat.show');
+    Route::get('/jemaat/{id}/edit', [PenatuaJemaatController::class, 'edit'])->name('jemaat.edit');
+    Route::put('/jemaat/{id}', [PenatuaJemaatController::class, 'update'])->name('jemaat.update');
 });
 
 /* --------------------------------------------------------------------------
    Pendeta Routes
    --------------------------------------------------------------------------*/
 Route::middleware('auth')->prefix('pendeta')->name('pendeta.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('pages.pendeta.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [PendetaAreaController::class, 'index'])->name('dashboard');
+    // Renungan (Pendeta) - standard resource-like names
+    Route::get('/renungan', [PendetaRenunganController::class, 'index'])->name('renungan.index');
+    Route::get('/renungan/create', [PendetaRenunganController::class, 'create'])->name('renungan.create');
+    Route::post('/renungan', [PendetaRenunganController::class, 'store'])->name('renungan.store');
+    Route::get('/renungan/{id}', [PendetaRenunganController::class, 'show'])->name('renungan.show');
+    Route::get('/renungan/{id}/edit', [PendetaRenunganController::class, 'edit'])->name('renungan.edit');
+    Route::put('/renungan/{id}', [PendetaRenunganController::class, 'update'])->name('renungan.update');
+    Route::delete('/renungan/{id}', [PendetaRenunganController::class, 'destroy'])->name('renungan.destroy');
+    Route::post('/renungan/{id}/toggle-status', [PendetaRenunganController::class, 'toggleStatus'])->name('renungan.toggleStatus');
     // add other pendeta routes here
 });

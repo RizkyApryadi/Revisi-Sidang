@@ -66,3 +66,91 @@
 
 </section>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    @if($errors->any())
+        let _errors = {!! json_encode($errors->getMessages()) !!};
+        let html = '<ul style="text-align:left; margin:0; padding-left:18px;">';
+        for (let field in _errors) {
+            html += '<li><strong>'+field+'</strong><ul style="margin:0; padding-left:14px;">';
+            _errors[field].forEach(function(msg){ html += '<li>'+msg+'</li>'; });
+            html += '</ul></li>';
+        }
+        html += '</ul>';
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal menyimpan perubahan',
+            html: html,
+            confirmButtonText: 'Tutup'
+        });
+    @endif
+
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: {!! json_encode(session('error')) !!},
+            confirmButtonText: 'Tutup'
+        });
+    @endif
+
+    @if(session('success'))
+        (function(){
+            let title = 'Berhasil disimpan';
+            let message = {!! json_encode(session('success')) !!};
+            let html = '<div style="text-align:left;">'+message+'</div>';
+            @if(session('uploaded_image'))
+                let img = {!! json_encode(asset('storage/' . session('uploaded_image'))) !!};
+                html += '<div style="margin-top:12px;text-align:center;"><img src="'+img+'" alt="uploaded" style="max-width:260px; height:auto; border:1px solid #ddd; padding:6px;"/></div>';
+            @endif
+
+            Swal.fire({
+                icon: 'success',
+                title: title,
+                html: html,
+                confirmButtonText: 'OK'
+            });
+        })();
+    @endif
+
+    // Client-side file size validation to catch oversized uploads before submit
+    (function(){
+        const form = document.querySelector('form[action*="berita"]');
+        if (!form) return;
+        const MAX_FOTO = 5 * 1024 * 1024; // 5 MB (matches server validation)
+        const MAX_FILE = 10 * 1024 * 1024; // 10 MB
+
+        form.addEventListener('submit', function(e){
+            const fotoInput = form.querySelector('input[name="foto"]');
+            const fileInput = form.querySelector('input[name="file"]');
+            let problems = [];
+
+            if (fotoInput && fotoInput.files && fotoInput.files[0]) {
+                if (fotoInput.files[0].size > MAX_FOTO) {
+                    problems.push('Foto terlalu besar (maks 5 MB).');
+                }
+            }
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                if (fileInput.files[0].size > MAX_FILE) {
+                    problems.push('File terlalu besar (maks 10 MB).');
+                }
+            }
+
+            if (problems.length) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ukuran file tidak sesuai',
+                    html: '<ul style="text-align:left; margin:0; padding-left:18px;">' + problems.map(p => '<li>'+p+'</li>').join('') + '</ul>',
+                    confirmButtonText: 'Tutup'
+                });
+            }
+        });
+    })();
+
+});
+@endpush

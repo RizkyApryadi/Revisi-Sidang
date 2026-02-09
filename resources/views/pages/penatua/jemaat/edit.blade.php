@@ -1,18 +1,19 @@
 @extends('layouts.main')
-@section('title','Tambah Jemaat')
+@section('title','Edit Jemaat')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-6 py-10">
+<div class="max-w-6xl mx-auto px-6 py-10">
 
     <div class="canvas-wrapper bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
 
         <div class="mb-8">
-            <h1 class="page-header">Tambah Data Jemaat</h1>
-            <p class="page-subtitle">Formulir pendaftaran dan data keluarga</p>
+            <h1 class="page-header">Edit Data Jemaat</h1>
+            <p class="page-subtitle">Formulir pendaftaran dan data keluarga (ubah)</p>
         </div>
 
-        <form method="POST" action="{{ route('penatua.jemaat.store') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('penatua.jemaat.update', $jemaat->id) }}" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
 
             @if($errors->any())
             <div class="mb-6">
@@ -64,56 +65,59 @@
                                 <div>
                                     <label class="form-label">Nomor Registrasi <span class="required">*</span></label>
                                     <input name="nomor_registrasi" class="input-soft" placeholder="Nomor Registrasi"
-                                        value="{{ old('nomor_registrasi') }}">
+                                        value="{{ old('nomor_registrasi', optional($keluarga)->nomor_registrasi) }}">
                                 </div>
                                 <div>
                                     <label class="form-label">Tanggal Registrasi <span class="required">*</span></label>
                                     <input name="tanggal_registrasi" type="date" class="input-soft"
-                                        value="{{ old('tanggal_registrasi') }}">
+                                        value="{{ old('tanggal_registrasi', optional($keluarga)->tanggal_registrasi ? \Illuminate\Support\Carbon::parse(optional($keluarga)->tanggal_registrasi)->format('Y-m-d') : '') }}">
                                 </div>
                             </div>
+
+
 
                             <div class="mt-4">
                                 <label class="form-label">Alamat Lengkap <span class="required">*</span></label>
                                 <textarea name="alamat" class="input-soft h-28"
-                                    placeholder="Alamat Lengkap">{{ old('alamat') }}</textarea>
+                                    placeholder="Alamat Lengkap">{{ old('alamat', optional($keluarga)->alamat) }}</textarea>
                             </div>
 
                             <div class="grid grid-cols-2 gap-6 mt-4">
                                 <div>
-                                    <label class="form-label">Wijk <span class="required">*</span></label>
-                                    @if(isset($penatuaWijk) && $penatuaWijk)
-                                    <input type="hidden" name="wijk_id" value="{{ $penatuaWijk->id }}">
-                                    <input type="text" class="input-soft" value="{{ $penatuaWijk->nama_wijk }}" disabled>
-                                    @else
-                                    <select name="wijk_id" class="input-soft">
-                                        <option value="">-- Pilih Wijk --</option>
-                                        @foreach($wijks as $w)
-                                        <option value="{{ $w->id }}" {{ old('wijk_id')==$w->id ? 'selected' : '' }}>{{
-                                            $w->nama_wijk }}</option>
-                                        @endforeach
-                                    </select>
-                                    @endif
+                                    <label class="form-label">Wijk</label>
+                                    @php
+                                    $displayWijkName = optional($penatuaWijk)->nama_wijk ??
+                                    optional($keluarga->wijk)->nama_wijk ?? '';
+                                    $displayWijkId = optional($penatuaWijk)->id ?? optional($keluarga)->wijk_id ?? '';
+                                    @endphp
+                                    <input id="wijk_display" type="text" class="input-soft"
+                                        value="{{ $displayWijkName }}" readonly>
+                                    <input type="hidden" name="wijk_id" value="{{ old('wijk_id', $displayWijkId) }}">
                                 </div>
                                 <div>
                                     <label class="form-label">Tanggal Pernikahan</label>
                                     <input name="tanggal_pernikahan" type="date" class="input-soft"
-                                        value="{{ old('tanggal_pernikahan') }}">
+                                        value="{{ old('tanggal_pernikahan', optional($keluarga)->tanggal_pernikahan ? \Illuminate\Support\Carbon::parse(optional($keluarga)->tanggal_pernikahan)->format('Y-m-d') : '') }}">
                                 </div>
                                 <div>
                                     <label class="form-label">Gereja Pemberkatan</label>
                                     <input name="gereja_pemberkatan" class="input-soft" placeholder="Gereja Pemberkatan"
-                                        value="{{ old('gereja_pemberkatan') }}">
+                                        value="{{ old('gereja_pemberkatan', optional($keluarga)->gereja_pemberkatan) }}">
                                 </div>
                                 <div>
                                     <label class="form-label">Pendeta Pemberkatan</label>
                                     <input name="pendeta_pemberkatan" class="input-soft"
-                                        placeholder="Pendeta Pemberkatan" value="{{ old('pendeta_pemberkatan') }}">
+                                        placeholder="Pendeta Pemberkatan"
+                                        value="{{ old('pendeta_pemberkatan', optional($keluarga)->pendeta_pemberkatan) }}">
                                 </div>
                             </div>
 
                             <div class="mt-4">
                                 <label class="form-label">Akte Pernikahan</label>
+                                @if(optional($keluarga)->akte_pernikahan)
+                                <div class="mb-2"><a href="{{ asset('storage/'.optional($keluarga)->akte_pernikahan) }}"
+                                        target="_blank" class="text-blue-600">Lihat akte saat ini</a></div>
+                                @endif
                                 <input type="file" name="akte_pernikahan" class="input-soft">
                             </div>
                         </div>
@@ -132,16 +136,18 @@
                                         <div>
                                             <label class="form-label">Nama <span class="required">*</span></label>
                                             <input class="input-soft" name="suami_nama" placeholder="Nama Lengkap"
-                                                value="{{ old('suami_nama') }}">
+                                                value="{{ old('suami_nama', optional($kepala)->nama ?? $jemaat->nama) }}">
                                         </div>
                                         <div>
                                             <label class="form-label">Jenis Kelamin <span
                                                     class="required">*</span></label>
                                             <select class="input-soft" name="suami_jenis_kelamin">
                                                 <option value="">-- Pilih --</option>
-                                                <option value="L" {{ old('suami_jenis_kelamin')=='L' ? 'selected' : ''
+                                                <option value="L" {{ old('suami_jenis_kelamin', optional($kepala)->
+                                                    jenis_kelamin ?? $jemaat->jenis_kelamin)=='L' ? 'selected' : ''
                                                     }}>Laki-laki</option>
-                                                <option value="P" {{ old('suami_jenis_kelamin')=='P' ? 'selected' : ''
+                                                <option value="P" {{ old('suami_jenis_kelamin', optional($kepala)->
+                                                    jenis_kelamin ?? $jemaat->jenis_kelamin)=='P' ? 'selected' : ''
                                                     }}>Perempuan</option>
                                             </select>
                                         </div>
@@ -150,36 +156,51 @@
                                             <label class="form-label">Tempat Lahir <span
                                                     class="required">*</span></label>
                                             <input class="input-soft" name="suami_tempat_lahir"
-                                                placeholder="Tempat Lahir" value="{{ old('suami_tempat_lahir') }}">
+                                                placeholder="Tempat Lahir"
+                                                value="{{ old('suami_tempat_lahir', optional($kepala)->tempat_lahir ?? $jemaat->tempat_lahir) }}">
                                         </div>
                                         <div>
                                             <label class="form-label">Tanggal Lahir <span
                                                     class="required">*</span></label>
                                             <input type="date" class="input-soft" name="suami_tanggal_lahir"
-                                                value="{{ old('suami_tanggal_lahir') }}">
+                                                value="{{ old('suami_tanggal_lahir', optional($kepala)->tanggal_lahir ? \Illuminate\Support\Carbon::parse(optional($kepala)->tanggal_lahir)->format('Y-m-d') : ($jemaat->tanggal_lahir ? \Illuminate\Support\Carbon::parse($jemaat->tanggal_lahir)->format('Y-m-d') : '')) }}">
                                         </div>
 
                                         <div>
                                             <label class="form-label">No. Telepon <span
                                                     class="required">*</span></label>
                                             <input class="input-soft" name="suami_no_telp" placeholder="No Telepon"
-                                                value="{{ old('suami_no_telp') }}">
+                                                value="{{ old('suami_no_telp', optional($kepala)->no_telp ?? $jemaat->no_telp) }}">
                                         </div>
                                         <div>
                                             <label class="form-label">Hubungan Keluarga <span
                                                     class="required">*</span></label>
+                                            @php
+                                                $suamiDefault = old('suami_hubungan');
+                                                if (!$suamiDefault) {
+                                                    $hubungan = optional($kepala)->hubungan_keluarga ?? $jemaat->hubungan_keluarga ?? null;
+                                                    if ($hubungan === 'Kepala Keluarga') {
+                                                        $gender = optional($kepala)->jenis_kelamin ?? $jemaat->jenis_kelamin ?? null;
+                                                        $suamiDefault = ($gender === 'P') ? 'Istri' : 'Suami';
+                                                    } else {
+                                                        $suamiDefault = $hubungan;
+                                                    }
+                                                }
+                                            @endphp
                                             <select class="input-soft" name="suami_hubungan">
                                                 <option value="">-- Pilih --</option>
-                                                <option value="Suami" {{ old('suami_hubungan')=='Suami' ? 'selected'
-                                                    : '' }}>Suami</option>
-                                                <option value="Istri" {{ old('suami_hubungan')=='Istri' ? 'selected'
-                                                    : '' }}>Istri</option>
-                                                <option value="Anak" {{ old('suami_hubungan')=='Anak' ? 'selected' : ''
-                                                    }}>Anak</option>
+                                                <option value="Suami" {{ $suamiDefault=='Suami' ? 'selected' : '' }}>Suami</option>
+                                                <option value="Istri" {{ $suamiDefault=='Istri' ? 'selected' : '' }}>Istri</option>
+                                                <option value="Anak" {{ $suamiDefault=='Anak' ? 'selected' : '' }}>Anak</option>
                                             </select>
                                         </div>
                                         <div>
                                             <label class="form-label">Foto</label>
+                                            @if(optional($kepala)->foto || $jemaat->foto)
+                                            <div class="mb-2"><img
+                                                    src="{{ asset('storage/'.(optional($kepala)->foto ?? $jemaat->foto)) }}"
+                                                    alt="foto" class="w-28 h-28 object-cover rounded"></div>
+                                            @endif
                                             <input type="file" class="input-soft" name="suami_foto">
                                         </div>
 
@@ -192,10 +213,16 @@
                                                 <label class="form-label">Tanggal Sidi <span
                                                         class="required">*</span></label>
                                                 <input type="date" class="input-soft" name="suami_tanggal_sidi"
-                                                    value="{{ old('suami_tanggal_sidi') }}">
+                                                    value="{{ old('suami_tanggal_sidi', optional($kepala)->tanggal_sidi ? \Illuminate\Support\Carbon::parse(optional($kepala)->tanggal_sidi)->format('Y-m-d') : ($jemaat->tanggal_sidi ? \Illuminate\Support\Carbon::parse($jemaat->tanggal_sidi)->format('Y-m-d') : '')) }}">
                                             </div>
                                             <div>
                                                 <label class="form-label">File Sidi</label>
+                                                @if(optional($kepala)->file_sidi || $jemaat->file_sidi)
+                                                <div class="mb-2"><a
+                                                        href="{{ asset('storage/'.(optional($kepala)->file_sidi ?? $jemaat->file_sidi)) }}"
+                                                        target="_blank" class="text-blue-600">Lihat file sidi saat
+                                                        ini</a></div>
+                                                @endif
                                                 <input type="file" class="input-soft" name="suami_file_sidi">
                                             </div>
 
@@ -203,10 +230,16 @@
                                                 <label class="form-label">Tanggal Baptis <span
                                                         class="required">*</span></label>
                                                 <input type="date" class="input-soft" name="suami_tanggal_baptis"
-                                                    value="{{ old('suami_tanggal_baptis') }}">
+                                                    value="{{ old('suami_tanggal_baptis', optional($kepala)->tanggal_baptis ? \Illuminate\Support\Carbon::parse(optional($kepala)->tanggal_baptis)->format('Y-m-d') : ($jemaat->tanggal_baptis ? \Illuminate\Support\Carbon::parse($jemaat->tanggal_baptis)->format('Y-m-d') : '')) }}">
                                             </div>
                                             <div>
                                                 <label class="form-label">File Baptis</label>
+                                                @if(optional($kepala)->file_baptis || $jemaat->file_baptis)
+                                                <div class="mb-2"><a
+                                                        href="{{ asset('storage/'.(optional($kepala)->file_baptis ?? $jemaat->file_baptis)) }}"
+                                                        target="_blank" class="text-blue-600">Lihat file baptis saat
+                                                        ini</a></div>
+                                                @endif
                                                 <input type="file" class="input-soft" name="suami_file_baptis">
                                             </div>
                                         </div>
@@ -223,7 +256,112 @@
                         <div class="card-soft">
                             <h2 class="title">Anggota Keluarga</h2>
 
-                            <div id="anggota-wrapper"></div>
+                            <div id="anggota-wrapper">
+                                @unless(old('anggota_nama'))
+                                @foreach($anggota as $a)
+                                <div class="anggota-card mb-4 p-4 rounded-lg border">
+                                    <input type="hidden" name="anggota_id[]" value="{{ $a->id }}">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="font-bold">Anggota</h4>
+                                        <button type="button" class="btn-remove text-sm text-red-600"
+                                            onclick="this.closest('.anggota-card').remove(); setTimeout(update,0)">Hapus</button>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="form-label">Nama Anggota <span
+                                                    class="required">*</span></label>
+                                            <input class="input-soft" name="anggota_nama[]" placeholder="Nama Anggota"
+                                                value="{{ old('anggota_nama[]', $a->nama) }}">
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Jenis Kelamin <span
+                                                    class="required">*</span></label>
+                                            <select class="input-soft" name="anggota_jenis_kelamin[]">
+                                                <option value="">-- Pilih --</option>
+                                                <option value="L" {{ ($a->jenis_kelamin=='L') ? 'selected' : ''
+                                                    }}>Laki-laki</option>
+                                                <option value="P" {{ ($a->jenis_kelamin=='P') ? 'selected' : ''
+                                                    }}>Perempuan</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Hubungan Keluarga <span
+                                                    class="required">*</span></label>
+                                            <select class="input-soft" name="anggota_hubungan[]">
+                                                <option value="">-- Pilih --</option>
+                                                <option value="Istri" {{ ($a->hubungan_keluarga=='Istri') ? 'selected' :
+                                                    '' }}>
+                                                    Istri</option>
+                                                <option value="Anak" {{ ($a->hubungan_keluarga=='Anak') ? 'selected' :
+                                                    '' }}>
+                                                    Anak</option>
+                                                <option value="Tanggungan" {{ ($a->hubungan_keluarga=='Tanggungan') ?
+                                                    'selected' : '' }}>
+                                                    Tanggungan</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label class="form-label">Tempat Lahir <span
+                                                    class="required">*</span></label>
+                                            <input class="input-soft" name="anggota_tempat_lahir[]"
+                                                placeholder="Tempat Lahir"
+                                                value="{{ old('anggota_tempat_lahir[]', $a->tempat_lahir) }}">
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Tanggal Lahir <span
+                                                    class="required">*</span></label>
+                                            <input type="date" class="input-soft" name="anggota_tanggal_lahir[]"
+                                                value="{{ old('anggota_tanggal_lahir[]', $a->tanggal_lahir ? \Illuminate\Support\Carbon::parse($a->tanggal_lahir)->format('Y-m-d') : '') }}">
+                                        </div>
+
+                                        <div>
+                                            <label class="form-label">No. Telepon </label>
+                                            <input class="input-soft" name="anggota_no_telp[]" placeholder="No Telepon"
+                                                value="{{ old('anggota_no_telp[]', $a->no_telp) }}">
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Foto</label>
+                                            @if($a->foto)
+                                            <div class="mb-2"><img src="{{ asset('storage/'.$a->foto) }}" alt="foto"
+                                                    class="w-28 h-28 object-cover rounded"></div>
+                                            @endif
+                                            <input type="file" class="input-soft" name="anggota_foto[]">
+                                        </div>
+
+                                        <div>
+                                            <label class="form-label">Tanggal Sidi</label>
+                                            <input type="date" class="input-soft" name="anggota_tanggal_sidi[]"
+                                                value="{{ old('anggota_tanggal_sidi[]', $a->tanggal_sidi ? \Illuminate\Support\Carbon::parse($a->tanggal_sidi)->format('Y-m-d') : '') }}">
+                                        </div>
+                                        <div>
+                                            <label class="form-label">File Sidi</label>
+                                            @if($a->file_sidi)
+                                            <div class="mb-2"><a href="{{ asset('storage/'.$a->file_sidi) }}"
+                                                    target="_blank" class="text-blue-600">Lihat file sidi</a></div>
+                                            @endif
+                                            <input type="file" class="input-soft" name="anggota_file_sidi[]">
+                                        </div>
+
+                                        <div>
+                                            <label class="form-label">Tanggal Baptis</label>
+                                            <input type="date" class="input-soft" name="anggota_tanggal_baptis[]"
+                                                value="{{ old('anggota_tanggal_baptis[]', $a->tanggal_baptis ? \Illuminate\Support\Carbon::parse($a->tanggal_baptis)->format('Y-m-d') : '') }}">
+                                        </div>
+                                        <div>
+                                            <label class="form-label">File Baptis</label>
+                                            @if($a->file_baptis)
+                                            <div class="mb-2"><a href="{{ asset('storage/'.$a->file_baptis) }}"
+                                                    target="_blank" class="text-blue-600">Lihat file baptis</a></div>
+                                            @endif
+                                            <input type="file" class="input-soft" name="anggota_file_baptis[]">
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+                                @endunless
+                            </div>
 
                             <button type="button" onclick="tambahAnggota()" class="btn-add mt-4">
                                 + Tambah Anggota
@@ -237,20 +375,20 @@
                             <h2 class="title">Konfirmasi</h2>
                             <p class="text-gray-600">Pastikan semua data sudah benar</p>
 
-                            <div id="summary" class="mt-6 space-y-6">
-                                <div>
+                            <div id="summary" class="mt-6 grid gap-6">
+                                <div class="summary-card p-4 bg-white rounded border">
                                     <h3 class="subtitle">Data Keluarga</h3>
-                                    <div id="summary-keluarga" class="text-sm text-gray-700"></div>
+                                    <div id="summary-keluarga" class="text-sm text-gray-700 mt-2"></div>
                                 </div>
 
-                                <div>
+                                <div class="summary-card p-4 bg-white rounded border">
                                     <h3 class="subtitle">Data Kepala Keluarga</h3>
-                                    <div id="summary-kepala" class="text-sm text-gray-700"></div>
+                                    <div id="summary-kepala" class="text-sm text-gray-700 mt-2"></div>
                                 </div>
 
-                                <div>
+                                <div class="summary-card p-4 bg-white rounded border">
                                     <h3 class="subtitle">Anggota Keluarga</h3>
-                                    <div id="summary-anggota" class="text-sm text-gray-700"></div>
+                                    <div id="summary-anggota" class="text-sm text-gray-700 mt-2"></div>
                                 </div>
                             </div>
 
@@ -272,13 +410,13 @@
 </div>
 
 <style>
-    /* CARD WARNA SESUAI GAMBAR */
+    /* reuse create styles (trimmed to essential) */
     .card-soft {
         background: radial-gradient(circle at top left, #dbeafe, #eff6ff, #ffffff);
-        border-radius: 20px;
-        padding: 28px;
-        border: 1px solid rgba(59, 130, 246, .12);
-        box-shadow: 0 18px 48px rgba(30, 64, 175, .12);
+        border-radius: 28px;
+        padding: 48px;
+        border: 1px solid rgba(59, 130, 246, .18);
+        box-shadow: 0 30px 80px rgba(30, 64, 175, .18);
     }
 
     .step-panel {
@@ -312,44 +450,37 @@
         box-shadow: 0 0 0 4px rgba(37, 99, 235, .15);
     }
 
-    /* Normalize specific input types to match other fields */
-    input[type="file"].input-soft {
-        padding: 8px 12px;
-        height: 48px;
-        min-height: 48px;
-        line-height: 1.2;
+    .page-header {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 2.25rem;
+        font-weight: 800;
+        color: #b5892a;
+        letter-spacing: 1px;
+        margin: 0 0 6px 0;
+        text-shadow: 0 6px 18px rgba(181, 137, 42, 0.18);
     }
 
-    input[type="date"].input-soft,
-    input[type="text"].input-soft,
-    input[type="tel"].input-soft,
-    select.input-soft {
-        min-height: 48px;
-        height: 48px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
-
-    /* Allow textareas to keep their own height utility (h-28) */
-    textarea.input-soft {
-        min-height: 0;
-    }
-
-    .step {
-        width: 42px;
-        height: 42px;
-        border-radius: 999px;
-        background: #e5e7eb;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .page-subtitle {
+        color: #6b7280;
         font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        margin-top: 4px;
     }
 
-    .step.active {
-        background: #2563eb;
-        color: white;
-        box-shadow: 0 8px 24px rgba(37, 99, 235, .4);
+    .form-label {
+        display: block;
+        font-weight: 700;
+        color: #374151;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+    }
+
+    .required {
+        color: #dc2626;
+        margin-left: 8px;
+        font-weight: 800;
     }
 
     .btn-primary {
@@ -373,35 +504,67 @@
         border-radius: 14px;
     }
 
-    /* Page header - luxury look */
-    .page-header {
-        font-family: Georgia, 'Times New Roman', serif;
-        font-size: 1.6rem;
-        font-weight: 800;
-        color: #b5892a;
-        letter-spacing: 0.6px;
-        margin: 0 0 6px 0;
-        text-shadow: 0 4px 12px rgba(181, 137, 42, 0.12);
+    /* Summary styles for Step 4 */
+    .summary-card {
+        box-shadow: none;
+        border-color: rgba(148, 163, 184, .12);
+        background: #fff;
     }
 
-    .page-header:after {
-        content: "";
-        display: block;
-        width: 90px;
-        height: 6px;
-        margin-top: 12px;
-        background: linear-gradient(90deg, #ffd27a, #b5892a);
-        border-radius: 6px;
-        box-shadow: 0 8px 26px rgba(181, 137, 42, 0.18);
+    .summary-card h3 {
+        margin: 0 0 8px 0;
     }
 
-    .page-subtitle {
-        color: #6b7280;
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 2px;
-        margin-top: 4px;
+    .summary-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .95rem;
+    }
+
+    .summary-table th {
+        text-align: left;
+        padding: 8px 10px;
+        color: #374151;
+        width: 220px;
+        vertical-align: top;
+        background: transparent;
+        font-weight: 700
+    }
+
+    .summary-table td {
+        padding: 8px 10px;
+        color: #374151;
+    }
+
+    .summary-anggota-wrap {
+        overflow: auto;
+    }
+
+    .summary-anggota-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .95rem;
+        min-width: 720px;
+    }
+
+    .summary-anggota-table thead th {
+        background: #f8fafc;
+        padding: 8px 10px;
+        text-align: left;
+        color: #374151;
+        border-bottom: 1px solid rgba(148, 163, 184, .08);
+    }
+
+    .summary-anggota-table tbody td {
+        padding: 8px 10px;
+        border-bottom: 1px solid rgba(148, 163, 184, .06);
+        color: #374151
+    }
+
+    .summary-anggota-table th.no-col,
+    .summary-anggota-table td.no-col {
+        width: 48px;
+        text-align: center
     }
 </style>
 
@@ -420,19 +583,15 @@ function update(){
     });
     if(progressEl) progressEl.style.width = (step/(total-1))*100 + '%';
 
-    // adjust wrapper height to active panel so nav buttons stay close
     if(wrapperEl && panels && panels[step]){
-        // measure visible content (.card-soft) to get stable height
         const active = panels[step];
         const content = active.querySelector('.card-soft') || active;
-        // measure on next frame to ensure DOM settled
         window.requestAnimationFrame(()=>{
             const h = content.offsetHeight || content.scrollHeight || active.scrollHeight;
             wrapperEl.style.height = h + 'px';
         });
     }
 
-    // nav buttons
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     if(prevBtn){
@@ -441,8 +600,6 @@ function update(){
     }
     if(nextBtn){
             if(step === total-1){
-                // On final step convert the Next button to a real submit so
-                // files and form data post correctly with a normal submit.
                 nextBtn.textContent = 'Simpan Data Jemaat';
                 nextBtn.setAttribute('type','submit');
                 nextBtn.removeAttribute('onclick');
@@ -453,53 +610,34 @@ function update(){
             }
     }
 
-    // populate summary when on final step
     if(step === total-1){
         if(typeof populateSummary === 'function') populateSummary();
     }
 }
 
-function nextStep(){
-    if(step < total-1){
-        step++;
-        // delay update to allow the originating click event to finish
-        setTimeout(update, 0);
-    }
-}
+function nextStep(){ if(step < total-1){ step++; setTimeout(update,0); } }
 function prevStep(){ if(step > 0){ step--; update(); }}
 
-    function submitForm(){
-        const form = document.querySelector('form');
-        if(form){ form.submit(); }
-    }
-
-    // populate the summary area with current form values
-    function populateSummary(){
-        function text(n){ const el = document.querySelector(`[name="${n}"]`); if(!el) return ''; if(el.type === 'file') return (el.files && el.files[0])? el.files[0].name : '' ; return el.value || ''; }
-        function lookupRadio(n){ const el = document.querySelector(`[name="${n}"]`); return el ? el.value : '' }
-
-        // keluarga (table)
-        const akte = document.querySelector('[name="akte_pernikahan"]');
-        // get readable wijk name from select
-        let wijkText = '-';
-        const wijkSelect = document.querySelector('[name="wijk_id"]');
-        if(wijkSelect){ const opt = wijkSelect.options[wijkSelect.selectedIndex]; if(opt) wijkText = opt.text; }
-        const keluargaHtml = `
+function populateSummary(){
+    function text(n){ const el = document.querySelector(`[name="${n}"]`); if(!el) return ''; if(el.type === 'file') return (el.files && el.files[0])? el.files[0].name : '' ; return el.value || ''; }
+    const akte = document.querySelector('[name="akte_pernikahan"]');
+    const wijkSelect = document.querySelector('[name="wijk_id"]');
+    const wijkText = (wijkSelect && wijkSelect.options && wijkSelect.selectedIndex >= 0) ? wijkSelect.options[wijkSelect.selectedIndex].text : '';
+    const keluargaHtml = `
             <table class="summary-table">
                 <tr><th>Nomor Registrasi</th><td>${escapeHtml(text('nomor_registrasi')) || '-'}</td></tr>
                 <tr><th>Tanggal Registrasi</th><td>${escapeHtml(text('tanggal_registrasi')) || '-'}</td></tr>
                 <tr><th>Alamat Lengkap</th><td>${escapeHtml(text('alamat')) || '-'}</td></tr>
-            <tr><th>Wijk</th><td>${escapeHtml(wijkText) || '-'}</td></tr>
+                <tr><th>Wijk</th><td>${escapeHtml(wijkText) || '-'}</td></tr>
                 <tr><th>Tanggal Pernikahan</th><td>${escapeHtml(text('tanggal_pernikahan')) || '-'}</td></tr>
                 <tr><th>Gereja Pemberkatan</th><td>${escapeHtml(text('gereja_pemberkatan')) || '-'}</td></tr>
                 <tr><th>Pendeta Pemberkatan</th><td>${escapeHtml(text('pendeta_pemberkatan')) || '-'}</td></tr>
                 <tr><th>Akte Pernikahan</th><td>${akte && akte.files && akte.files[0] ? escapeHtml(akte.files[0].name) : '-'}</td></tr>
             </table>`;
-        document.getElementById('summary-keluarga').innerHTML = keluargaHtml;
+    document.getElementById('summary-keluarga').innerHTML = keluargaHtml;
 
-        // kepala keluarga (table)
-        const suamiFoto = document.querySelector('[name="suami_foto"]');
-        const kepalaHtml = `
+    const suamiFoto = document.querySelector('[name="suami_foto"]');
+    const kepalaHtml = `
             <table class="summary-table">
                 <tr><th>Nama</th><td>${escapeHtml(text('suami_nama')) || '-'}</td></tr>
                 <tr><th>Jenis Kelamin</th><td>${escapeHtml(text('suami_jenis_kelamin')) || '-'}</td></tr>
@@ -513,27 +651,26 @@ function prevStep(){ if(step > 0){ step--; update(); }}
                 <tr><th>Tanggal Baptis</th><td>${escapeHtml(text('suami_tanggal_baptis')) || '-'}</td></tr>
                 <tr><th>File Baptis</th><td>${(document.querySelector('[name="suami_file_baptis"]') && document.querySelector('[name="suami_file_baptis"]').files[0]) ? escapeHtml(document.querySelector('[name="suami_file_baptis"]').files[0].name) : '-'}</td></tr>
             </table>`;
-        document.getElementById('summary-kepala').innerHTML = kepalaHtml;
+    document.getElementById('summary-kepala').innerHTML = kepalaHtml;
 
-        // anggota keluarga (table)
-        const anggotaNames = Array.from(document.querySelectorAll('[name="anggota_nama[]"]')).map(i=>i.value);
-        const anggotaJenis = Array.from(document.querySelectorAll('[name="anggota_jenis_kelamin[]"]')).map(i=>i.value);
-        const anggotaHub = Array.from(document.querySelectorAll('[name="anggota_hubungan[]"]')).map(i=>i.value);
-        const anggotaTempat = Array.from(document.querySelectorAll('[name="anggota_tempat_lahir[]"]')).map(i=>i.value);
-        const anggotaTanggal = Array.from(document.querySelectorAll('[name="anggota_tanggal_lahir[]"]')).map(i=>i.value);
-        const anggotaNo = Array.from(document.querySelectorAll('[name="anggota_no_telp[]"]')).map(i=>i.value);
-
-        if(anggotaNames.length === 0){
-            document.getElementById('summary-anggota').innerHTML = '<div>- Tidak ada anggota -</div>';
-        } else {
-            let rows = `<table class="summary-table summary-anggota-table"><thead><tr><th>No</th><th>Nama</th><th>Jenis</th><th>Hubungan</th><th>Tempat Lahir</th><th>Tanggal Lahir</th><th>No. Telp</th></tr></thead><tbody>`;
-            for(let i=0;i<anggotaNames.length;i++){
-                rows += `<tr><td>${i+1}</td><td>${escapeHtml(anggotaNames[i]||'-')}</td><td>${escapeHtml(anggotaJenis[i]||'-')}</td><td>${escapeHtml(anggotaHub[i]||'-')}</td><td>${escapeHtml(anggotaTempat[i]||'-')}</td><td>${escapeHtml(anggotaTanggal[i]||'-')}</td><td>${escapeHtml(anggotaNo[i]||'-')}</td></tr>`;
-            }
-            rows += `</tbody></table>`;
-            document.getElementById('summary-anggota').innerHTML = rows;
+    const anggotaNames = Array.from(document.querySelectorAll('[name="anggota_nama[]"]')).map(i=>i.value);
+    if(anggotaNames.length === 0){
+        document.getElementById('summary-anggota').innerHTML = '<div>- Tidak ada anggota -</div>';
+    } else {
+        let rows = `<table class="summary-table summary-anggota-table"><thead><tr><th>No</th><th>Nama</th><th>Jenis</th><th>Hubungan</th><th>Tempat Lahir</th><th>Tanggal Lahir</th><th>No. Telp</th></tr></thead><tbody>`;
+        for(let i=0;i<anggotaNames.length;i++){
+            const nama = escapeHtml(anggotaNames[i]||'-');
+            const jenis = escapeHtml((document.querySelectorAll('[name="anggota_jenis_kelamin[]"]')[i]||{}).value||'-');
+            const hub = escapeHtml((document.querySelectorAll('[name="anggota_hubungan[]"]')[i]||{}).value||'-');
+            const tempat = escapeHtml((document.querySelectorAll('[name="anggota_tempat_lahir[]"]')[i]||{}).value||'-');
+            const tanggal = escapeHtml((document.querySelectorAll('[name="anggota_tanggal_lahir[]"]')[i]||{}).value||'-');
+            const notelp = escapeHtml((document.querySelectorAll('[name="anggota_no_telp[]"]')[i]||{}).value||'-');
+            rows += `<tr><td>${i+1}</td><td>${nama}</td><td>${jenis}</td><td>${hub}</td><td>${tempat}</td><td>${tanggal}</td><td>${notelp}</td></tr>`;
         }
+        rows += `</tbody></table>`;
+        document.getElementById('summary-anggota').innerHTML = rows;
     }
+}
 
 function tambahAnggota(){
     const wrapper = document.getElementById('anggota-wrapper');
@@ -606,26 +743,7 @@ function tambahAnggota(){
             </div>
         </div>
     `);
-    // recalc wrapper height after DOM update
     setTimeout(update, 0);
-}
-
-// adjust on resize so wrapper height stays correct
-window.addEventListener('resize', ()=>{
-    // small debounce
-    clearTimeout(window._stepResizeTimer);
-    window._stepResizeTimer = setTimeout(()=>{ update(); }, 120);
-});
-
-// helper to escape HTML when injecting values
-function escapeHtml(s){
-    if(s === null || s === undefined) return '';
-    return String(s)
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;')
-        .replace(/'/g,'&#39;');
 }
 
 function tambahAnggotaWithData(d){
@@ -655,9 +773,9 @@ function tambahAnggotaWithData(d){
                     <label class="form-label">Hubungan Keluarga <span class="required">*</span></label>
                     <select class="input-soft" name="anggota_hubungan[]">
                         <option value="">-- Pilih --</option>
-                        <option value="istri" ${d.hubungan == 'istri' ? 'selected' : ''}>Istri</option>
-                        <option value="anak" ${d.hubungan == 'anak' ? 'selected' : ''}>Anak</option>
-                        <option value="tanggungan" ${d.hubungan == 'tanggungan' ? 'selected' : ''}>Tanggungan</option>
+                        <option value="istri" ${d.hubungan == 'Istri' || d.hubungan == 'istri' ? 'selected' : ''}>Istri</option>
+                        <option value="anak" ${d.hubungan == 'Anak' || d.hubungan == 'anak' ? 'selected' : ''}>Anak</option>
+                        <option value="tanggungan" ${d.hubungan == 'Tanggungan' || d.hubungan == 'tanggungan' ? 'selected' : ''}>Tanggungan</option>
                     </select>
                 </div>
 
@@ -681,7 +799,7 @@ function tambahAnggotaWithData(d){
 
                 <div>
                     <label class="form-label">Tanggal Sidi</label>
-                    <input type="date" class="input-soft" name="anggota_tanggal_sidi[]">
+                    <input type="date" class="input-soft" name="anggota_tanggal_sidi[]" value="${escapeHtml(d.tanggal_sidi)}">
                 </div>
                 <div>
                     <label class="form-label">File Sidi</label>
@@ -690,7 +808,7 @@ function tambahAnggotaWithData(d){
 
                 <div>
                     <label class="form-label">Tanggal Baptis</label>
-                    <input type="date" class="input-soft" name="anggota_tanggal_baptis[]">
+                    <input type="date" class="input-soft" name="anggota_tanggal_baptis[]" value="${escapeHtml(d.tanggal_baptis)}">
                 </div>
                 <div>
                     <label class="form-label">File Baptis</label>
@@ -703,28 +821,37 @@ function tambahAnggotaWithData(d){
     setTimeout(update, 0);
 }
 
-// repopulate anggota cards from previous input after validation error
 document.addEventListener('DOMContentLoaded', ()=>{
+    // populate existing anggota from server-side data
+    const existing = {!! json_encode($anggota->map(function($a){ return [
+        'nama' => $a->nama,
+        'jenis' => $a->jenis_kelamin,
+        'hubungan' => $a->hubungan_keluarga,
+        'tempat' => $a->tempat_lahir,
+        'tanggal' => $a->tanggal_lahir ? \Illuminate\Support\Carbon::parse($a->tanggal_lahir)->format('Y-m-d') : null,
+        'no_telp' => $a->no_telp,
+        'tanggal_sidi' => $a->tanggal_sidi ? \Illuminate\Support\Carbon::parse($a->tanggal_sidi)->format('Y-m-d') : null,
+        'tanggal_baptis' => $a->tanggal_baptis ? \Illuminate\Support\Carbon::parse($a->tanggal_baptis)->format('Y-m-d') : null,
+    ]; })) !!};
+    if(Array.isArray(existing) && existing.length){
+        existing.forEach(e=>{ tambahAnggotaWithData(e); });
+    }
+
+    // repopulate old input if validation failed (merge behavior)
     const oldNama = {!! json_encode(old('anggota_nama', [])) !!};
     if(Array.isArray(oldNama) && oldNama.length){
+        // if we also loaded existing, prefer old values by clearing and using old
+        document.getElementById('anggota-wrapper').innerHTML = '';
         const oldJenis = {!! json_encode(old('anggota_jenis_kelamin', [])) !!};
         const oldHub = {!! json_encode(old('anggota_hubungan', [])) !!};
         const oldTempat = {!! json_encode(old('anggota_tempat_lahir', [])) !!};
         const oldTanggal = {!! json_encode(old('anggota_tanggal_lahir', [])) !!};
         const oldNo = {!! json_encode(old('anggota_no_telp', [])) !!};
         for(let i=0;i<oldNama.length;i++){
-            tambahAnggotaWithData({
-                nama: oldNama[i] || '',
-                jenis: oldJenis[i] || '',
-                hubungan: oldHub[i] || '',
-                tempat: oldTempat[i] || '',
-                tanggal: oldTanggal[i] || '',
-                no_telp: oldNo[i] || ''
-            });
+            tambahAnggotaWithData({ nama: oldNama[i] || '', jenis: oldJenis[i] || '', hubungan: oldHub[i] || '', tempat: oldTempat[i] || '', tanggal: oldTanggal[i] || '', no_telp: oldNo[i] || '', tanggal_sidi:'', tanggal_baptis: '' });
         }
     }
 
-    // live-update the summary when inputs change (helps show summary immediately)
     const formEl = document.querySelector('form');
     if(formEl){
         const onChange = ()=>{ if(step === total-1 && typeof populateSummary === 'function') populateSummary(); };
@@ -732,10 +859,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
         formEl.addEventListener('change', onChange, true);
     }
 
-    // if we somehow start on the final step, populate immediately
     if(step === total-1 && typeof populateSummary === 'function') populateSummary();
 });
 
+function escapeHtml(s){ if(s === null || s === undefined) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
 update();
 </script>
+
 @endsection

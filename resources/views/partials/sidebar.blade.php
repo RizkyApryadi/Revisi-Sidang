@@ -162,6 +162,12 @@
                                                         <i class="fas fa-columns"></i> <span>Dashboard</span>
                                                 </a>
                                         </li>
+                                        <li class="{{ request()->routeIs('pendeta.renungan.*') ? 'active' : '' }}">
+                                                <a class="nav-link" href="{{ route('pendeta.renungan.index') }}">
+                                                        <i class="fas fa-columns"></i> <span>Renungan</span>
+                                                </a>
+                                        </li>
+
                                         {{-- Tambah menu khusus pendeta di sini --}}
                                 </ul>
                         </li>
@@ -189,10 +195,12 @@
                                         <!-- Pelayanan links for Penatua -->
                                         <li
                                                 class="{{ request()->routeIs('penatua.pelayanan.baptisan') ? 'active' : '' }}">
-                                                <a class="nav-link" href="{{ route('penatua.pelayanan.baptisan') }}">
+                                                <a class="nav-link" href="#">
                                                         <i class="fas fa-tint"></i> <span>Baptisan</span>
                                                 </a>
                                         </li>
+                                        {{--
+
                                         <li
                                                 class="{{ request()->routeIs('penatua.pelayanan.katekisasi') ? 'active' : '' }}">
                                                 <a class="nav-link" href="{{ route('penatua.pelayanan.katekisasi') }}">
@@ -216,7 +224,7 @@
                                                 <a class="nav-link" href="{{ route('penatua.pelayanan.pindah') }}">
                                                         <i class="fas fa-sign-out-alt"></i> <span>Pindah</span>
                                                 </a>
-                                        </li>
+                                        </li> --}}
                                         {{-- Tambah menu khusus penatua di sini --}}
                                 </ul>
                         </li>

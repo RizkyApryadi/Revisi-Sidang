@@ -32,7 +32,7 @@
                 <div class="icon-circle bg-primary text-white me-3">
                     <i class="fas fa-users"></i>
                 </div>
-                <div>
+                {{-- <div>
                     <h6 class="mb-0 text-muted">Jumlah Jemaat</h6>
                     <h3 class="mb-0 fw-bold">
                         @php
@@ -51,7 +51,7 @@
                         @endphp
                         {{ $__jemaat_total }}
                     </h3>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
@@ -63,7 +63,7 @@
                 <div class="icon-circle bg-success text-white me-3">
                     <i class="fas fa-home"></i>
                 </div>
-                <div>
+                {{-- <div>
                     <h6 class="mb-0 text-muted">Keluarga (KK)</h6>
                     <h3 class="mb-0 fw-bold">
                         @php
@@ -80,7 +80,7 @@
                         @endphp
                         {{ $__kk_total }}
                     </h3>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
@@ -92,12 +92,12 @@
                 <div class="icon-circle bg-warning text-white me-3">
                     <i class="fas fa-clipboard-list"></i>
                 </div>
-                <div>
+                {{-- <div>
                     <h6 class="mb-0 text-muted">Pendaftaran</h6>
                     <h3 class="mb-0 fw-bold">
                         {{ $pendaftaran_count ?? (isset($pendaftaran) ? $pendaftaran->count() : 0) }}
                     </h3>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
@@ -159,7 +159,7 @@
                             <th>Anggota</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    {{-- <tbody>
                         @forelse($keluargas_with_wijk as $kk)
                         @break($loop->index == 5)
                         <tr>
@@ -174,7 +174,7 @@
                             </td>
                         </tr>
                         @endforelse
-                    </tbody>
+                    </tbody> --}}
                 </table>
             </div>
         </div>
@@ -182,26 +182,6 @@
 
 
 </div>
-
-{{-- DATA TERBARU --}}
-@php
-// queries for items that need Pendeta approval (safe fallbacks if controller provides variables)
-try{
-$need_baptis =
-\App\Models\PendaftaranBaptis::with('jemaat')->where('status','pending')->orderBy('created_at','desc')->limit(5)->get();
-}catch(\Exception $e){ $need_baptis = collect(); }
-
-try{
-$need_pernikahan = \App\Models\PendaftaranPernikahan::with(['pria','wanita'])
-->where(function($q){ $q->whereNull('status')->orWhere('status','pending'); })
-->orderBy('created_at','desc')->limit(5)->get();
-}catch(\Exception $e){ $need_pernikahan = collect(); }
-
-try{
-$need_pindah =
-\App\Models\PendaftaranPindah::with('jemaat')->where('status','disetujui_penatua')->orderBy('created_at','desc')->limit(5)->get();
-}catch(\Exception $e){ $need_pindah = collect(); }
-@endphp
 
 <!-- Menunggu Persetujuan Pendeta -->
 <div class="row mt-3">
@@ -212,7 +192,7 @@ $need_pindah =
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4">
+                    {{-- <div class="col-md-4">
                         <h6>Baptisan ({{ $need_baptis->count() }})</h6>
                         <ul class="list-unstyled small">
                             @forelse($need_baptis as $b)
@@ -225,9 +205,9 @@ $need_pindah =
                             <li class="text-muted">Tidak ada.</li>
                             @endforelse
                         </ul>
-                    </div>
+                    </div> --}}
 
-                    <div class="col-md-4">
+                    {{-- <div class="col-md-4">
                         <h6>Pernikahan ({{ $need_pernikahan->count() }})</h6>
                         <ul class="list-unstyled small">
                             @forelse($need_pernikahan as $pn)
@@ -241,9 +221,9 @@ $need_pindah =
                             <li class="text-muted">Tidak ada.</li>
                             @endforelse
                         </ul>
-                    </div>
+                    </div> --}}
 
-                    <div class="col-md-4">
+                    {{-- <div class="col-md-4">
                         <h6>Pindah ({{ $need_pindah->count() }})</h6>
                         <ul class="list-unstyled small">
                             @forelse($need_pindah as $pd)
@@ -257,7 +237,7 @@ $need_pindah =
                             <li class="text-muted">Tidak ada.</li>
                             @endforelse
                         </ul>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

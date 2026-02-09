@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Berita;
 use App\Models\Galeri;
 use App\Models\GaleriFoto;
+use App\Models\Renungan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
@@ -40,7 +41,17 @@ class GuestController extends Controller
 
     public function renungan()
     {
-        return view('pages.guest.renungan');
+        $renungans = Renungan::where('status', 'publish')
+            ->orderBy('tanggal', 'desc')
+            ->get();
+
+        return view('pages.guest.renungan', compact('renungans'));
+    }
+
+    public function renunganShow($id)
+    {
+        $renungan = Renungan::with('pendeta')->where('status', 'publish')->findOrFail($id);
+        return view('pages.guest.renungan_show', compact('renungan'));
     }
 
     public function dashboard()
@@ -159,6 +170,22 @@ class GuestController extends Controller
             $ibadah->pendeta = $pendeta;
         } else {
             $ibadah->pendeta = DB::table('users')->where('id', $ibadah->pendeta_id)->first();
+        }
+
+        // load pelayan entries (if table exists)
+        if (Schema::hasTable('pelayan_ibadahs')) {
+            try {
+                $pelayan = DB::table('pelayan_ibadahs')
+                    ->where('ibadah_id', $id)
+                    ->orderBy('id')
+                    ->get();
+                $ibadah->pelayan = $pelayan;
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to load pelayan for jadwalShow: ' . $e->getMessage());
+                $ibadah->pelayan = collect();
+            }
+        } else {
+            $ibadah->pelayan = collect();
         }
 
         // map tata_ibadah to file for view compatibility

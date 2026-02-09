@@ -63,7 +63,11 @@ class BeritaController extends Controller
 				'updated_at' => now(),
 			]);
 
-			return redirect()->route('admin.berita')->with('success', 'Berita berhasil dibuat.');
+			$redirect = redirect()->route('admin.berita')->with('success', 'Berita berhasil dibuat.');
+			if (!empty($fotoPath)) {
+				$redirect->with('uploaded_image', $fotoPath);
+			}
+			return $redirect;
 		} catch (\Exception $e) {
 			Log::error('Berita store error: ' . $e->getMessage());
 			return redirect()->back()->with('error', 'Gagal menyimpan berita.')->withInput();
@@ -178,6 +182,12 @@ class BeritaController extends Controller
 				'foto' => $fotoPath,
 				'updated_at' => now(),
 			]);
+
+			if (!empty($fotoPath)) {
+				return redirect()->route('admin.berita')
+					->with('success', 'Berita berhasil diperbarui.')
+					->with('uploaded_image', $fotoPath);
+			}
 
 			return redirect()->route('admin.berita')->with('success', 'Berita berhasil diperbarui.');
 		} catch (\Exception $e) {
