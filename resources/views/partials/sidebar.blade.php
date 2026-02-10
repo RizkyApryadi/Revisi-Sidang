@@ -162,6 +162,12 @@
                                                         <i class="fas fa-columns"></i> <span>Dashboard</span>
                                                 </a>
                                         </li>
+
+                                        <li class="{{ request()->routeIs('pendeta.jemaat') ? 'active' : '' }}">
+                                                <a class="nav-link" href="{{ route('pendeta.jemaat') }}">
+                                                        <i class="fas fa-columns"></i> <span>Jemaat</span>
+                                                </a>
+                                        </li>
                                         <li class="{{ request()->routeIs('pendeta.renungan.*') ? 'active' : '' }}">
                                                 <a class="nav-link" href="{{ route('pendeta.renungan.index') }}">
                                                         <i class="fas fa-columns"></i> <span>Renungan</span>

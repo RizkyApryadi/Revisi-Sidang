@@ -4,19 +4,41 @@
 @section('content')
 <section class="section">
     <div class="section-header">
-<style>
-    /* simple context menu styling */
-    #renungan-status-menu { position: fixed; z-index: 2000; background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 6px 0; box-shadow: 0 4px 16px rgba(0,0,0,0.08); display: none; min-width: 160px; }
-    #renungan-status-menu button { display: block; width: 100%; text-align: left; padding: 8px 12px; background: transparent; border: none; cursor: pointer; }
-    #renungan-status-menu button:hover { background: #f3f4f6; }
-</style>
+        <style>
+            /* simple context menu styling */
+            #renungan-status-menu {
+                position: fixed;
+                z-index: 2000;
+                background: #fff;
+                border: 1px solid #e5e7eb;
+                border-radius: 6px;
+                padding: 6px 0;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+                display: none;
+                min-width: 160px;
+            }
 
-<div id="renungan-status-menu">
-    <button id="renungan-status-action"></button>
-</div>
+            #renungan-status-menu button {
+                display: block;
+                width: 100%;
+                text-align: left;
+                padding: 8px 12px;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+            }
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
+            #renungan-status-menu button:hover {
+                background: #f3f4f6;
+            }
+        </style>
+
+        <div id="renungan-status-menu">
+            <button id="renungan-status-action"></button>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
     const menu = document.getElementById('renungan-status-menu');
     const actionBtn = document.getElementById('renungan-status-action');
     const baseToggleUrl = "{{ url('pendeta/renungan') }}"; // will append /{id}/toggle-status
@@ -96,19 +118,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
-</script>
+        </script>
         <h1>Renungan Harian</h1>
-        <div class="section-header-button">
-            <a href="{{ route('pendeta.renungan.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Tambah Renungan
-            </a>
-        </div>
+
     </div>
 
     <div class="section-body">
         <div class="card shadow-sm">
-            <div class="card-header">
+            <div class="card-header flex items-center justify-between">
                 <h4>Daftar Renungan</h4>
+
+                <div class="section-header-button">
+                    <a href="{{ route('pendeta.renungan.create') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Tambah Renungan
+                    </a>
+                </div>
             </div>
 
             <div class="card-body">
@@ -137,7 +161,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 </td>
                                 <td>{{ $renungan->judul }}</td>
                                 <td>{{ optional($renungan->tanggal)->format('d M Y') }}</td>
-                                <td class="status-cell" data-id="{{ $renungan->id }}" data-status="{{ $renungan->status }}">
+                                <td class="status-cell" data-id="{{ $renungan->id }}"
+                                    data-status="{{ $renungan->status }}">
                                     @if($renungan->status === 'publish')
                                     <span class="badge badge-success">Publish</span>
                                     @else

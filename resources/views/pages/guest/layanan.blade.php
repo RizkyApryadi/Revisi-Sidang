@@ -10,11 +10,11 @@
 
 </head>
 
-<body class="pb-0 md:pb-0"> {{-- Tambahkan padding top untuk menghindari overlap nav --}}
+<body class="min-h-screen flex flex-col pb-0 md:pb-0"> {{-- Tambahkan padding top untuk menghindari overlap nav --}}
     @include('pages.guest.partialsGuest.navGuest')
 
     <!-- Layanan Gereja Section -->
-    <section id="layanan" class="py-12 md:py-16">
+    <section id="layanan" class="py-12 md:py-16 flex-1">
         <div class="max-w-[1200px] mx-auto px-6 pb-6">
 
             <h2

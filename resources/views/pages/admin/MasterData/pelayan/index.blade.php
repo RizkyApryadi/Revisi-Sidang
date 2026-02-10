@@ -35,14 +35,28 @@
                                 <td>{{ optional($ibadah->warta)->id ? optional($ibadah->warta)->id . ' - ' . optional($ibadah->warta)->nama_minggu : '-' }}</td>
                                 <td>{{ $ibadah->waktu ? \Carbon\Carbon::parse($ibadah->waktu)->format('H:i') : '-' }}</td>
                                 <td class="text-center">
-                                    <a href="{{ route('admin.pelayan.show', $ibadah->id) }}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i> Lihat
-                                    </a>
+                                    <div class="d-flex justify-content-center gap-1 flex-nowrap align-items-center">
+                                        <a href="{{ route('admin.pelayan.show', $ibadah->id) }}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+
+                                        <a href="{{ route('admin.pelayan.edit', $ibadah->id) }}" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+
+                                        <form action="{{ route('admin.pelayan.destroy', $ibadah->id) }}" method="POST" class="m-0 p-0" onsubmit="return confirm('Hapus data ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="text-center">Tidak ada data ibadah.</td>
+                                <td colspan="4" class="text-center">Tidak ada data ibadah.</td>
                             </tr>
                         @endforelse
                     </tbody>

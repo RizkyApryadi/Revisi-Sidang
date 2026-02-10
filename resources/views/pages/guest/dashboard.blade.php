@@ -163,10 +163,15 @@
 
 
     <!-- Berita Section -->
-    <section id="berita"
-        class="bg-[linear-gradient(135deg,#1e3c72_0%,#2a5298_40%,#6dd5fa_100%)] text-white py-12 md:py-16">
+    <section id="berita" class="relative text-white py-12 md:py-16">
 
-        <div class="max-w-[1400px] mx-auto px-8">
+        <!-- Background image + gradient overlay -->
+        <div class="absolute inset-0">
+            <img src="{{ asset('img/worship.jpg') }}" alt="Worship background" class="w-full h-full object-cover object-center">
+            <div class="absolute inset-0 bg-black/60"></div>
+        </div>
+
+        <div class="relative z-10 max-w-[1400px] mx-auto px-8">
             <h2 class="text-3xl md:text-4xl font-extrabold text-center mb-10">
                 Berita Gereja
             </h2>

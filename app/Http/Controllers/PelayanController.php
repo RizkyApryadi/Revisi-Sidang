@@ -121,4 +121,81 @@ class PelayanController extends Controller
 
 		return view('pages.admin.MasterData.pelayan.show', compact('ibadah', 'pelayan'));
 	}
+
+	/**
+	 * Show edit form for pelayanan of an ibadah
+	 */
+	public function edit($id)
+	{
+		$ibadah = DB::table('ibadahs')->where('id', $id)->first();
+		if (!$ibadah) {
+			return redirect()->route('admin.pelayan')->with('error', 'Ibadah tidak ditemukan.');
+		}
+
+		$wartas = DB::table('wartas')->select('id', 'nama_minggu', 'tanggal')->orderBy('tanggal', 'desc')->get();
+		$ibadahs = DB::table('ibadahs')->select('id', 'warta_id', 'waktu')->get()->groupBy('warta_id');
+
+		$wartasForJs = $wartas->map(function ($w) use ($ibadahs) {
+			$list = $ibadahs->has($w->id) ? $ibadahs[$w->id]->map(function ($i) {
+				return ['id' => $i->id, 'waktu' => $i->waktu];
+			})->values() : collect();
+
+			return [
+				'id' => $w->id,
+				'nama_minggu' => $w->nama_minggu,
+				'ibadahs' => $list,
+			];
+		});
+
+		$pelayan = DB::table('pelayan_ibadahs')->where('ibadah_id', $id)->orderBy('id')->get();
+
+		return view('pages.admin.MasterData.pelayan.edit', compact('ibadah', 'wartas', 'wartasForJs', 'pelayan'));
+	}
+
+	/**
+	 * Update pelayanan list for an ibadah
+	 */
+	public function update(Request $request, $id)
+	{
+		$request->validate([
+			'jenis_pelayanan' => 'required|array|min:1',
+			'jenis_pelayanan.*' => 'required|string|max:191',
+			'petugas' => 'required|array|min:1',
+			'petugas.*' => 'nullable|string|max:191',
+		]);
+
+		$jenis = $request->input('jenis_pelayanan', []);
+		$petugas = $request->input('petugas', []);
+
+		$rows = [];
+		foreach ($jenis as $i => $j) {
+			$p = $petugas[$i] ?? null;
+			if (trim((string)$j) === '') continue;
+			$rows[] = [
+				'ibadah_id' => $id,
+				'jenis_pelayanan' => $j,
+				'petugas' => $p,
+				'created_at' => now(),
+				'updated_at' => now(),
+			];
+		}
+
+		DB::transaction(function () use ($id, $rows) {
+			DB::table('pelayan_ibadahs')->where('ibadah_id', $id)->delete();
+			if (!empty($rows)) {
+				DB::table('pelayan_ibadahs')->insert($rows);
+			}
+		});
+
+		return redirect()->route('admin.pelayan')->with('success', 'Pelayanan diperbarui.');
+	}
+
+	/**
+	 * Remove all pelayanan entries for an ibadah
+	 */
+	public function destroy($id)
+	{
+		DB::table('pelayan_ibadahs')->where('ibadah_id', $id)->delete();
+		return redirect()->route('admin.pelayan')->with('success', 'Pelayanan dihapus.');
+	}
 }

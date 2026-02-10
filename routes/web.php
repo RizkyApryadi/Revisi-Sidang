@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Guest\GuestController;
 use App\Http\Controllers\WijkController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\JemaatController;
 use App\Http\Controllers\KeluargaController;
 use App\Http\Controllers\PenatuaController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Penatua\PenatuaController as PenatuaAreaController;
 use App\Http\Controllers\Penatua\PenatuaJemaatController;
 use App\Http\Controllers\Pendeta\PendetaController as PendetaAreaController;
 use App\Http\Controllers\Pendeta\PendetaRenunganController;
+use App\Http\Controllers\Pendeta\PendetaJemaatController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -60,9 +62,7 @@ require __DIR__ . '/auth.php';
    Admin Routes
    --------------------------------------------------------------------------*/
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('pages.admin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Wijk 
     Route::get('/wijk', [WijkController::class, 'index'])->name('wijk');
@@ -120,11 +120,19 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/pelayan/create', [PelayanController::class, 'create'])->name('pelayan.create');
     Route::post('/pelayan', [PelayanController::class, 'store'])->name('pelayan.store');
     Route::get('/pelayan/{id}', [PelayanController::class, 'show'])->name('pelayan.show');
+    Route::get('/pelayan/{id}/edit', [PelayanController::class, 'edit'])->name('pelayan.edit');
+    Route::put('/pelayan/{id}', [PelayanController::class, 'update'])->name('pelayan.update');
+    Route::delete('/pelayan/{id}', [PelayanController::class, 'destroy'])->name('pelayan.destroy');
 
     // Galeri
     Route::get('/galeri', [GaleriController::class, 'index'])->name('galeri');
     Route::get('/galeri/create', [GaleriController::class, 'create'])->name('galeri.create');
     Route::post('/galeri', [GaleriController::class, 'store'])->name('galeri.store');
+    Route::get('/galeri/{id}/edit', [GaleriController::class, 'edit'])->name('galeri.edit');
+    Route::put('/galeri/{id}', [GaleriController::class, 'update'])->name('galeri.update');
+    Route::get('/galeri/{id}', [GaleriController::class, 'show'])->name('galeri.show');
+    Route::delete('/galeri/{id}', [GaleriController::class, 'destroy'])->name('galeri.destroy');
+    Route::delete('/galeri/foto/{id}', [GaleriController::class, 'destroyFoto'])->name('galeri.foto.destroy');
 
     // Pendeta
     Route::get('/pendeta', [PendetaController::class, 'index'])->name('pendeta');
@@ -158,6 +166,11 @@ Route::middleware('auth')->prefix('penatua')->name('penatua.')->group(function (
    --------------------------------------------------------------------------*/
 Route::middleware('auth')->prefix('pendeta')->name('pendeta.')->group(function () {
     Route::get('/dashboard', [PendetaAreaController::class, 'index'])->name('dashboard');
+    // Pendeta - jemaat 
+    Route::get('/jemaat', [PendetaJemaatController::class, 'index'])->name('jemaat');
+    Route::get('/jemaat/create', [PendetaJemaatController::class, 'create'])->name('jemaat.create');
+    Route::post('/jemaat', [JemaatController::class, 'store'])->name('jemaat.store');
+
     // Renungan (Pendeta) - standard resource-like names
     Route::get('/renungan', [PendetaRenunganController::class, 'index'])->name('renungan.index');
     Route::get('/renungan/create', [PendetaRenunganController::class, 'create'])->name('renungan.create');

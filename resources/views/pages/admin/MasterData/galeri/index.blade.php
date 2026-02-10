@@ -46,19 +46,21 @@
                             </td>
 
                             <td class="text-center align-middle">
-                                <a href="#" class="btn btn-primary btn-sm" title="Lihat">
-                                    <i class="fas fa-eye"></i>
-                                </a>
+                                <div class="btn-group" role="group" aria-label="Actions">
+                                    <a href="{{ route('admin.galeri.show', $galeri->id) }}" class="btn btn-info btn-sm me-1" title="Lihat">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
 
-                                <a href="#" class="btn btn-warning btn-sm mx-1" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
+                                    <a href="{{ route('admin.galeri.edit', $galeri->id) }}" class="btn btn-warning btn-sm me-1" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
 
-                                <form action="#" method="POST" style="display:inline-block" onsubmit="return confirm('Hapus galeri ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus"><i class="fas fa-trash"></i></button>
-                                </form>
+                                    <form action="{{ route('admin.galeri.destroy', $galeri->id) }}" method="POST" style="display:inline-block; margin:0;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Hapus galeri ini?');"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @empty
@@ -78,7 +80,8 @@
 
 <style>
     /* Ensure headers and cells align center and vertically middle */
-    .galeri-table th, .galeri-table td {
+    .galeri-table th,
+    .galeri-table td {
         text-align: center !important;
         vertical-align: middle !important;
         white-space: normal;
@@ -94,5 +97,12 @@
         max-width: 120px;
         max-height: 80px;
         object-fit: cover;
+    }
+
+    /* Align small buttons appearance with Pelayan page */
+    .galeri-table .btn.btn-sm {
+        padding: .25rem .5rem;
+        font-size: .75rem;
+        line-height: 1;
     }
 </style>
